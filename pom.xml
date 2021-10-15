@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.teddycrane</groupId>
     <artifactId>spring-practice</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>spring-practice</name>
     <description>spring-practice</description>
     <properties>
