@@ -36,7 +36,8 @@ jobs:
       - checkout
       - run:
           name: Build
-          command: mvn -DskipTests deploy
+          command: mvn -DskipTests clean package
+
 
 
 # Invoke jobs via workflows
