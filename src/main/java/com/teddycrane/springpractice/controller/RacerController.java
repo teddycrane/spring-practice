@@ -3,6 +3,7 @@ package com.teddycrane.springpractice.controller;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.CreationException;
+import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
@@ -13,9 +14,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 
 @Controller
-@RequestMapping(path = "/racers")
+@RequestMapping(path = "/racer")
 public class RacerController {
 
 	@Autowired
@@ -25,6 +29,20 @@ public class RacerController {
 	public @ResponseBody
 	Iterable<Racer> getAllRacers() {
 		return racerRepository.findAll();
+	}
+
+	@GetMapping
+	public @ResponseBody
+	Racer getRacer(@RequestParam String id) throws RacerNotFoundException {
+		try {
+			Racer r;
+			UUID uuid = UUID.fromString(id);
+			Optional<Racer> queryResult = racerRepository.findById(uuid);
+			// allowing the get() call without an isPresent() check since we want an error to be thrown from the catch if no element is found
+			return new Racer(queryResult.get());
+		} catch (Exception e) {
+			throw new RacerNotFoundException(String.format("No racer found with the id %s.", id));
+		}
 	}
 
 	@PostMapping(path = "/new")
