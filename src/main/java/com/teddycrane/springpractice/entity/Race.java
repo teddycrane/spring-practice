@@ -4,10 +4,13 @@ import com.teddycrane.springpractice.enums.Category;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
 
 @Entity
 public class Race {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private final UUID id;
@@ -16,11 +19,19 @@ public class Race {
 
 	private Category category;
 
+	@Transient
 	private Collection<UUID> racers;
 
 	public Race() {
 		this.id = UUID.randomUUID();
 		this.racers = new ArrayList<>();
+	}
+
+	public Race(@NotNull Race other) {
+		this.id = other.id;
+		this.name = other.name;
+		this.category = other.category;
+		this.racers = new ArrayList<>(other.racers);
 	}
 
 	private Race(String name, Category category, Collection<Racer> racers) {
