@@ -1,22 +1,18 @@
 package com.teddycrane.springpractice.models;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class AddRacerRequest {
 	private UUID raceId;
-	private String firstName;
-	private String lastName;
+	private List<UUID> racerIds;
 
 	public UUID getRaceId() {
 		return raceId;
 	}
 
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
+	public List<UUID> getRacerIds() {
+		return new ArrayList<>(this.racerIds);
 	}
 }

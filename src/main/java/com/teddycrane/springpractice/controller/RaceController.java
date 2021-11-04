@@ -1,11 +1,11 @@
 package com.teddycrane.springpractice.controller;
 
-import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.BaseNotFoundException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
+import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
 import com.teddycrane.springpractice.repository.RaceRepository;
@@ -16,22 +16,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping(path="/race")
+@RequestMapping(path = "/race")
 public class RaceController {
 
 	@Autowired
-	private RacerRepository racers;
-
+	private RacerRepository racerRepository;
 	@Autowired
-	private RaceRepository races;
+	private RaceRepository raceRepository;
 
 	@GetMapping
-	public @ResponseBody Race getRace(@RequestParam String id) throws RaceNotFoundException, BadRequestException {
+	public @ResponseBody
+	Race getRace(@RequestParam String id) throws RaceNotFoundException, BadRequestException {
 		try {
 			UUID raceId = UUID.fromString(id);
 			System.out.printf("request id %s%n", id);
-			Optional<Race> result = races.findById(raceId);
-			System.out.printf("Found race %s%n", result.toString());
+			Optional<Race> result = raceRepository.findById(raceId);
+			System.out.printf("Found race %s%n", result);
 
 			if (result.isPresent()) {
 				return new Race(result.get());
@@ -45,9 +45,10 @@ public class RaceController {
 		}
 	}
 
-	@GetMapping(path="/all")
-	public @ResponseBody List<Race> getAllRaces() throws RaceNotFoundException {
-		Iterable<Race> response = races.findAll();
+	@GetMapping(path = "/all")
+	public @ResponseBody
+	List<Race> getAllRaces() throws RaceNotFoundException {
+		Iterable<Race> response = raceRepository.findAll();
 		List<Race> result = new ArrayList<>();
 		response.forEach(result::add);
 
@@ -59,12 +60,13 @@ public class RaceController {
 	}
 
 	@PutMapping
-	public @ResponseBody Race createRace(@RequestBody CreateRaceRequest request) throws BadRequestException {
+	public @ResponseBody
+	Race createRace(@RequestBody CreateRaceRequest request) throws BadRequestException {
 		try {
 			Race r = new Race();
 			r.setName(request.getName());
 			r.setCategory(request.getCategory());
-			races.save(r);
+			raceRepository.save(r);
 			return r;
 		} catch (Exception e) {
 			throw new BadRequestException(String.format("Unable to create race with name %s and category %s", request.getName(), EnumHelpers.getCategoryMapping(request.getCategory())));
@@ -73,34 +75,34 @@ public class RaceController {
 
 	/**
 	 * Adds a single racer
+	 *
 	 * @param request
 	 * @return
 	 * @throws BadRequestException
 	 */
-	@PatchMapping(path="/add-racer")
-	public @ResponseBody Race addRacer(@RequestBody AddRacerRequest request) throws BadRequestException, BaseNotFoundException {
+	@PatchMapping(path = "/add-racer")
+	public @ResponseBody
+	Race addRacer(@RequestBody AddRacerRequest request) throws BadRequestException, BaseNotFoundException {
+		System.out.print("addRacer called\n");
 		try {
-			Optional<Race> _race = races.findById(request.getRaceId());
-			List<Racer> _racer = racers.findByFirstNameAndLastName(request.getFirstName(), request.getLastName());
+			Optional<Race> _race = raceRepository.findById(request.getRaceId());
+			Iterable<Racer> racers = racerRepository.findAllById(request.getRacerIds());
 			Race race;
-			Racer racer;
 
 			if (_race.isPresent()) {
 				race = new Race(_race.get());
-				if (_racer.size() > 0) {
-					racer = new Racer(_racer.get(0));
-				} else {
-					throw new NoSuchElementException(String.format("No racer found with name %s %s", request.getFirstName(), request.getLastName()));
-				}
 
-				race.addRacer(racer);
+				// add racers to race
+				racers.forEach(race::addRacer);
 
+				raceRepository.save(race);
 				return race;
 			} else {
-				throw new NoSuchElementException(String.format("No race found with id %s", request.getRaceId().toString()));
+				throw new BadRequestException("Unable to fulfill the request");
 			}
 		} catch (NoSuchElementException e) {
-			throw new BaseNotFoundException(e.getMessage());
+			System.out.printf("An error occurred! Error mesage follows: \n%s", e.getMessage());
+			throw new BaseNotFoundException("Unable to find one of the specified racers!");
 		}
 	}
 }
