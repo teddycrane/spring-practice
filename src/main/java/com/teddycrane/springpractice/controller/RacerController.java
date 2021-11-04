@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping(path = "/racer")
@@ -26,9 +24,13 @@ public class RacerController {
 
 	@GetMapping(path = "/all")
 	public @ResponseBody
-	Iterable<Racer> getAllRacers() {
+	List<Racer> getAllRacers() {
 		System.out.println("getAllRacers called");
-		return racerRepository.findAll();
+		List<Racer> allRacers = new ArrayList<>();
+		racerRepository.findAll().forEach(allRacers::add);
+
+		allRacers.removeIf(Racer::getIsDeleted);
+		return allRacers;
 	}
 
 	@GetMapping
@@ -101,6 +103,31 @@ public class RacerController {
 			}
 		} catch (Exception e) {
 			throw new UpdateException(String.format("Unable to update rider with name %s %s", request.getFirstName(), request.getLastName()));
+		}
+	}
+
+	@DeleteMapping
+	public @ResponseBody
+	Racer deleteRacer(@RequestParam String id) throws RacerNotFoundException {
+		System.out.printf("deleteRacer called for id %s\n", id);
+		try {
+			UUID racerId = UUID.fromString(id);
+			Optional<Racer> _racer = racerRepository.findById(racerId);
+			Racer racer;
+
+			if (_racer.isPresent()) {
+				racer = _racer.get();
+				racerRepository.delete(racer);
+				return racer;
+			} else {
+				throw new NoSuchElementException("No element found with the given id");
+			}
+		} catch (NoSuchElementException e) {
+			System.out.println("No element found");
+			throw new RacerNotFoundException(String.format("Unable to find a rider with id %s", id));
+		} catch (Exception e) {
+			System.out.println("an error occurred");
+			throw new RacerNotFoundException("No racer found");
 		}
 	}
 }
