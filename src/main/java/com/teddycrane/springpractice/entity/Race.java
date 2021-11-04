@@ -19,6 +19,7 @@ public class Race {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private final UUID id;
 
+	@Column(unique=true)
 	private String name;
 
 	private Category category;

@@ -11,4 +11,5 @@ import java.util.UUID;
 
 @Repository
 public interface RaceRepository extends CrudRepository<Race, UUID> {
+	Optional<Race> findByName(String name);
 }

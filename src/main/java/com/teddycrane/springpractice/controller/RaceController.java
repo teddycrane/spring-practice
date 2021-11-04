@@ -4,6 +4,7 @@ import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.BaseNotFoundException;
+import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.AddRacerRequest;
@@ -59,10 +60,25 @@ public class RaceController {
 		}
 	}
 
+	/**
+	 * Creates a race if no race already exists with the same name
+	 *
+	 * @param request The request object with a required name and category
+	 * @return The successfully created race
+	 * @throws BadRequestException    Thrown if the input parameters do not allow for the creation of the race
+	 * @throws DuplicateItemException Thrown if there is already a race in the database with the same name, case sensitive
+	 */
 	@PostMapping
 	public @ResponseBody
-	Race createRace(@RequestBody CreateRaceRequest request) throws BadRequestException {
+	Race createRace(@RequestBody CreateRaceRequest request) throws BadRequestException, DuplicateItemException {
+		System.out.println("createRace called");
 		try {
+			Optional<Race> existing = raceRepository.findByName(request.getName());
+
+			if (existing.isPresent()) {
+				throw new DuplicateItemException(String.format("A race with the name %s already exists!", request.getName()));
+			}
+
 			Race r = new Race();
 			r.setName(request.getName());
 			r.setCategory(request.getCategory());
@@ -76,9 +92,9 @@ public class RaceController {
 	/**
 	 * Adds a single racer
 	 *
-	 * @param request
-	 * @return
-	 * @throws BadRequestException
+	 * @param request A request object with the racer's id and the race ID to add the racer to
+	 * @return The Race object with the new racer
+	 * @throws BadRequestException Thrown if the racer is unable to be added to the Race object
 	 */
 	@PatchMapping(path = "/add-racer")
 	public @ResponseBody
