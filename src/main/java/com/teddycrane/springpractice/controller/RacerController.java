@@ -55,23 +55,20 @@ public class RacerController {
 		r.setFirstName(request.getFirstName());
 		r.setLastName(request.getLastName());
 
-		// duplication check
 		try {
-			List<Racer> existing = racerRepository.findByFirstNameAndLastName(r.getFirstName(), r.getLastName());
-			Racer existingRacer = existing.get(0);
-			if (existingRacer.getFirstName().equals(r.getFirstName()) && existingRacer.getLastName().equals(r.getLastName())) {
-				throw new CreationException(String.format("Cannot create a new racer with name %s %s", request.getFirstName(), request.getLastName()));
-			}
-		} catch (IndexOutOfBoundsException ignored) {
+			racerRepository.save(r);
+			return r;
+		} catch (IndexOutOfBoundsException e) {
+			System.out.printf("An error occurred! Stack Trace: %s\n", e.getMessage());
+			throw new CreationException(String.format("Unable to create a racer with name %s %s", request.getFirstName(), request.getLastName()));
 		}
-		racerRepository.save(r);
-		return r;
 	}
 
 	/**
 	 * Handles PATCH requests to /racer/update?id=racerId
+	 *
 	 * @param request The request object containing the fields to update
-	 * @param id The id of the racer to update
+	 * @param id      The id of the racer to update
 	 * @return The updated Racer object
 	 * @throws UpdateException Thrown if the racer does not exist, or if the racer fails to update
 	 */
