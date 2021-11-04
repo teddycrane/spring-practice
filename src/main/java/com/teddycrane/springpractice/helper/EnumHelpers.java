@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice;
+package com.teddycrane.springpractice.helper;
 
 import com.teddycrane.springpractice.enums.Category;
 

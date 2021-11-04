@@ -1,6 +1,6 @@
 package com.teddycrane.springpractice.entity;
 
-import com.teddycrane.springpractice.EnumHelpers;
+import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.enums.Category;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;

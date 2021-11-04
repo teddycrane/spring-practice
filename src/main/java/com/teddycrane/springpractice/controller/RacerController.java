@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,6 +33,7 @@ public class RacerController {
 	@GetMapping
 	public @ResponseBody
 	Racer getRacer(@RequestParam String id) throws RacerNotFoundException {
+		System.out.printf("getRacer called with id %s", id);
 		try {
 			Racer r;
 			UUID uuid = UUID.fromString(id);
@@ -48,6 +48,7 @@ public class RacerController {
 	@PostMapping(path = "/new")
 	public @ResponseBody
 	Racer addRacer(@RequestBody @NotNull CreateRacerRequest request) throws CreationException {
+		System.out.println("addRacer called");
 		Racer r = new Racer();
 		r.setCategory(Category.CAT_5);
 		r.setFirstName(request.getFirstName());
@@ -60,33 +61,46 @@ public class RacerController {
 			if (existingRacer.getFirstName().equals(r.getFirstName()) && existingRacer.getLastName().equals(r.getLastName())) {
 				throw new CreationException(String.format("Cannot create a new racer with name %s %s", request.getFirstName(), request.getLastName()));
 			}
-		} catch (IndexOutOfBoundsException ignored) {}
+		} catch (IndexOutOfBoundsException ignored) {
+		}
 		racerRepository.save(r);
 		return r;
 	}
 
-	@PutMapping(path = "/update")
+	/**
+	 * Handles PATCH requests to /racer/update?id=racerId
+	 * @param request The request object containing the fields to update
+	 * @param id The id of the racer to update
+	 * @return The updated Racer object
+	 * @throws UpdateException Thrown if the racer does not exist, or if the racer fails to update
+	 */
+	@PatchMapping(path = "/update")
 	public @ResponseBody
-	Racer updateRacer(@RequestBody @NotNull UpdateRacerRequest request) throws UpdateException {
+	Racer updateRacer(@RequestBody @NotNull UpdateRacerRequest request, @RequestParam String id) throws UpdateException {
 		try {
-			List<Racer> racers = racerRepository.findByFirstNameAndLastName(request.getFirstName(), request.getLastName());
-			Racer existing = new Racer(racers.get(0));
-			existing.setFirstName(request.getFirstName());
-			existing.setLastName(request.getLastName());
+			System.out.printf("updateRacer called with id %s \nand request body \n%s\n", id, request);
+			UUID racerId = UUID.fromString(id);
+			Optional<Racer> _racer = racerRepository.findById(racerId);
+			Racer racer;
 
-			if (request.getCategory() != null) {
-				existing.setCategory(request.getCategory());
+			if (_racer.isPresent()) {
+				racer = new Racer(_racer.get());
+
+				// Verify parameters and only update parameters that are present
+				if (request.getFirstName().isPresent()) {
+					racer.setFirstName(request.getFirstName().get());
+				}
+				if (request.getLastName().isPresent()) {
+					racer.setLastName(request.getLastName().get());
+				}
+				if (request.getCategory().isPresent()) {
+					racer.setCategory(request.getCategory().get());
+				}
+
+				return racer;
+			} else {
+				throw new Exception("Exception temp string change me");
 			}
-			return existing;
-		} catch (IndexOutOfBoundsException e) {
-			Racer r = new Racer(request.getFirstName(), request.getLastName());
-
-			if (request.getCategory() != null) {
-				r.setCategory(request.getCategory());
-			}
-
-			racerRepository.save(r);
-			return r;
 		} catch (Exception e) {
 			throw new UpdateException(String.format("Unable to update rider with name %s %s", request.getFirstName(), request.getLastName()));
 		}
