@@ -77,7 +77,11 @@ public class RaceController {
 			Optional<Race> existing = raceRepository.findByName(request.getName());
 
 			if (existing.isPresent()) {
-				throw new DuplicateItemException(String.format("A race with the name %s already exists!", request.getName()));
+				Race r = new Race(existing.get());
+
+				if (r.getName().equals(request.getName()) && r.getCategory() == request.getCategory()) {
+					throw new DuplicateItemException(String.format("A race with the name %s already exists!", request.getName()));
+				}
 			}
 
 			Race r = new Race();
