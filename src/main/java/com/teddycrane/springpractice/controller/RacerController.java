@@ -27,6 +27,7 @@ public class RacerController {
 	@GetMapping(path = "/all")
 	public @ResponseBody
 	Iterable<Racer> getAllRacers() {
+		System.out.println("getAllRacers called");
 		return racerRepository.findAll();
 	}
 
@@ -78,7 +79,7 @@ public class RacerController {
 	public @ResponseBody
 	Racer updateRacer(@RequestBody @NotNull UpdateRacerRequest request, @RequestParam String id) throws UpdateException {
 		try {
-			System.out.printf("updateRacer called with id %s \nand request body \n%s\n", id, request);
+			System.out.println("updateRacer called");
 			UUID racerId = UUID.fromString(id);
 			Optional<Racer> _racer = racerRepository.findById(racerId);
 			Racer racer;
