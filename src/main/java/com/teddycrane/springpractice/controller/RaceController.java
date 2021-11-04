@@ -9,6 +9,7 @@ import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
+import com.teddycrane.springpractice.models.UpdateRaceRequest;
 import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,10 +83,39 @@ public class RaceController {
 			Race r = new Race();
 			r.setName(request.getName());
 			r.setCategory(request.getCategory());
-			raceRepository.save(r);
-			return r;
+			return raceRepository.save(r);
 		} catch (Exception e) {
 			throw new BadRequestException(String.format("Unable to create race with name %s and category %s", request.getName(), EnumHelpers.getCategoryMapping(request.getCategory())));
+		}
+	}
+
+	@PatchMapping
+	public @ResponseBody
+	Race updateRace(@RequestBody UpdateRaceRequest request, @RequestParam String id) throws BaseNotFoundException {
+		System.out.println("updateRace called");
+
+		try {
+			UUID raceId = UUID.fromString(id);
+			Optional<Race> race = raceRepository.findById(raceId);
+			Race r;
+
+			if (race.isPresent()) {
+				r = new Race(race.get());
+
+				// request optional param validation
+				if (request.getName().isPresent()) {
+					r.setName(request.getName().get());
+				}
+				if (request.getCategory().isPresent()) {
+					r.setCategory(request.getCategory().get());
+				}
+
+				return raceRepository.save(r);
+			} else {
+				throw new BaseNotFoundException(String.format("No element found with the id %s", id));
+			}
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(String.format("Unable to parse id %s", id));
 		}
 	}
 
@@ -111,8 +141,7 @@ public class RaceController {
 				// add racers to race
 				racers.forEach(race::addRacer);
 
-				raceRepository.save(race);
-				return race;
+				return raceRepository.save(race);
 			} else {
 				throw new BadRequestException("Unable to fulfill the request");
 			}
