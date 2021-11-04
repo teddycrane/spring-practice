@@ -59,7 +59,7 @@ public class RaceController {
 		}
 	}
 
-	@PutMapping
+	@PostMapping
 	public @ResponseBody
 	Race createRace(@RequestBody CreateRaceRequest request) throws BadRequestException {
 		try {
