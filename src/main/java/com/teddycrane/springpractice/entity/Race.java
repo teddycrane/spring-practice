@@ -1,7 +1,7 @@
 package com.teddycrane.springpractice.entity;
 
-import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.helper.EnumHelpers;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,11 +15,11 @@ import java.util.UUID;
 public class Race {
 
 	@Id
-	@Type(type="uuid-char")
+	@Type(type = "uuid-char")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private final UUID id;
 
-	@Column(unique=true)
+	@Column(unique = true)
 	private String name;
 
 	private Category category;
@@ -39,10 +39,14 @@ public class Race {
 		this.racers = new ArrayList<>(other.racers);
 	}
 
-	private Race(String name, Category category, Collection<Racer> racers) {
+	public Race(String name, Category category) {
 		this();
 		this.name = name;
 		this.category = category;
+	}
+
+	private Race(String name, Category category, Collection<Racer> racers) {
+		this(name, category);
 		this.racers = new ArrayList<>(racers);
 	}
 

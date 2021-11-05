@@ -2,20 +2,20 @@ package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
-import com.teddycrane.springpractice.exceptions.BadRequestException;
-import com.teddycrane.springpractice.exceptions.BaseNotFoundException;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
-import com.teddycrane.springpractice.helper.EnumHelpers;
+import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
 import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
+import com.teddycrane.springpractice.service.RaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/race")
@@ -26,39 +26,30 @@ public class RaceController {
 	@Autowired
 	private RaceRepository raceRepository;
 
+	@Autowired
+	private RaceService raceService;
+
 	@GetMapping
 	public @ResponseBody
 	Race getRace(@RequestParam String id) throws RaceNotFoundException, BadRequestException {
-		try {
-			UUID raceId = UUID.fromString(id);
-			System.out.printf("request id %s%n", id);
-			Optional<Race> result = raceRepository.findById(raceId);
-			System.out.printf("Found race %s%n", result);
+		System.out.println("RaceController.getRace called");
 
-			if (result.isPresent()) {
-				return new Race(result.get());
-			} else {
-				throw new NoSuchElementException(String.format("No element with id %s", id));
-			}
-		} catch (NoSuchElementException e) {
-			throw new RaceNotFoundException(e.getMessage());
-		} catch (Exception e) {
-			throw new BadRequestException("Bad Request");
+		try {
+			UUID uuid = UUID.fromString(id);
+			return this.raceService.getRace(uuid);
+		} catch (RaceNotFoundException e) {
+			throw new RaceNotFoundException(String.format("Unable to find a race with id %s", id));
+		} catch (IllegalArgumentException e) {
+			System.out.println("Bad argument provided");
+			throw new BadRequestException(String.format("The provided id %s was not in the correct format.  Please try again", id));
 		}
 	}
 
 	@GetMapping(path = "/all")
 	public @ResponseBody
 	List<Race> getAllRaces() throws RaceNotFoundException {
-		Iterable<Race> response = raceRepository.findAll();
-		List<Race> result = new ArrayList<>();
-		response.forEach(result::add);
-
-		if (result.size() > 0) {
-			return result;
-		} else {
-			throw new RaceNotFoundException("Unable to find any races");
-		}
+		System.out.println("RaceController.getAllRaces called");
+		return this.raceService.getAllRaces();
 	}
 
 	/**
@@ -72,54 +63,37 @@ public class RaceController {
 	@PostMapping
 	public @ResponseBody
 	Race createRace(@RequestBody CreateRaceRequest request) throws BadRequestException, DuplicateItemException {
-		System.out.println("createRace called");
+		System.out.println("RaceController.createRace called");
 		try {
-			Optional<Race> existing = raceRepository.findByName(request.getName());
-
-			if (existing.isPresent()) {
-				Race r = new Race(existing.get());
-
-				if (r.getName().equals(request.getName()) && r.getCategory() == request.getCategory()) {
-					throw new DuplicateItemException(String.format("A race with the name %s already exists!", request.getName()));
-				}
-			}
-
-			Race r = new Race();
-			r.setName(request.getName());
-			r.setCategory(request.getCategory());
-			return raceRepository.save(r);
-		} catch (Exception e) {
-			throw new BadRequestException(String.format("Unable to create race with name %s and category %s", request.getName(), EnumHelpers.getCategoryMapping(request.getCategory())));
+			if (request == null)
+				throw new IllegalArgumentException("Request cannot be null");
+			return this.raceService.createRace(request.getName(), request.getCategory());
+		} catch (DuplicateItemException e) {
+			throw new DuplicateItemException(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
 		}
 	}
 
 	@PatchMapping
 	public @ResponseBody
-	Race updateRace(@RequestBody UpdateRaceRequest request, @RequestParam String id) throws BaseNotFoundException {
-		System.out.println("updateRace called");
+	Race updateRace(@RequestBody UpdateRaceRequest request, @RequestParam String id) throws BadRequestException {
+		System.out.println("RaceController.updateRace called");
 
 		try {
 			UUID raceId = UUID.fromString(id);
-			Optional<Race> race = raceRepository.findById(raceId);
-			Race r;
-
-			if (race.isPresent()) {
-				r = new Race(race.get());
-
-				// request optional param validation
-				if (request.getName().isPresent()) {
-					r.setName(request.getName().get());
-				}
-				if (request.getCategory().isPresent()) {
-					r.setCategory(request.getCategory().get());
-				}
-
-				return raceRepository.save(r);
+			if (request.getName().isPresent() || request.getCategory().isPresent()) {
+				return this.raceService.updateRace(raceId, request.getName().get(), request.getCategory().get());
 			} else {
-				throw new BaseNotFoundException(String.format("No element found with the id %s", id));
+				System.out.println("No valid parameters");
+				throw new BadRequestException("No valid parameters provided!");
 			}
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(String.format("Unable to parse id %s", id));
+		} catch (UpdateException e) {
+			throw new UpdateException(e.getMessage());
+		} catch (RaceNotFoundException e) {
+			throw new RaceNotFoundException(e.getMessage());
 		}
 	}
 
