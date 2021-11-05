@@ -75,6 +75,7 @@ public class RacerService implements IRacerService {
 		if (r.isPresent()) {
 			racer = new Racer(r.get());
 			if (racer.getIsDeleted()) {
+				System.out.printf("Deleting racer %s.", racer);
 				this.racerRepository.delete(racer);
 				return racer;
 			}
