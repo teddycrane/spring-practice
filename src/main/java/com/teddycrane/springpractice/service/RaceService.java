@@ -1,25 +1,29 @@
 package com.teddycrane.springpractice.service;
 
 import com.teddycrane.springpractice.entity.Race;
+import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
+import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.repository.RaceRepository;
+import com.teddycrane.springpractice.repository.RacerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class RaceService implements IRaceService {
 
 	@Autowired
 	private RaceRepository raceRepository;
+
+	@Autowired
+	private RacerRepository racerRepository;
 
 	@Override
 	public List<Race> getAllRaces() {
@@ -91,5 +95,43 @@ public class RaceService implements IRaceService {
 			System.out.println("Unable to find a race!");
 			throw new RaceNotFoundException(String.format("Unable to find a race with id %s", id));
 		}
+	}
+
+	@Override
+	public Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException {
+		System.out.println("RaceService.addRacer called");
+
+		// remove duplicates from within the list of ids
+		List<UUID> deDupedIds = new ArrayList<>(new HashSet<>(racerIds));
+		List<Racer> racers;
+		Optional<Race> _race = this.raceRepository.findById(id);
+		Race r;
+
+		if (_race.isPresent()) {
+			r = new Race(_race.get());
+			racers = new ArrayList<>(r.getRacers());
+			Stream<Racer> racerListStream = racers.stream();
+			// check for potential duplicate entries, and throw out if duplicates
+			deDupedIds.forEach((racerId) -> {
+				if (racerListStream.anyMatch((element) -> element.getId().equals(racerId)))
+					deDupedIds.remove(racerId);
+			});
+
+			try {
+				// since we've removed duplicates earlier, we just forEach the iterable onto the list of racers in the Race object
+				Iterable<Racer> _racers = this.racerRepository.findAllById(deDupedIds);
+				_racers.forEach(r::addRacer);
+			} catch (IllegalArgumentException e) {
+				System.out.println("Unable to find a racer!");
+				System.out.println(e.getMessage());
+				throw new RacerNotFoundException("Cannot find a racer with a null id or entry.  ");
+			}
+
+			return this.raceRepository.save(r);
+		} else {
+			System.out.println("Unable to find race!");
+			throw new RaceNotFoundException(String.format("Unable to find Race with id %s", id));
+		}
+
 	}
 }

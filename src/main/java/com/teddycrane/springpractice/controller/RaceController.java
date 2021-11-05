@@ -1,30 +1,20 @@
 package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.entity.Race;
-import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
-import com.teddycrane.springpractice.repository.RaceRepository;
-import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.RaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/race")
 public class RaceController {
-
-	@Autowired
-	private RacerRepository racerRepository;
-	@Autowired
-	private RaceRepository raceRepository;
 
 	@Autowired
 	private RaceService raceService;
@@ -77,7 +67,7 @@ public class RaceController {
 
 	@PatchMapping
 	public @ResponseBody
-	Race updateRace(@RequestBody UpdateRaceRequest request, @RequestParam String id) throws BadRequestException {
+	Race updateRace(@RequestBody UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, DuplicateItemException, RaceNotFoundException {
 		System.out.println("RaceController.updateRace called");
 
 		try {
@@ -94,6 +84,8 @@ public class RaceController {
 			throw new UpdateException(e.getMessage());
 		} catch (RaceNotFoundException e) {
 			throw new RaceNotFoundException(e.getMessage());
+		} catch (DuplicateItemException e) {
+			throw new DuplicateItemException(e.getMessage());
 		}
 	}
 
@@ -106,26 +98,20 @@ public class RaceController {
 	 */
 	@PatchMapping(path = "/add-racer")
 	public @ResponseBody
-	Race addRacer(@RequestBody AddRacerRequest request) throws BadRequestException, BaseNotFoundException {
-		System.out.print("addRacer called\n");
+	Race addRacer(@RequestBody AddRacerRequest request) throws BadRequestException, RaceNotFoundException, RacerNotFoundException {
+		System.out.println("RaceController.addRacer called");
+
 		try {
-			Optional<Race> _race = raceRepository.findById(request.getRaceId());
-			Iterable<Racer> racers = racerRepository.findAllById(request.getRacerIds());
-			Race race;
-
-			if (_race.isPresent()) {
-				race = new Race(_race.get());
-
-				// add racers to race
-				racers.forEach(race::addRacer);
-
-				return raceRepository.save(race);
+			if (request != null) {
+				return this.raceService.addRacer(request.getRaceId(), request.getRacerIds());
 			} else {
-				throw new BadRequestException("Unable to fulfill the request");
+				System.out.println("Request body is not valid");
+				throw new BadRequestException("Request body cannot be null!");
 			}
-		} catch (NoSuchElementException e) {
-			System.out.printf("An error occurred! Error mesage follows: \n%s", e.getMessage());
-			throw new BaseNotFoundException("Unable to find one of the specified racers!");
+		} catch (RacerNotFoundException e) {
+			throw new RacerNotFoundException(e.getMessage());
+		} catch (RaceNotFoundException e) {
+			throw new RaceNotFoundException(e.getMessage());
 		}
 	}
 }
