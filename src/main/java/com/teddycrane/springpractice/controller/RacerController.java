@@ -29,9 +29,15 @@ public class RacerController {
 
 	@GetMapping(path = "/all")
 	public @ResponseBody
-	List<Racer> getAllRacers() {
+	List<Racer> getAllRacers(@RequestParam(required = false) boolean isDeleted) {
 		System.out.println("RacerController.getAllRacers called");
-		return racerService.getAllRacers();
+		if (isDeleted) {
+			System.out.println("Returning all racers, including deleted entries");
+			return racerService.getAllRacersWithDeleted();
+		} else {
+			System.out.println("Filtering out deleted entries");
+			return racerService.getAllRacers();
+		}
 	}
 
 	@GetMapping

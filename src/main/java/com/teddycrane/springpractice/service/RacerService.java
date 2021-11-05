@@ -89,4 +89,12 @@ public class RacerService implements IRacerService {
 		}
 	}
 
+	@Override
+	public List<Racer> getAllRacersWithDeleted() {
+		List<Racer> result = new ArrayList<>();
+		Iterable<Racer> response = this.racerRepository.findAll();
+		response.forEach(result::add);
+		return result;
+	}
+
 }

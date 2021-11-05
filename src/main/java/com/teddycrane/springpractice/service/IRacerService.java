@@ -29,4 +29,6 @@ interface IRacerService {
 	Racer updateRacer(UUID id, String firstName, String lastName, Category category) throws RacerNotFoundException;
 
 	Racer deleteRacer(UUID id) throws RacerNotFoundException;
+
+	List<Racer> getAllRacersWithDeleted();
 }
