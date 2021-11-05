@@ -8,6 +8,7 @@ import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
 import com.teddycrane.springpractice.repository.RacerRepository;
+import com.teddycrane.springpractice.service.RacerService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,23 +21,22 @@ import java.util.*;
 public class RacerController {
 
 	@Autowired
+	private RacerService racerService;
+
+	@Autowired
 	private RacerRepository racerRepository;
 
 	@GetMapping(path = "/all")
 	public @ResponseBody
 	List<Racer> getAllRacers() {
-		System.out.println("getAllRacers called");
-		List<Racer> allRacers = new ArrayList<>();
-		racerRepository.findAll().forEach(allRacers::add);
-
-		allRacers.removeIf(Racer::getIsDeleted);
-		return allRacers;
+		System.out.println("RacerController.getAllRacers called");
+		return racerService.getAllRacers();
 	}
 
 	@GetMapping
 	public @ResponseBody
 	Racer getRacer(@RequestParam String id) throws RacerNotFoundException {
-		System.out.printf("getRacer called with id %s", id);
+		System.out.printf("RacerController.getRacer called with id %s", id);
 		try {
 			Racer r;
 			UUID uuid = UUID.fromString(id);
