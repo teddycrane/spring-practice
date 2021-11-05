@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -38,14 +37,14 @@ public class RacerController {
 	@GetMapping
 	public @ResponseBody
 	Racer getRacer(@RequestParam String id) throws RacerNotFoundException {
-		System.out.printf("RacerController.getRacer called with id %s", id);
+		try {
+			System.out.printf("RacerController.getRacer called with id %s", id);
 
-		UUID uuid = UUID.fromString(id);
-		Optional<Racer> result = this.racerService.getRacerById(uuid);
+			UUID uuid = UUID.fromString(id);
+			return this.racerService.getRacerById(uuid);
 
-		if (result.isPresent()) {
-			return result.get();
-		} else {
+		} catch (RacerNotFoundException e) {
+			System.out.println("Unable to find racer");
 			throw new RacerNotFoundException(String.format("No racer found with id %s", id));
 		}
 	}
@@ -55,10 +54,10 @@ public class RacerController {
 	Racer addRacer(@RequestBody @NotNull CreateRacerRequest request) throws BadRequestException {
 		System.out.println("RacerController.addRacer called");
 
-		// verify required parameters
-		if (request.getFirstName() != null && request.getLastName() != null) {
+		try {
+			// verify required parameters
 			return this.racerService.addRacer(request.getFirstName(), request.getLastName());
-		} else {
+		} catch (Exception e) {
 			throw new BadRequestException(String.format("Unable to create a racer with name %s %s", request.getFirstName(), request.getLastName()));
 		}
 	}

@@ -30,9 +30,15 @@ public class RacerService implements IRacerService {
 	}
 
 	@Override
-	public Optional<Racer> getRacerById(UUID id) {
+	public Racer getRacerById(UUID id) throws RacerNotFoundException {
 		System.out.println("RacerService.getRacerById called");
-		return racerRepository.findById(id);
+		Optional<Racer> result = racerRepository.findById(id);
+
+		if (result.isPresent()) {
+			return result.get();
+		} else {
+			throw new RacerNotFoundException("No racer found!");
+		}
 	}
 
 	@Override
