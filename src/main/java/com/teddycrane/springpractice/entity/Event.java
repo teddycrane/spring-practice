@@ -16,6 +16,7 @@ public class Event {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private final UUID id;
 
+	@Column(unique = true)
 	private String name;
 
 	@OneToMany
@@ -87,5 +88,21 @@ public class Event {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = new Date(endDate.getTime());
+	}
+
+	public boolean equals(Event other) {
+		return this.id.equals(other.id) && this.name.equals(other.name) && this.startDate.equals(other.startDate) && this.endDate.equals(other.endDate) && this.races.equals(other.races);
+	}
+
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("{\n");
+		builder.append(String.format("   \"id\": \"%s\",\n    \"name\": \"%s\",\n    \"startDate\": \"%s\",\n    \"endDate\": \"%s\",\n", id, name, startDate, endDate));
+		builder.append("    \"races\": [\n");
+
+		if (races.size() > 0) races.forEach((race) -> builder.append(String.format("%s,\n", race)));
+		builder.append("    ],\n");
+		builder.append("}");
+		return builder.toString();
 	}
 }
