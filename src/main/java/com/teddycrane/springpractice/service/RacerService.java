@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-class RacerService implements IRacerService {
+public class RacerService implements IRacerService {
 
 	@Autowired
 	private RacerRepository racerRepository;

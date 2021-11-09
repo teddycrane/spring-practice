@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.tests.servicetests.unittests;
+package com.teddycrane.springpractice.tests.unittests;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;

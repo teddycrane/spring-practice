@@ -1,9 +1,12 @@
 package com.teddycrane.springpractice.tests.servicetests;
 
 import com.teddycrane.springpractice.entity.Racer;
+import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.IRacerService;
+import com.teddycrane.springpractice.service.RacerService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,16 +20,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RacerServiceTest {
 
 	private List<Racer> mockRacers;
+	private Racer request;
 	@InjectMocks
-	private IRacerService racerService;
+	private IRacerService racerService = new RacerService();
 	@Mock
 	private RacerRepository racerRepository;
 
@@ -36,6 +40,7 @@ public class RacerServiceTest {
 		mockRacers = new ArrayList<>();
 		mockRacers.add(new Racer("Fname", "Lname"));
 		mockRacers.add(new Racer("Test", "Test"));
+		request = new Racer("firstName", "lastName");
 	}
 
 	@Test
@@ -45,9 +50,9 @@ public class RacerServiceTest {
 		// test
 		List<Racer> result = racerService.getAllRacers();
 
-		assertEquals(result.size(), 2);
-		assertEquals(result.get(0), mockRacers.get(0));
-		assertEquals(result.get(1), mockRacers.get(1));
+		Assert.assertEquals(result.size(), 2);
+		Assert.assertEquals(result.get(0), mockRacers.get(0));
+		Assert.assertEquals(result.get(1), mockRacers.get(1));
 	}
 
 	@Test
@@ -56,7 +61,7 @@ public class RacerServiceTest {
 
 		// test
 		Racer result = racerService.getRacerById(mockRacers.get(0).getId());
-		assertEquals(result, mockRacers.get(0));
+		Assert.assertEquals(result, mockRacers.get(0));
 	}
 
 	@Test
@@ -65,7 +70,86 @@ public class RacerServiceTest {
 		when(racerRepository.findById(random)).thenReturn(Optional.empty());
 
 		// test
-		assertThrows(RacerNotFoundException.class, () -> racerService.getRacerById(random));
+		Assert.assertThrows(RacerNotFoundException.class, () -> racerService.getRacerById(random));
 	}
 
+	@Test
+	public void createRacerTest() {
+		when(racerRepository.save(any(Racer.class))).thenReturn(request);
+
+		// test
+		Racer result = this.racerService.addRacer("firstName", "lastName");
+		Assert.assertTrue(request.equals(result));
+	}
+
+	@Test
+	public void updateRacerWhenSuccessful() {
+		// set up mock response
+		Racer response = new Racer(request);
+		response.setFirstName("updatedFname");
+		response.setLastName("updated lname");
+		response.setCategory(Category.CAT_1);
+		// mocking
+		when(racerRepository.findById(request.getId())).thenReturn(Optional.of(request));
+		when(racerRepository.save(any(Racer.class))).thenReturn(response);
+
+		// test
+		Racer result = this.racerService.updateRacer(request.getId(), "updatedFname", "updatedLname", Category.CAT_1);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(response, result);
+	}
+
+	@Test
+	public void updateRacerWhenExceptionThrown() {
+		UUID random = UUID.randomUUID();
+		when(racerRepository.findById(random)).thenReturn(Optional.empty());
+
+		// test
+		Assert.assertThrows(RacerNotFoundException.class, () -> racerService.updateRacer(random, "test", "test", null));
+	}
+
+	@Test
+	public void deleteRacerWhenSuccessful() {
+		UUID random = UUID.randomUUID();
+		// mocking
+		when(racerRepository.findById(random)).thenReturn(Optional.of(request));
+
+		Racer result = racerService.deleteRacer(random);
+		Assert.assertTrue(result.getIsDeleted());
+	}
+
+	@Test
+	public void deleteRacerWhenAlreadyDeleted() {
+		UUID random = UUID.randomUUID();
+		Racer response = new Racer(request);
+		response.setIsDeleted(true);
+
+		// mocking
+		when(racerRepository.findById(random)).thenReturn(Optional.of(response));
+
+		Racer result = racerService.deleteRacer(random);
+		Assert.assertTrue(response.equals(result));
+	}
+
+	@Test
+	public void deleteRacerWhenNoRacerIsFound() {
+		when(racerRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+		// test
+		Assert.assertThrows(RacerNotFoundException.class, () -> racerService.deleteRacer(UUID.randomUUID()));
+	}
+
+	@Test
+	public void getAllRacersWithDeletedSuccess() {
+		request.setIsDeleted(true);
+		mockRacers.add(request);
+		when(racerRepository.findAll()).thenReturn(mockRacers);
+
+		// test
+		List<Racer> result = racerService.getAllRacersWithDeleted();
+
+		Assert.assertEquals(3, result.size());
+
+		Assert.assertTrue(result.stream().anyMatch(Racer::getIsDeleted));
+	}
 }
