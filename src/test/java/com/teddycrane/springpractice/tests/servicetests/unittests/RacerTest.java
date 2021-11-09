@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.unittests;
+package com.teddycrane.springpractice.tests.servicetests.unittests;
 
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;

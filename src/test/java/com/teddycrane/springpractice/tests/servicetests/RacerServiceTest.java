@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.servicetests;
+package com.teddycrane.springpractice.tests.servicetests;
 
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
