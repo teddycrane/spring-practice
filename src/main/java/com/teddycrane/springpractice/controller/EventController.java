@@ -55,4 +55,20 @@ public class EventController {
 			throw new DuplicateItemException(e.getMessage());
 		}
 	}
+
+	@DeleteMapping
+	public Event deleteEvent(@RequestParam String requestId) throws BadRequestException, EventNotFoundException {
+		System.out.println("EventController.deleteEvent called");
+		UUID id;
+
+		try {
+			id = UUID.fromString(requestId);
+			return this.eventService.deleteEvent(id);
+		} catch (IllegalArgumentException e) {
+			System.out.printf("Unable to parse provided id %s", requestId);
+			throw new BadRequestException(String.format("Unable to handle id %s.  Please check the provided id and try again. ", requestId));
+		} catch (EventNotFoundException e) {
+			throw new EventNotFoundException(e.getMessage());
+		}
+	}
 }

@@ -5,6 +5,7 @@ import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -56,4 +57,20 @@ class EventService implements IEventService {
 
 		return this.eventRepository.save(e);
 	}
+
+	@Override
+	public Event deleteEvent(UUID id) throws EventNotFoundException {
+		System.out.println("EventService.deleteEvent called");
+		Optional<Event> existing = this.eventRepository.findById(id);
+		Event e;
+
+		if (existing.isPresent()) {
+			e = new Event(existing.get());
+			this.eventRepository.delete(existing.get());
+			return e;
+		} else {
+			throw new EventNotFoundException(String.format("No event found with id %s", id));
+		}
+	}
+
 }
