@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Service
-public class RaceService implements IRaceService {
+class RaceService implements IRaceService {
 
 	@Autowired
 	private RaceRepository raceRepository;

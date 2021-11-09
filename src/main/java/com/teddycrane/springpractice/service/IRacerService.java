@@ -1,15 +1,14 @@
 package com.teddycrane.springpractice.service;
 
-import com.sun.istack.Nullable;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-interface IRacerService {
+public interface IRacerService {
 
 	/**
 	 * Gets all racers from DB

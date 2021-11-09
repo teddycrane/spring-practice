@@ -5,7 +5,7 @@ import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
-import com.teddycrane.springpractice.service.RaceService;
+import com.teddycrane.springpractice.service.IRaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class RaceController {
 
 	@Autowired
-	private RaceService raceService;
+	private IRaceService raceService;
 
 	@GetMapping
 	public @ResponseBody

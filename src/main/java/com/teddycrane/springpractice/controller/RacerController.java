@@ -7,7 +7,7 @@ import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
 import com.teddycrane.springpractice.repository.RacerRepository;
-import com.teddycrane.springpractice.service.RacerService;
+import com.teddycrane.springpractice.service.IRacerService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class RacerController {
 
 	@Autowired
-	private RacerService racerService;
+	private IRacerService racerService;
 
 	@Autowired
 	private RacerRepository racerRepository;

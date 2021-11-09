@@ -5,7 +5,7 @@ import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.models.CreateEventRequest;
-import com.teddycrane.springpractice.service.EventService;
+import com.teddycrane.springpractice.service.IEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class EventController {
 
 	@Autowired
-	private EventService eventService;
+	private IEventService eventService;
 
 	@GetMapping(path = "/all")
 	public List<Event> getAllEvents() {

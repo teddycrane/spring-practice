@@ -3,7 +3,7 @@ package com.teddycrane.springpractice.tests.servicetests;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
-import com.teddycrane.springpractice.service.RacerService;
+import com.teddycrane.springpractice.service.IRacerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +26,7 @@ public class RacerServiceTest {
 
 	private List<Racer> mockRacers;
 	@InjectMocks
-	private RacerService racerService;
+	private IRacerService racerService;
 	@Mock
 	private RacerRepository racerRepository;
 
