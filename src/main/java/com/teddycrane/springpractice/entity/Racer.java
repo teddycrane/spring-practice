@@ -99,4 +99,16 @@ public class Racer {
 				String.format("    \"isDeleted\": \"%s\"\n", this.isDeleted) +
 				"}";
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + this.id.hashCode();
+		hash = 31 * hash + this.firstName.hashCode();
+		hash = 31 * hash + this.lastName.hashCode();
+		hash = 31 * hash + this.category.hashCode();
+		if (this.isDeleted) hash++;
+
+		return hash;
+	}
 }

@@ -69,4 +69,14 @@ public class RacerTest {
 		Assert.assertEquals(test[5], "    \"isDeleted\": \"false\"");
 		Assert.assertEquals(test[6], "}");
 	}
+
+	@Test
+	public void testHashCode() {
+		int hash1 = racer.hashCode();
+		int hash2 = new Racer(racer).hashCode();
+		int hash3 = new Racer().hashCode();
+
+		Assert.assertEquals(hash1, hash2);
+		Assert.assertNotEquals(hash1, hash3);
+	}
 }
