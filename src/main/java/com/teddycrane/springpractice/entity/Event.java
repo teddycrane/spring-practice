@@ -3,10 +3,7 @@ package com.teddycrane.springpractice.entity;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class Event {
@@ -20,7 +17,7 @@ public class Event {
 	private String name;
 
 	@OneToMany
-	private Collection<Race> races;
+	private List<Race> races;
 
 	private Date startDate, endDate;
 
@@ -104,5 +101,21 @@ public class Event {
 		builder.append("    ],\n");
 		builder.append("}");
 		return builder.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + this.id.hashCode();
+		hash = 31 * hash + this.name.hashCode();
+		hash = 31 * hash + this.startDate.hashCode();
+		hash = 31 * hash + this.endDate.hashCode();
+
+		if (this.races.size() > 0) {
+			for (Race race : races) {
+				hash = 31 * hash + race.hashCode();
+			}
+		}
+		return hash;
 	}
 }
