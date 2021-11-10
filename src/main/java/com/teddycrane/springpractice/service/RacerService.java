@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.service;
 
+import com.sun.istack.Nullable;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
@@ -56,6 +57,10 @@ public class RacerService implements IRacerService {
 
 		if (r.isPresent()) {
 			racer = new Racer(r.get());
+			if (racer.getIsDeleted()) {
+				System.out.printf("The racer for id %s is deleted, and is unable to be edited", id);
+				throw new RacerNotFoundException("No valid racer found with the provided id");
+			}
 			if (firstName != null) racer.setFirstName(firstName);
 			if (lastName != null) racer.setLastName(lastName);
 			if (category != null) racer.setCategory(category);

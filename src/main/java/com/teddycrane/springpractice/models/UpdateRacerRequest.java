@@ -4,14 +4,20 @@ import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Optional;
 
 public class UpdateRacerRequest {
 
-	@Nullable
+	@NotEmpty
+	private String id;
+
 	private String firstName, lastName;
-	@Nullable
 	private Category category;
+
+	public String getId() {
+		return this.id;
+	}
 
 	public Optional<String> getFirstName() {
 		return Optional.ofNullable(firstName);

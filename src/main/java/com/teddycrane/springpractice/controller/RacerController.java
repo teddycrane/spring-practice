@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -72,29 +73,27 @@ public class RacerController {
 	 * Handles PATCH requests to /racer/update?id=racerId
 	 *
 	 * @param request The request object containing the fields to update
-	 * @param id      The id of the racer to update
 	 * @return The updated Racer object
 	 * @throws UpdateException Thrown if the racer does not exist, or if the racer fails to update
 	 */
 	@PatchMapping(path = "/update")
 	public @ResponseBody
-	Racer updateRacer(@RequestBody @NotNull UpdateRacerRequest request, @RequestParam String id) throws UpdateException, BadRequestException {
+	Racer updateRacer(@Valid @RequestBody UpdateRacerRequest request) throws RacerNotFoundException, BadRequestException {
 		try {
-			System.out.println("updateRacer called");
-			UUID uuid = UUID.fromString(id);
+			System.out.println("RacerController.updateRacer called");
+			UUID uuid = UUID.fromString(request.getId());
 
-			// verify parameters - if any of the required parameters are valid, continue, otherwise, throw a bad request error
-			if (request.getFirstName().isPresent() || request.getLastName().isPresent() || request.getCategory().isPresent()) {
-				return this.racerService.updateRacer(uuid, request.getFirstName().get(), request.getLastName().get(), request.getCategory().get());
-			} else {
-				throw new BadRequestException("No update parameters specified!");
-			}
+			// validate that at least one of the parameters are not empty or null
+			return this.racerService.updateRacer(uuid,
+					request.getFirstName().isPresent() ? request.getFirstName().get() : null,
+					request.getLastName().isPresent() ? request.getLastName().get() : null,
+					request.getCategory().isPresent() ? request.getCategory().get() : null);
 		} catch (BadRequestException e) {
 			System.out.print("error");
 			throw new BadRequestException(e.getMessage());
 		} catch (RacerNotFoundException e) {
 			System.out.println("No racer found!");
-			throw new UpdateException(String.format("No racer found with id %s.", id));
+			throw new RacerNotFoundException(String.format("No racer found with id %s.", request.getId()));
 		}
 	}
 
