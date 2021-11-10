@@ -25,9 +25,6 @@ public class RacerController {
 	@Autowired
 	private IRacerService racerService;
 
-	@Autowired
-	private RacerRepository racerRepository;
-
 	@GetMapping(path = "/all")
 	public @ResponseBody
 	List<Racer> getAllRacers(@RequestParam(required = false) boolean isDeleted) {
@@ -109,6 +106,19 @@ public class RacerController {
 			String message = String.format("No element found with id %s\n", id);
 			System.out.println(message);
 			throw new RacerNotFoundException(message);
+		}
+	}
+
+	@PatchMapping(path = "/restore")
+	public @ResponseBody
+	Racer restoreRacer(@RequestParam String id) throws RacerNotFoundException {
+		System.out.println("RacerController.restoreRacer called");
+
+		try {
+			UUID uuid = UUID.fromString(id);
+			return this.racerService.restoreRacer(uuid);
+		} catch (RacerNotFoundException e) {
+			throw new RacerNotFoundException(e.getMessage());
 		}
 	}
 }

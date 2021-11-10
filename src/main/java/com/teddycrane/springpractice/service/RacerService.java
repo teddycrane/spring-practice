@@ -102,4 +102,21 @@ public class RacerService implements IRacerService {
 		return result;
 	}
 
+	@Override
+	public Racer restoreRacer(UUID id) throws RacerNotFoundException {
+		System.out.println("RacerService.restoreRacer called");
+
+		Optional<Racer> result = this.racerRepository.findById(id);
+		Racer r;
+
+		if (result.isPresent()) {
+			r = new Racer(result.get());
+			r.setIsDeleted(false);
+			return this.racerRepository.save(r);
+		} else {
+			System.out.printf("Unable to find with id %s", id);
+			throw new RacerNotFoundException(String.format("Unable to find a racer with id %s", id));
+		}
+	}
+
 }

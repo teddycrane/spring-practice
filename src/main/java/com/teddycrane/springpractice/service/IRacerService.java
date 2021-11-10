@@ -30,4 +30,6 @@ public interface IRacerService {
 	Racer deleteRacer(UUID id) throws RacerNotFoundException;
 
 	List<Racer> getAllRacersWithDeleted();
+
+	Racer restoreRacer(UUID id) throws RacerNotFoundException;
 }
