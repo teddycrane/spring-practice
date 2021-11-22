@@ -20,10 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -162,5 +159,43 @@ public class RacerControllerTest
 		// test
 		UpdateRacerRequest request = new UpdateRacerRequest("Firstname", "LastName", Category.CAT_5);
 		Assert.assertThrows(BadRequestException.class, () -> this.racerController.updateRacer(request, "z!"));
+	}
+
+	@Test
+	public void deleteRacerTest()
+	{
+		when(racerService.deleteRacer(any(UUID.class))).thenReturn(racer);
+
+		// test
+		Racer response = this.racerController.deleteRacer(UUID.randomUUID().toString());
+		Assert.assertTrue(response.equals(racer));
+	}
+
+	@Test
+	public void deleteRacerShouldThrowException()
+	{
+		when(racerService.deleteRacer(any(UUID.class))).thenThrow(NoSuchElementException.class);
+
+		// test
+		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.deleteRacer(UUID.randomUUID().toString()));
+	}
+
+	@Test
+	public void restoreRacerTest()
+	{
+		when(racerService.restoreRacer(any(UUID.class))).thenReturn(racer);
+
+		// test
+		Racer response = this.racerController.restoreRacer(UUID.randomUUID().toString());
+		Assert.assertTrue(response.equals(racer));
+	}
+
+	@Test
+	public void restoreRacerShouldThrowException()
+	{
+		when(racerService.restoreRacer(any(UUID.class))).thenThrow(RacerNotFoundException.class);
+
+		// test
+		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.restoreRacer(UUID.randomUUID().toString()));
 	}
 }
