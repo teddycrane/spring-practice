@@ -155,4 +155,12 @@ public class RacerControllerTest
 		UpdateRacerRequest request = new UpdateRacerRequest("Firstname", "lastname", null);
 		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.updateRacer(request, UUID.randomUUID().toString()));
 	}
+
+	@Test
+	public void updateShouldThrowBadRequestExceptionWhenTheUUIDIsBad()
+	{
+		// test
+		UpdateRacerRequest request = new UpdateRacerRequest("Firstname", "LastName", Category.CAT_5);
+		Assert.assertThrows(BadRequestException.class, () -> this.racerController.updateRacer(request, "z!"));
+	}
 }
