@@ -30,4 +30,7 @@ public interface IEventController
 
 	@PatchMapping(path = "/add-races")
 	Event addRacesToEvent(@RequestParam String requestId, @RequestBody UpdateEventRequest request) throws EventNotFoundException, BadRequestException;
+
+	@PostMapping(path = "/start-event")
+	Event startEvent(@RequestParam String eventId) throws EventNotFoundException;
 }

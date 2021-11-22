@@ -23,4 +23,6 @@ public interface IEventService
 	Event deleteEvent(UUID id) throws EventNotFoundException;
 
 	Event addRacesToEvent(UUID id, List<UUID> raceIds) throws EventNotFoundException;
+
+	Event setEventAsActive(UUID id) throws EventNotFoundException;
 }

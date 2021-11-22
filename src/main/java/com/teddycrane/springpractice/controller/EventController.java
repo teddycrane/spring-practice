@@ -112,7 +112,25 @@ class EventController implements IEventController
 			throw new BadRequestException(String.format("Unable to parse the id %s", requestId));
 		} catch (EventNotFoundException e)
 		{
-			this.logger.error("Event not found!", e);
+			throw new EventNotFoundException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Event startEvent(String eventId) throws EventNotFoundException
+	{
+		this.logger.trace("EventController.startEvent called");
+
+		try
+		{
+			UUID id = UUID.fromString(eventId);
+			return this.eventService.setEventAsActive(id);
+		} catch (IllegalArgumentException e)
+		{
+			this.logger.error("Unable to parse id!", e);
+			throw new BadRequestException(e.getMessage());
+		} catch (EventNotFoundException e)
+		{
 			throw new EventNotFoundException(e.getMessage());
 		}
 	}
