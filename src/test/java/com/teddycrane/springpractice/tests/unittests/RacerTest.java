@@ -10,19 +10,22 @@ import org.junit.Assert;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class RacerTest {
+public class RacerTest
+{
 
 	private Racer racer;
 
 	@Before
-	public void init() {
+	public void init()
+	{
 		racer = new Racer();
 		racer.setFirstName("test");
 		racer.setLastName("user");
 	}
 
 	@Test
-	public void constructorShouldCreateValidRacers() {
+	public void constructorShouldCreateValidRacers()
+	{
 		// test that the default constructor constructs properly and that the constructors are all working
 		Assert.assertNotNull(racer);
 		Assert.assertTrue(racer.equals(new Racer(racer)));
@@ -39,7 +42,8 @@ public class RacerTest {
 	}
 
 	@Test
-	public void testGetterAndSetter() {
+	public void testGetterAndSetter()
+	{
 		// test first name setter
 		racer.setFirstName("set first name");
 		Assert.assertEquals("set first name", racer.getFirstName());
@@ -58,7 +62,8 @@ public class RacerTest {
 	}
 
 	@Test
-	public void testToStringOverride() {
+	public void testToStringOverride()
+	{
 		String[] test = racer.toString().split("\n");
 
 		Assert.assertEquals(test[0], "{");
@@ -71,7 +76,8 @@ public class RacerTest {
 	}
 
 	@Test
-	public void testHashCode() {
+	public void testHashCode()
+	{
 		int hash1 = racer.hashCode();
 		int hash2 = new Racer(racer).hashCode();
 		int hash3 = new Racer().hashCode();

@@ -13,17 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RaceTest {
+public class RaceTest
+{
 
 	private Race race;
 
 	@Before
-	public void init() {
+	public void init()
+	{
 		race = new Race();
 	}
 
 	@Test
-	public void constructorShouldCreateValidRaces() {
+	public void constructorShouldCreateValidRaces()
+	{
 		// test that a valid race comes from the default constructor
 		Assert.assertNotNull(race);
 
@@ -39,7 +42,8 @@ public class RaceTest {
 	}
 
 	@Test
-	public void shouldSetRacers() {
+	public void shouldSetRacers()
+	{
 		List<Racer> list = new ArrayList<>();
 		list.add(new Racer("fname", "lname"));
 
@@ -49,8 +53,10 @@ public class RaceTest {
 		boolean areEqual = false;
 
 		// todo update this
-		if (racers.size() == list.size()) {
-			for (int i = 0; i < racers.size(); i++) {
+		if (racers.size() == list.size())
+		{
+			for (int i = 0; i < racers.size(); i++)
+			{
 				areEqual = racers.get(i).equals(list.get(i));
 			}
 		}
@@ -59,7 +65,8 @@ public class RaceTest {
 	}
 
 	@Test
-	public void shouldTestGetterAndSetter() {
+	public void shouldTestGetterAndSetter()
+	{
 		// name setter
 		race.setName("test");
 		Assert.assertEquals("test", race.getName());
@@ -74,7 +81,8 @@ public class RaceTest {
 	}
 
 	@Test
-	public void shouldTestAllCasesForEquals() {
+	public void shouldTestAllCasesForEquals()
+	{
 		Race race1 = new Race();
 		Race race2 = new Race();
 		List<Racer> list = new ArrayList<>();
