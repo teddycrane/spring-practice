@@ -2,15 +2,29 @@ package com.teddycrane.springpractice.models;
 
 import com.teddycrane.springpractice.enums.Category;
 
-public class CreateRaceRequest {
-	private String name;
-	private Category category;
+import javax.validation.constraints.NotNull;
 
-	public Category getCategory() {
+public class CreateRaceRequest
+{
+
+	@NotNull
+	private final String name;
+	@NotNull
+	private final Category category;
+
+	public CreateRaceRequest(String name, Category category)
+	{
+		this.name = name;
+		this.category = category;
+	}
+
+	public Category getCategory()
+	{
 		return category;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 }
