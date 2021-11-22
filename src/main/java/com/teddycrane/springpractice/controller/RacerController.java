@@ -21,19 +21,20 @@ import java.util.UUID;
 public class RacerController implements IRacerController
 {
 
-	private static final Logger logger = LogManager.getLogger(RacerController.class);
+	private final Logger logger;
 
 	private final IRacerService racerService;
 
 	public RacerController(IRacerService racerService)
 	{
+		this.logger = LogManager.getLogger(this.getClass());
 		this.racerService = racerService;
 	}
 
 	@Override
 	public List<Racer> getAllRacers(boolean isDeleted)
 	{
-		logger.info("RacerController.getAllRaces called");
+		this.logger.info("RacerController.getAllRaces called");
 		if (isDeleted)
 		{
 			return racerService.getAllRacersWithDeleted();
@@ -46,7 +47,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer getRacer(String id) throws RacerNotFoundException
 	{
-		logger.info("RacerController.getRacer called");
+		this.logger.info("RacerController.getRacer called");
 		try
 		{
 
@@ -63,7 +64,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer addRacer(CreateRacerRequest request) throws BadRequestException
 	{
-		logger.info("RacerController.addRacer called");
+		this.logger.info("RacerController.addRacer called");
 
 		try
 		{
@@ -85,7 +86,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer updateRacer(UpdateRacerRequest request, String id) throws RacerNotFoundException, BadRequestException
 	{
-		logger.info("RacerController.updateRacer called");
+		this.logger.info("RacerController.updateRacer called");
 		try
 		{
 			UUID uuid = UUID.fromString(id);
@@ -114,7 +115,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer deleteRacer(String id) throws RacerNotFoundException
 	{
-		logger.info("RacerController.deleteRacer called");
+		this.logger.info("RacerController.deleteRacer called");
 
 		try
 		{
@@ -130,7 +131,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer restoreRacer(String id) throws RacerNotFoundException
 	{
-		logger.info("RacerController.restoreRacer called");
+		this.logger.info("RacerController.restoreRacer called");
 
 		try
 		{

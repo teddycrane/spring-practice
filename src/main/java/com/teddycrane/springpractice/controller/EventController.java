@@ -7,7 +7,8 @@ import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.models.CreateEventRequest;
 import com.teddycrane.springpractice.models.UpdateEventRequest;
 import com.teddycrane.springpractice.service.IEventService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,24 +19,27 @@ import java.util.UUID;
 class EventController implements IEventController
 {
 
+	private final Logger logger;
+
 	private final IEventService eventService;
 
 	public EventController(IEventService eventService)
 	{
+		this.logger = LogManager.getLogger(this.getClass());
 		this.eventService = eventService;
 	}
 
 	@Override
 	public List<Event> getAllEvents()
 	{
-		System.out.println("EventController.getAllEvents called");
+		this.logger.info("EventController.getAllEvents called");
 		return this.eventService.getAllEvents();
 	}
 
 	@Override
 	public Event getEvent(String id) throws BadRequestException, EventNotFoundException
 	{
-		System.out.println("EventController.getEvent called");
+		this.logger.info("EventController.getEvent called");
 
 		try
 		{
@@ -54,7 +58,7 @@ class EventController implements IEventController
 	@Override
 	public Event createEvent(CreateEventRequest request) throws DuplicateItemException, BadRequestException
 	{
-		System.out.println("EventController.createEvent called");
+		this.logger.info("EventController.createEvent called");
 
 		try
 		{
@@ -75,16 +79,14 @@ class EventController implements IEventController
 	@Override
 	public Event deleteEvent(String requestId) throws BadRequestException, EventNotFoundException
 	{
-		System.out.println("EventController.deleteEvent called");
-		UUID id;
-
+		this.logger.info("EventController.deleteEvent called");
 		try
 		{
-			id = UUID.fromString(requestId);
+			UUID id = UUID.fromString(requestId);
 			return this.eventService.deleteEvent(id);
 		} catch (IllegalArgumentException e)
 		{
-			System.out.printf("Unable to parse provided id %s", requestId);
+			this.logger.error(String.format("Unable to parse provided id %s", requestId), e);
 			throw new BadRequestException(String.format("Unable to handle id %s.  Please check the provided id and try again. ", requestId));
 		} catch (EventNotFoundException e)
 		{
@@ -95,7 +97,7 @@ class EventController implements IEventController
 	@Override
 	public Event addRacesToEvent(String requestId, UpdateEventRequest request) throws EventNotFoundException, BadRequestException
 	{
-		System.out.println("EventController.addRacesToEvent called");
+		this.logger.info("EventController.addRacesToEvent called");
 		try
 		{
 			UUID id = UUID.fromString(requestId);
@@ -106,10 +108,11 @@ class EventController implements IEventController
 			return this.eventService.addRacesToEvent(id, request.getRaceIds());
 		} catch (IllegalArgumentException e)
 		{
-			System.out.println("Bad UUID!");
+			this.logger.trace("Bad UUID!", e);
 			throw new BadRequestException(String.format("Unable to parse the id %s", requestId));
 		} catch (EventNotFoundException e)
 		{
+			this.logger.error("Event not found!", e);
 			throw new EventNotFoundException(e.getMessage());
 		}
 	}

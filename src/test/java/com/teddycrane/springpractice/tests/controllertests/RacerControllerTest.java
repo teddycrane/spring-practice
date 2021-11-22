@@ -8,12 +8,11 @@ import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
 import com.teddycrane.springpractice.service.IRacerService;
-import com.teddycrane.springpractice.tests.helpers.RacerControllerHelper;
+import com.teddycrane.springpractice.tests.helpers.ControllerTestHelper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -46,7 +45,7 @@ public class RacerControllerTest
 		racerList = new ArrayList<>();
 		for (int i = 0; i < 5; i++)
 		{
-			racerList.add(RacerControllerHelper.generateRacer());
+			racerList.add(ControllerTestHelper.generateRacer());
 		}
 	}
 

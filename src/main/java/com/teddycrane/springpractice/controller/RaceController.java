@@ -8,7 +8,6 @@ import com.teddycrane.springpractice.models.UpdateRaceRequest;
 import com.teddycrane.springpractice.service.IRaceService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,19 +18,20 @@ import java.util.UUID;
 public class RaceController implements IRaceController
 {
 
-	private static final Logger logger = LogManager.getLogger(RaceController.class);
+	private final Logger logger;
 
 	private final IRaceService raceService;
 
 	public RaceController(IRaceService raceService)
 	{
+		this.logger = LogManager.getLogger(this.getClass());
 		this.raceService = raceService;
 	}
 
 	@Override
 	public Race getRace(String id) throws RaceNotFoundException, BadRequestException
 	{
-		logger.info("RaceController.getRace called");
+		this.logger.info("RaceController.getRace called");
 
 		try
 		{
@@ -39,11 +39,11 @@ public class RaceController implements IRaceController
 			return this.raceService.getRace(uuid);
 		} catch (RaceNotFoundException e)
 		{
-			logger.error("Unable to find race!", e);
+			this.logger.error("Unable to find race!", e);
 			throw new RaceNotFoundException(String.format("Unable to find a race with id %s", id));
 		} catch (IllegalArgumentException e)
 		{
-			logger.error("Id was not formatted correctly.", e);
+			this.logger.error("Id was not formatted correctly.", e);
 			throw new BadRequestException(String.format("The provided id %s was not in the correct format.  Please try again", id));
 		}
 	}
@@ -51,7 +51,7 @@ public class RaceController implements IRaceController
 	@Override
 	public List<Race> getAllRaces() throws RaceNotFoundException
 	{
-		logger.info("RaceController.getAllRaces called");
+		this.logger.info("RaceController.getAllRaces called");
 		return this.raceService.getAllRaces();
 	}
 
@@ -66,7 +66,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race createRace(CreateRaceRequest request) throws BadRequestException, DuplicateItemException
 	{
-		logger.info("RaceController.createRace called");
+		this.logger.info("RaceController.createRace called");
 		try
 		{
 			if (request == null)
@@ -74,11 +74,11 @@ public class RaceController implements IRaceController
 			return this.raceService.createRace(request.getName(), request.getCategory());
 		} catch (DuplicateItemException e)
 		{
-			logger.error("Unable to create a duplicate item", e);
+			this.logger.error("Unable to create a duplicate item", e);
 			throw new DuplicateItemException(e.getMessage());
 		} catch (IllegalArgumentException e)
 		{
-			logger.error("Bad request", e);
+			this.logger.error("Bad request", e);
 			throw new BadRequestException(e.getMessage());
 		}
 	}
@@ -86,7 +86,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race updateRace(UpdateRaceRequest request, String id) throws BadRequestException, DuplicateItemException, RaceNotFoundException
 	{
-		logger.info("RaceController.updateRace called");
+		this.logger.info("RaceController.updateRace called");
 
 		try
 		{
@@ -96,20 +96,24 @@ public class RaceController implements IRaceController
 				return this.raceService.updateRace(raceId, request.getName().get(), request.getCategory().get());
 			} else
 			{
-				logger.error("No valid parameters");
+				this.logger.error("No valid parameters");
 				throw new BadRequestException("No valid parameters provided!");
 			}
 		} catch (IllegalArgumentException e)
 		{
+			this.logger.error("Unable to parse the provided id", e);
 			throw new BadRequestException(String.format("Unable to parse id %s", id));
 		} catch (UpdateException e)
 		{
+			this.logger.error("Unable to update the specified race!", e);
 			throw new UpdateException(e.getMessage());
 		} catch (RaceNotFoundException e)
 		{
+			this.logger.error("Unable to find the specified race!", e);
 			throw new RaceNotFoundException(e.getMessage());
 		} catch (DuplicateItemException e)
 		{
+			this.logger.error("Unable to have duplicate entrants in a race!", e);
 			throw new DuplicateItemException(e.getMessage());
 		}
 	}
@@ -124,7 +128,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race addRacer(AddRacerRequest request, String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException
 	{
-		System.out.println("RaceController.addRacer called");
+		this.logger.info("RaceController.addRacer called");
 
 		try
 		{
@@ -134,19 +138,21 @@ public class RaceController implements IRaceController
 				return this.raceService.addRacer(id, request.getRacerIds());
 			} else
 			{
-				System.out.println("Request body is not valid");
+				this.logger.error("Request body is not valid");
 				throw new BadRequestException("Request body cannot be null!");
 			}
 		} catch (RacerNotFoundException e)
 		{
+			this.logger.error("Unable to find a racer!", e);
 			throw new RacerNotFoundException(e.getMessage());
 		} catch (RaceNotFoundException e)
 		{
+			this.logger.error("Unable to find the specified race!", e);
 			throw new RaceNotFoundException(e.getMessage());
 		} catch (IllegalArgumentException e)
 		{
 			String message = String.format("Unable to parse the provided id %s", raceId);
-			System.out.println(message);
+			this.logger.error(message, e);
 			throw new BadRequestException(message);
 		}
 	}
