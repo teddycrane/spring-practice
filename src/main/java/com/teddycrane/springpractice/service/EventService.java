@@ -48,7 +48,7 @@ class EventService implements IEventService
 			return response.get();
 		} else
 		{
-			this.logger.trace("No event found!");
+			this.logger.error("No event found!");
 			throw new EventNotFoundException(String.format("No event exists for id %s", id));
 		}
 	}

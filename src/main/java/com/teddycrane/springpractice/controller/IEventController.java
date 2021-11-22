@@ -20,16 +20,16 @@ public interface IEventController
 	List<Event> getAllEvents();
 
 	@GetMapping
-	Event getEvent(@RequestParam String id) throws BadRequestException, EventNotFoundException;
+	Event getEvent(@RequestParam String eventId) throws BadRequestException, EventNotFoundException;
 
 	@PostMapping
 	Event createEvent(@RequestBody @Valid CreateEventRequest request) throws DuplicateItemException, BadRequestException;
 
 	@DeleteMapping
-	Event deleteEvent(@RequestParam String requestId) throws BadRequestException, EventNotFoundException;
+	Event deleteEvent(@RequestParam String eventId) throws BadRequestException, EventNotFoundException;
 
 	@PatchMapping(path = "/add-races")
-	Event addRacesToEvent(@RequestParam String requestId, @RequestBody UpdateEventRequest request) throws EventNotFoundException, BadRequestException;
+	Event addRacesToEvent(@RequestParam String eventId, @RequestBody UpdateEventRequest request) throws EventNotFoundException, BadRequestException;
 
 	@PostMapping(path = "/start-event")
 	Event startEvent(@RequestParam String eventId) throws EventNotFoundException;
