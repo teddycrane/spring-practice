@@ -6,32 +6,39 @@ import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Optional;
+import java.util.UUID;
 
-public class UpdateRacerRequest {
+public class UpdateRacerRequest
+{
 
-	@NotEmpty
-	private String id;
+	private final String firstName;
+	private final String lastName;
+	private final Category category;
 
-	private String firstName, lastName;
-	private Category category;
-
-	public String getId() {
-		return this.id;
+	public UpdateRacerRequest(String firstName, String lastName, Category category)
+	{
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.category = category;
 	}
 
-	public Optional<String> getFirstName() {
+	public Optional<String> getFirstName()
+	{
 		return Optional.ofNullable(firstName);
 	}
 
-	public Optional<String> getLastName() {
+	public Optional<String> getLastName()
+	{
 		return Optional.ofNullable(lastName);
 	}
 
-	public Optional<Category> getCategory() {
+	public Optional<Category> getCategory()
+	{
 		return Optional.ofNullable(category);
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder result = new StringBuilder();
 		result.append("{\n");
 		this.getFirstName().ifPresent(s -> result.append(String.format("    \"firstName\": \"%s\",\n", s)));

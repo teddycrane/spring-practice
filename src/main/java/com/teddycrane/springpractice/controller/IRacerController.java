@@ -25,7 +25,7 @@ public interface IRacerController
 	Racer addRacer(@Valid @RequestBody CreateRacerRequest request) throws BadRequestException;
 
 	@PatchMapping(path = "/update")
-	Racer updateRacer(@Valid @RequestBody UpdateRacerRequest request) throws RacerNotFoundException, BadRequestException;
+	Racer updateRacer(@Valid @RequestBody UpdateRacerRequest request, @RequestParam String id) throws RacerNotFoundException, BadRequestException;
 
 	@DeleteMapping
 	Racer deleteRacer(@RequestParam String id) throws RacerNotFoundException;

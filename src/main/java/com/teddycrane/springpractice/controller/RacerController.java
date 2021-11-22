@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping(path = "/racer")
-class RacerController implements IRacerController
+public class RacerController implements IRacerController
 {
 
 	@Autowired
@@ -78,12 +78,12 @@ class RacerController implements IRacerController
 	 * @throws UpdateException Thrown if the racer does not exist, or if the racer fails to update
 	 */
 	@Override
-	public Racer updateRacer(UpdateRacerRequest request) throws RacerNotFoundException, BadRequestException
+	public Racer updateRacer(UpdateRacerRequest request, String id) throws RacerNotFoundException, BadRequestException
 	{
+		System.out.println("RacerController.updateRacer called");
 		try
 		{
-			System.out.println("RacerController.updateRacer called");
-			UUID uuid = UUID.fromString(request.getId());
+			UUID uuid = UUID.fromString(id);
 
 			// validate that at least one of the parameters are not empty or null
 			return this.racerService.updateRacer(uuid,
@@ -97,7 +97,10 @@ class RacerController implements IRacerController
 		} catch (RacerNotFoundException e)
 		{
 			System.out.println("No racer found!");
-			throw new RacerNotFoundException(String.format("No racer found with id %s.", request.getId()));
+			throw new RacerNotFoundException(String.format("No racer found with id %s.", id));
+		} catch (IllegalArgumentException e)
+		{
+			throw new BadRequestException(String.format("Unable to parse the id %s. Please try again", id));
 		}
 	}
 
