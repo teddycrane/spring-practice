@@ -18,8 +18,12 @@ import java.util.UUID;
 class EventController implements IEventController
 {
 
-	@Autowired
-	private IEventService eventService;
+	private final IEventService eventService;
+
+	public EventController(IEventService eventService)
+	{
+		this.eventService = eventService;
+	}
 
 	@Override
 	public List<Event> getAllEvents()
@@ -29,7 +33,7 @@ class EventController implements IEventController
 	}
 
 	@Override
-	public Event getEvent(@RequestParam String id) throws BadRequestException, EventNotFoundException
+	public Event getEvent(String id) throws BadRequestException, EventNotFoundException
 	{
 		System.out.println("EventController.getEvent called");
 

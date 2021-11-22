@@ -16,13 +16,17 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/race")
-class RaceController implements IRaceController
+public class RaceController implements IRaceController
 {
 
 	private static final Logger logger = LogManager.getLogger(RaceController.class);
 
-	@Autowired
-	private IRaceService raceService;
+	private final IRaceService raceService;
+
+	public RaceController(IRaceService raceService)
+	{
+		this.raceService = raceService;
+	}
 
 	@Override
 	public Race getRace(String id) throws RaceNotFoundException, BadRequestException

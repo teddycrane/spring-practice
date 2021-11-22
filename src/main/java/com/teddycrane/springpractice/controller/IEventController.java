@@ -8,6 +8,7 @@ import com.teddycrane.springpractice.models.CreateEventRequest;
 import com.teddycrane.springpractice.models.UpdateEventRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,7 +23,7 @@ public interface IEventController
 	Event getEvent(@RequestParam String id) throws BadRequestException, EventNotFoundException;
 
 	@PostMapping
-	Event createEvent(@RequestBody CreateEventRequest request) throws DuplicateItemException, BadRequestException;
+	Event createEvent(@RequestBody @Valid CreateEventRequest request) throws DuplicateItemException, BadRequestException;
 
 	@DeleteMapping
 	Event deleteEvent(@RequestParam String requestId) throws BadRequestException, EventNotFoundException;

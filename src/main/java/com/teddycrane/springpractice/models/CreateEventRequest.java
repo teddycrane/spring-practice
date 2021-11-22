@@ -2,11 +2,13 @@ package com.teddycrane.springpractice.models;
 
 import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Optional;
 
 public class CreateEventRequest {
 
+	@NotNull
 	private String name;
 
 	@Nullable
