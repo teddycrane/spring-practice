@@ -6,62 +6,66 @@ import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
-import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.IRacerService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Controller
 @RequestMapping(path = "/racer")
-public class RacerController {
+class RacerController implements IRacerController
+{
 
 	@Autowired
 	private IRacerService racerService;
 
-	@GetMapping(path = "/all")
-	public @ResponseBody
-	List<Racer> getAllRacers(@RequestParam(required = false) boolean isDeleted) {
+	@Override
+	public List<Racer> getAllRacers(boolean isDeleted)
+	{
 		System.out.println("RacerController.getAllRacers called");
-		if (isDeleted) {
+		if (isDeleted)
+		{
 			System.out.println("Returning all racers, including deleted entries");
 			return racerService.getAllRacersWithDeleted();
-		} else {
+		} else
+		{
 			System.out.println("Filtering out deleted entries");
 			return racerService.getAllRacers();
 		}
 	}
 
-	@GetMapping
-	public @ResponseBody
-	Racer getRacer(@RequestParam String id) throws RacerNotFoundException {
-		try {
+	@Override
+	public Racer getRacer(String id) throws RacerNotFoundException
+	{
+		try
+		{
 			System.out.printf("RacerController.getRacer called with id %s", id);
 
 			UUID uuid = UUID.fromString(id);
 			return this.racerService.getRacerById(uuid);
 
-		} catch (RacerNotFoundException e) {
+		} catch (RacerNotFoundException e)
+		{
 			System.out.println("Unable to find racer");
 			throw new RacerNotFoundException(String.format("No racer found with id %s", id));
 		}
 	}
 
-	@PostMapping(path = "/new")
-	public @ResponseBody
-	Racer addRacer(@RequestBody @NotNull CreateRacerRequest request) throws BadRequestException {
+	@Override
+	public Racer addRacer(CreateRacerRequest request) throws BadRequestException
+	{
 		System.out.println("RacerController.addRacer called");
 
-		try {
+		try
+		{
 			// verify required parameters
 			return this.racerService.addRacer(request.getFirstName(), request.getLastName());
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			throw new BadRequestException(String.format("Unable to create a racer with name %s %s", request.getFirstName(), request.getLastName()));
 		}
 	}
@@ -73,10 +77,11 @@ public class RacerController {
 	 * @return The updated Racer object
 	 * @throws UpdateException Thrown if the racer does not exist, or if the racer fails to update
 	 */
-	@PatchMapping(path = "/update")
-	public @ResponseBody
-	Racer updateRacer(@Valid @RequestBody UpdateRacerRequest request) throws RacerNotFoundException, BadRequestException {
-		try {
+	@Override
+	public Racer updateRacer(UpdateRacerRequest request) throws RacerNotFoundException, BadRequestException
+	{
+		try
+		{
 			System.out.println("RacerController.updateRacer called");
 			UUID uuid = UUID.fromString(request.getId());
 
@@ -85,39 +90,45 @@ public class RacerController {
 					request.getFirstName().isPresent() ? request.getFirstName().get() : null,
 					request.getLastName().isPresent() ? request.getLastName().get() : null,
 					request.getCategory().isPresent() ? request.getCategory().get() : null);
-		} catch (BadRequestException e) {
+		} catch (BadRequestException e)
+		{
 			System.out.print("error");
 			throw new BadRequestException(e.getMessage());
-		} catch (RacerNotFoundException e) {
+		} catch (RacerNotFoundException e)
+		{
 			System.out.println("No racer found!");
 			throw new RacerNotFoundException(String.format("No racer found with id %s.", request.getId()));
 		}
 	}
 
-	@DeleteMapping
-	public @ResponseBody
-	Racer deleteRacer(@RequestParam String id) throws RacerNotFoundException {
+	@Override
+	public Racer deleteRacer(String id) throws RacerNotFoundException
+	{
 		System.out.println("RacerController.deleteRacer called");
 
-		try {
+		try
+		{
 			UUID uuid = UUID.fromString(id);
 			return this.racerService.deleteRacer(uuid);
-		} catch (NoSuchElementException e) {
+		} catch (NoSuchElementException e)
+		{
 			String message = String.format("No element found with id %s\n", id);
 			System.out.println(message);
 			throw new RacerNotFoundException(message);
 		}
 	}
 
-	@PatchMapping(path = "/restore")
-	public @ResponseBody
-	Racer restoreRacer(@RequestParam String id) throws RacerNotFoundException {
+	@Override
+	public Racer restoreRacer(String id) throws RacerNotFoundException
+	{
 		System.out.println("RacerController.restoreRacer called");
 
-		try {
+		try
+		{
 			UUID uuid = UUID.fromString(id);
 			return this.racerService.restoreRacer(uuid);
-		} catch (RacerNotFoundException e) {
+		} catch (RacerNotFoundException e)
+		{
 			throw new RacerNotFoundException(e.getMessage());
 		}
 	}
