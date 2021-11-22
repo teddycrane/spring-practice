@@ -7,6 +7,8 @@ import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
 import com.teddycrane.springpractice.service.IRacerService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,20 +22,20 @@ import java.util.UUID;
 public class RacerController implements IRacerController
 {
 
+	private static final Logger logger = LogManager.getLogger(RacerController.class);
+
 	@Autowired
 	private IRacerService racerService;
 
 	@Override
 	public List<Racer> getAllRacers(boolean isDeleted)
 	{
-		System.out.println("RacerController.getAllRacers called");
+		logger.info("RacerController.getAllRaces called");
 		if (isDeleted)
 		{
-			System.out.println("Returning all racers, including deleted entries");
 			return racerService.getAllRacersWithDeleted();
 		} else
 		{
-			System.out.println("Filtering out deleted entries");
 			return racerService.getAllRacers();
 		}
 	}
@@ -41,16 +43,16 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer getRacer(String id) throws RacerNotFoundException
 	{
+		logger.info("RacerController.getRacer called");
 		try
 		{
-			System.out.printf("RacerController.getRacer called with id %s", id);
 
 			UUID uuid = UUID.fromString(id);
 			return this.racerService.getRacerById(uuid);
 
 		} catch (RacerNotFoundException e)
 		{
-			System.out.println("Unable to find racer");
+			logger.error("No racer found!", e);
 			throw new RacerNotFoundException(String.format("No racer found with id %s", id));
 		}
 	}
@@ -58,7 +60,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer addRacer(CreateRacerRequest request) throws BadRequestException
 	{
-		System.out.println("RacerController.addRacer called");
+		logger.info("RacerController.addRacer called");
 
 		try
 		{
@@ -80,7 +82,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer updateRacer(UpdateRacerRequest request, String id) throws RacerNotFoundException, BadRequestException
 	{
-		System.out.println("RacerController.updateRacer called");
+		logger.info("RacerController.updateRacer called");
 		try
 		{
 			UUID uuid = UUID.fromString(id);
@@ -92,14 +94,15 @@ public class RacerController implements IRacerController
 					request.getCategory().isPresent() ? request.getCategory().get() : null);
 		} catch (BadRequestException e)
 		{
-			System.out.print("error");
+			logger.error("Bad request", e);
 			throw new BadRequestException(e.getMessage());
 		} catch (RacerNotFoundException e)
 		{
-			System.out.println("No racer found!");
+			logger.error("No racer found!", e);
 			throw new RacerNotFoundException(String.format("No racer found with id %s.", id));
 		} catch (IllegalArgumentException e)
 		{
+			logger.error("Unable to parse the provided id", e);
 			throw new BadRequestException(String.format("Unable to parse the id %s. Please try again", id));
 		}
 	}
@@ -107,7 +110,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer deleteRacer(String id) throws RacerNotFoundException
 	{
-		System.out.println("RacerController.deleteRacer called");
+		logger.info("RacerController.deleteRacer called");
 
 		try
 		{
@@ -115,16 +118,15 @@ public class RacerController implements IRacerController
 			return this.racerService.deleteRacer(uuid);
 		} catch (NoSuchElementException e)
 		{
-			String message = String.format("No element found with id %s\n", id);
-			System.out.println(message);
-			throw new RacerNotFoundException(message);
+			logger.error("No element found with the provided id", e);
+			throw new RacerNotFoundException(e.getMessage());
 		}
 	}
 
 	@Override
 	public Racer restoreRacer(String id) throws RacerNotFoundException
 	{
-		System.out.println("RacerController.restoreRacer called");
+		logger.info("RacerController.restoreRacer called");
 
 		try
 		{
@@ -132,6 +134,7 @@ public class RacerController implements IRacerController
 			return this.racerService.restoreRacer(uuid);
 		} catch (RacerNotFoundException e)
 		{
+			logger.error("Unable to find the specified racer", e);
 			throw new RacerNotFoundException(e.getMessage());
 		}
 	}
