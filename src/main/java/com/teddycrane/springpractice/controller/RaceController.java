@@ -14,30 +14,34 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/race")
-public class RaceController {
+class RaceController implements IRaceController
+{
 
 	@Autowired
 	private IRaceService raceService;
 
-	@GetMapping
-	public @ResponseBody
-	Race getRace(@RequestParam String id) throws RaceNotFoundException, BadRequestException {
+	@Override
+	public Race getRace(@RequestParam String id) throws RaceNotFoundException, BadRequestException
+	{
 		System.out.println("RaceController.getRace called");
 
-		try {
+		try
+		{
 			UUID uuid = UUID.fromString(id);
 			return this.raceService.getRace(uuid);
-		} catch (RaceNotFoundException e) {
+		} catch (RaceNotFoundException e)
+		{
 			throw new RaceNotFoundException(String.format("Unable to find a race with id %s", id));
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e)
+		{
 			System.out.println("Bad argument provided");
 			throw new BadRequestException(String.format("The provided id %s was not in the correct format.  Please try again", id));
 		}
 	}
 
-	@GetMapping(path = "/all")
-	public @ResponseBody
-	List<Race> getAllRaces() throws RaceNotFoundException {
+	@Override
+	public List<Race> getAllRaces() throws RaceNotFoundException
+	{
 		System.out.println("RaceController.getAllRaces called");
 		return this.raceService.getAllRaces();
 	}
@@ -50,41 +54,51 @@ public class RaceController {
 	 * @throws BadRequestException    Thrown if the input parameters do not allow for the creation of the race
 	 * @throws DuplicateItemException Thrown if there is already a race in the database with the same name, case sensitive
 	 */
-	@PostMapping
-	public @ResponseBody
-	Race createRace(@RequestBody CreateRaceRequest request) throws BadRequestException, DuplicateItemException {
+	@Override
+	public Race createRace(@RequestBody CreateRaceRequest request) throws BadRequestException, DuplicateItemException
+	{
 		System.out.println("RaceController.createRace called");
-		try {
+		try
+		{
 			if (request == null)
 				throw new IllegalArgumentException("Request cannot be null");
 			return this.raceService.createRace(request.getName(), request.getCategory());
-		} catch (DuplicateItemException e) {
+		} catch (DuplicateItemException e)
+		{
 			throw new DuplicateItemException(e.getMessage());
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e)
+		{
 			throw new BadRequestException(e.getMessage());
 		}
 	}
 
-	@PatchMapping
-	public @ResponseBody
-	Race updateRace(@RequestBody UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, DuplicateItemException, RaceNotFoundException {
+	@Override
+	public Race updateRace(@RequestBody UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, DuplicateItemException, RaceNotFoundException
+	{
 		System.out.println("RaceController.updateRace called");
 
-		try {
+		try
+		{
 			UUID raceId = UUID.fromString(id);
-			if (request.getName().isPresent() || request.getCategory().isPresent()) {
+			if (request.getName().isPresent() || request.getCategory().isPresent())
+			{
 				return this.raceService.updateRace(raceId, request.getName().get(), request.getCategory().get());
-			} else {
+			} else
+			{
 				System.out.println("No valid parameters");
 				throw new BadRequestException("No valid parameters provided!");
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e)
+		{
 			throw new BadRequestException(String.format("Unable to parse id %s", id));
-		} catch (UpdateException e) {
+		} catch (UpdateException e)
+		{
 			throw new UpdateException(e.getMessage());
-		} catch (RaceNotFoundException e) {
+		} catch (RaceNotFoundException e)
+		{
 			throw new RaceNotFoundException(e.getMessage());
-		} catch (DuplicateItemException e) {
+		} catch (DuplicateItemException e)
+		{
 			throw new DuplicateItemException(e.getMessage());
 		}
 	}
@@ -96,22 +110,32 @@ public class RaceController {
 	 * @return The Race object with the new racer
 	 * @throws BadRequestException Thrown if the racer is unable to be added to the Race object
 	 */
-	@PatchMapping(path = "/add-racer")
-	public @ResponseBody
-	Race addRacer(@RequestBody AddRacerRequest request) throws BadRequestException, RaceNotFoundException, RacerNotFoundException {
+	@Override
+	public Race addRacer(@RequestBody AddRacerRequest request, @RequestParam String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException
+	{
 		System.out.println("RaceController.addRacer called");
 
-		try {
-			if (request != null) {
-				return this.raceService.addRacer(request.getRaceId(), request.getRacerIds());
-			} else {
+		try
+		{
+			UUID id = UUID.fromString(raceId);
+			if (request != null)
+			{
+				return this.raceService.addRacer(id, request.getRacerIds());
+			} else
+			{
 				System.out.println("Request body is not valid");
 				throw new BadRequestException("Request body cannot be null!");
 			}
-		} catch (RacerNotFoundException e) {
+		} catch (RacerNotFoundException e)
+		{
 			throw new RacerNotFoundException(e.getMessage());
-		} catch (RaceNotFoundException e) {
+		} catch (RaceNotFoundException e)
+		{
 			throw new RaceNotFoundException(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			String message = String.format("Unable to parse the provided id %s", raceId);
+			System.out.println(message);
+			throw new BadRequestException(message);
 		}
 	}
 }
