@@ -6,11 +6,12 @@ import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
-interface IRaceService {
+public interface IRaceService {
 
 	List<Race> getAllRaces();
 

@@ -1,14 +1,24 @@
 package com.teddycrane.springpractice.models;
 
-public class CreateRacerRequest {
-	private String firstName;
-	private String lastName;
+public class CreateRacerRequest
+{
 
-	public String getFirstName() {
+	private final String firstName;
+	private final String lastName;
+
+	public CreateRacerRequest(String firstName, String lastName)
+	{
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	public String getFirstName()
+	{
 		return firstName;
 	}
 
-	public String getLastName() {
+	public String getLastName()
+	{
 		return lastName;
 	}
 }

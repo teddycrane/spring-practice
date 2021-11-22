@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,9 +19,9 @@ public class Race {
 	private final UUID id;
 
 	@Column(unique = true)
-	private String name;
+	private String name = "";
 
-	private Category category;
+	private Category category = Category.CAT_5;
 
 	@OneToMany
 	private List<Racer> racers;
@@ -45,16 +44,11 @@ public class Race {
 		this.category = category;
 	}
 
-	private Race(String name, Category category, Collection<Racer> racers) {
-		this(name, category);
-		this.racers = new ArrayList<>(racers);
-	}
-
-	public Collection<Racer> getRacers() {
+	public List<Racer> getRacers() {
 		return racers;
 	}
 
-	public void setRacers(Collection<Racer> racers) {
+	public void setRacers(List<Racer> racers) {
 		this.racers = new ArrayList<>(racers);
 	}
 
@@ -113,5 +107,16 @@ public class Race {
 		builder.append("    ]\n");
 		builder.append("}");
 		return builder.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + this.id.hashCode();
+		hash = 31 * hash + this.name.hashCode();
+		hash = 31 * hash + this.category.hashCode();
+		hash = 31 * hash + this.racers.hashCode();
+
+		return hash;
 	}
 }

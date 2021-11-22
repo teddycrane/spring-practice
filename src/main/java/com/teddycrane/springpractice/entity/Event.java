@@ -3,13 +3,11 @@ package com.teddycrane.springpractice.entity;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
-public class Event {
+public class Event
+{
 
 	@Id
 	@Type(type = "uuid-char")
@@ -20,33 +18,39 @@ public class Event {
 	private String name;
 
 	@OneToMany
-	private Collection<Race> races;
+	private List<Race> races;
 
 	private Date startDate, endDate;
 
-	public Event() {
+	public Event()
+	{
 		this.id = UUID.randomUUID();
 		this.races = new ArrayList<>();
 		this.startDate = new Date();
 		this.endDate = new Date();
+		this.name = "";
 	}
 
-	public Event(String name) {
+	public Event(String name)
+	{
 		this();
 		this.name = name;
 	}
 
-	public Event(String name, Date startDate, Date endDate) {
+	public Event(String name, Date startDate, Date endDate)
+	{
 		this(name);
 		this.startDate = new Date(startDate.getTime());
 		this.endDate = new Date(endDate.getTime());
 	}
 
-	public Event(String name, Date startDate) {
+	public Event(String name, Date startDate)
+	{
 		this(name, startDate, startDate);
 	}
 
-	public Event(Event other) {
+	public Event(Event other)
+	{
 		this.id = other.id;
 		this.name = other.name;
 		this.races = new ArrayList<>(other.races);
@@ -54,47 +58,58 @@ public class Event {
 		this.endDate = new Date(other.endDate.getTime());
 	}
 
-	public UUID getId() {
+	public UUID getId()
+	{
 		return id;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(String name)
+	{
 		this.name = name;
 	}
 
-	public Collection<Race> getRaces() {
+	public Collection<Race> getRaces()
+	{
 		return new ArrayList<>(this.races);
 	}
 
-	public void setRaces(Collection<Race> races) {
+	public void setRaces(Collection<Race> races)
+	{
 		this.races = new ArrayList<>(races);
 	}
 
-	public Date getStartDate() {
+	public Date getStartDate()
+	{
 		return new Date(startDate.getTime());
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(Date startDate)
+	{
 		this.startDate = new Date(startDate.getTime());
 	}
 
-	public Date getEndDate() {
+	public Date getEndDate()
+	{
 		return new Date(endDate.getTime());
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(Date endDate)
+	{
 		this.endDate = new Date(endDate.getTime());
 	}
 
-	public boolean equals(Event other) {
+	public boolean equals(Event other)
+	{
 		return this.id.equals(other.id) && this.name.equals(other.name) && this.startDate.equals(other.startDate) && this.endDate.equals(other.endDate) && this.races.equals(other.races);
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder builder = new StringBuilder();
 		builder.append("{\n");
 		builder.append(String.format("   \"id\": \"%s\",\n    \"name\": \"%s\",\n    \"startDate\": \"%s\",\n    \"endDate\": \"%s\",\n", id, name, startDate, endDate));
@@ -104,5 +119,24 @@ public class Event {
 		builder.append("    ],\n");
 		builder.append("}");
 		return builder.toString();
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 7;
+		hash = 31 * hash + this.id.hashCode();
+		hash = 31 * hash + this.name.hashCode();
+		hash = 31 * hash + this.startDate.hashCode();
+		hash = 31 * hash + this.endDate.hashCode();
+
+		if (this.races.size() > 0)
+		{
+			for (Race race : races)
+			{
+				hash = 31 * hash + race.hashCode();
+			}
+		}
+		return hash;
 	}
 }

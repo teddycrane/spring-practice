@@ -18,9 +18,9 @@ public class Racer {
 	@Type(type = "uuid-char")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private final UUID id;
-	private String firstName;
-	private String lastName;
-	private Category category;
+	private String firstName = "";
+	private String lastName = "";
+	private Category category = Category.CAT_5;
 	private boolean isDeleted = false;
 
 	private Racer(UUID id, String firstName, String lastName, Category category, boolean isDeleted) {
@@ -98,5 +98,17 @@ public class Racer {
 				String.format("    \"category\": \"%s\",\n", EnumHelpers.getCategoryMapping(this.category)) +
 				String.format("    \"isDeleted\": \"%s\"\n", this.isDeleted) +
 				"}";
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + this.id.hashCode();
+		hash = 31 * hash + this.firstName.hashCode();
+		hash = 31 * hash + this.lastName.hashCode();
+		hash = 31 * hash + this.category.hashCode();
+		if (this.isDeleted) hash++;
+
+		return hash;
 	}
 }
