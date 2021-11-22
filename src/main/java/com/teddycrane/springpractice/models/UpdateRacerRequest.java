@@ -2,11 +2,8 @@ package com.teddycrane.springpractice.models;
 
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.helper.EnumHelpers;
-import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.Optional;
-import java.util.UUID;
 
 public class UpdateRacerRequest
 {

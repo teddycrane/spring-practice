@@ -88,6 +88,7 @@ public class RacerController implements IRacerController
 			UUID uuid = UUID.fromString(id);
 
 			// validate that at least one of the parameters are not empty or null
+
 			return this.racerService.updateRacer(uuid,
 					request.getFirstName().isPresent() ? request.getFirstName().get() : null,
 					request.getLastName().isPresent() ? request.getLastName().get() : null,

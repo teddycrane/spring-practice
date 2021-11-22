@@ -22,9 +22,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -132,5 +134,25 @@ public class RacerControllerTest
 		// test
 		Racer result = this.racerController.updateRacer(new UpdateRacerRequest("firstName", "lastName", Category.CAT_5), UUID.randomUUID().toString());
 		Assert.assertTrue(result.equals(racer));
+	}
+
+	@Test
+	public void shouldThrowBadRequestExceptionIfTheRequestIsInvalid()
+	{
+		when(racerService.updateRacer(any(UUID.class), nullable(String.class), nullable(String.class), nullable(Category.class))).thenThrow(BadRequestException.class);
+
+		// test
+		UpdateRacerRequest request = new UpdateRacerRequest(null, null, null);
+		Assert.assertThrows(BadRequestException.class, () -> this.racerController.updateRacer(request, UUID.randomUUID().toString()));
+	}
+
+	@Test
+	public void updateShouldThrowRacerNotFoundException()
+	{
+		when(racerService.updateRacer(any(UUID.class), any(String.class), any(String.class), nullable(Category.class))).thenThrow(RacerNotFoundException.class);
+
+		// test
+		UpdateRacerRequest request = new UpdateRacerRequest("Firstname", "lastname", null);
+		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.updateRacer(request, UUID.randomUUID().toString()));
 	}
 }
