@@ -1,11 +1,9 @@
 package com.teddycrane.springpractice.service;
 
-import com.sun.istack.Nullable;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,9 +14,12 @@ import java.util.UUID;
 @Service
 public class RacerService implements IRacerService {
 
-	@Autowired
-	private RacerRepository racerRepository;
+	private final RacerRepository racerRepository;
 
+	public RacerService(RacerRepository racerRepository)
+	{
+		this.racerRepository = racerRepository;
+	}
 
 	@Override
 	public List<Racer> getAllRacers() {

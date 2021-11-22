@@ -4,11 +4,8 @@ import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.repository.EventRepository;
 import com.teddycrane.springpractice.repository.RaceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,10 +14,14 @@ import java.util.*;
 class EventService implements IEventService
 {
 
-	@Autowired
-	private EventRepository eventRepository;
-	@Autowired
-	private RaceRepository raceRepository;
+	private final EventRepository eventRepository;
+	private final RaceRepository raceRepository;
+
+	public EventService(EventRepository eventRepository, RaceRepository raceRepository)
+	{
+		this.eventRepository = eventRepository;
+		this.raceRepository = raceRepository;
+	}
 
 	@Override
 	public List<Event> getAllEvents()
