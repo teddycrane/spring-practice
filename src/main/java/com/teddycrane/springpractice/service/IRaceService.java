@@ -20,7 +20,9 @@ public interface IRaceService {
 
 	Race createRace(String name, Category category) throws DuplicateItemException;
 
-	Race createRace(String name, Category category, Date startDate) throws DuplicateItemException;
+	Race createRace(String name, Category category, Date startTime) throws DuplicateItemException;
+
+	Race createRace(String name, Category category, Date startTime, Date endTime) throws DuplicateItemException;
 
 	Race updateRace(UUID id, String name, Category category) throws UpdateException, RaceNotFoundException, DuplicateItemException;
 

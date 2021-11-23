@@ -79,7 +79,7 @@ public class RaceService implements IRaceService
 	}
 
 	@Override
-	public Race createRace(String name, Category category, Date startDate) throws DuplicateItemException
+	public Race createRace(String name, Category category, Date startTime) throws DuplicateItemException
 	{
 		this.logger.trace("RaceService.createRace called");
 
@@ -88,19 +88,39 @@ public class RaceService implements IRaceService
 		if(existing.isPresent())
 		{
 			Race race = new Race(existing.get());
-			if (race.getName().equals(name) && race.getCategory() == category && race.getStartTime().equals(startDate))
+			if (race.getName().equals(name) && race.getCategory() == category && race.getStartTime().equals(startTime))
 			{
 				this.logger.error("Name collision detected!");
 				throw new DuplicateItemException("A race with this same name already exists!");
 			}
 		}
-		return this.raceRepository.save(new Race(name, category, startDate));
+		return this.raceRepository.save(new Race(name, category, startTime));
+	}
+
+	@Override
+	public Race createRace(String name, Category category, Date startTime, Date endTime) throws DuplicateItemException
+	{
+		this.logger.trace("RaceService.createRace called");
+
+		Optional<Race> existing = this.raceRepository.findByName(name);
+
+		if(existing.isPresent())
+		{
+			Race race = new Race(existing.get());
+
+			if(race.getName().equals(name) && race.getCategory() == category)
+			{
+				this.logger.error("Name collision detected!");
+				throw new DuplicateItemException("A race with the same name already exists!");
+			}
+		}
+		return this.raceRepository.save(new Race(name, category, startTime));
 	}
 
 	@Override
 	public Race updateRace(UUID id, String name, Category category) throws UpdateException, RaceNotFoundException, DuplicateItemException
 	{
-		System.out.println("RaceService.updateRace called");
+		this.logger.trace("RaceService.updateRace called");
 		Optional<Race> _race = this.raceRepository.findById(id);
 
 		if (_race.isPresent())
@@ -121,7 +141,7 @@ public class RaceService implements IRaceService
 			// name collision validation
 			if (other.isPresent() && other.get().getName().equals(name) && other.get().getCategory() == category)
 			{
-				System.out.println("Duplicate item detected");
+				this.logger.error("Duplicate item detected");
 				throw new DuplicateItemException(String.format("An item with the name %s and category %s already exists!", name, EnumHelpers.getCategoryMapping(category)));
 			}
 
@@ -134,7 +154,7 @@ public class RaceService implements IRaceService
 			}
 		} else
 		{
-			System.out.println("Unable to find a race!");
+			this.logger.error("Unable to find a race!");
 			throw new RaceNotFoundException(String.format("Unable to find a race with id %s", id));
 		}
 	}
@@ -142,7 +162,7 @@ public class RaceService implements IRaceService
 	@Override
 	public Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException
 	{
-		System.out.println("RaceService.addRacer called");
+		this.logger.trace("RaceService.addRacer called");
 
 		// remove duplicates from within the list of ids
 		List<UUID> deDupedIds = new ArrayList<>(new HashSet<>(racerIds));
@@ -168,15 +188,15 @@ public class RaceService implements IRaceService
 				_racers.forEach(r::addRacer);
 			} catch (IllegalArgumentException e)
 			{
-				System.out.println("Unable to find a racer!");
-				System.out.println(e.getMessage());
+				this.logger.error("Unable to find a racer!");
+				this.logger.error(e.getMessage());
 				throw new RacerNotFoundException("Cannot find a racer with a null id or entry.  ");
 			}
 
 			return this.raceRepository.save(r);
 		} else
 		{
-			System.out.println("Unable to find race!");
+			this.logger.error("Unable to find race!");
 			throw new RaceNotFoundException(String.format("Unable to find Race with id %s", id));
 		}
 
