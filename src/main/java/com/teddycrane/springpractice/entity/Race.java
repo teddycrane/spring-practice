@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,10 +28,14 @@ public class Race
 	@OneToMany
 	private List<Racer> racers;
 
+	private Date startTime, endTime;
+
 	public Race()
 	{
 		this.id = UUID.randomUUID();
 		this.racers = new ArrayList<>();
+		this.startTime = new Date();
+		this.endTime = new Date();
 	}
 
 	public Race(@NotNull Race other)
@@ -39,6 +44,8 @@ public class Race
 		this.name = other.name;
 		this.category = other.category;
 		this.racers = new ArrayList<>(other.racers);
+		this.startTime = other.startTime;
+		this.endTime = other.endTime;
 	}
 
 	public Race(String name)
@@ -82,6 +89,26 @@ public class Race
 	public void setCategory(Category category)
 	{
 		this.category = category;
+	}
+
+	public Date getStartTime()
+	{
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime)
+	{
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime()
+	{
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime)
+	{
+		this.endTime = endTime;
 	}
 
 	public UUID getId()
