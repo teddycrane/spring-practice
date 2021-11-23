@@ -8,6 +8,7 @@ import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +19,8 @@ public interface IRaceService {
 	Race getRace(UUID id) throws RaceNotFoundException;
 
 	Race createRace(String name, Category category) throws DuplicateItemException;
+
+	Race createRace(String name, Category category, Date startDate) throws DuplicateItemException;
 
 	Race updateRace(UUID id, String name, Category category) throws UpdateException, RaceNotFoundException, DuplicateItemException;
 

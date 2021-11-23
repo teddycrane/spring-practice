@@ -61,6 +61,18 @@ public class Race
 		this.category = category;
 	}
 
+	public Race(String name, Category category, Date startTime)
+	{
+		this(name, category);
+		this.startTime = new Date(startTime.getTime());
+	}
+
+	public Race(String name, Category category, Date startTime, Date endTime)
+	{
+		this(name, category, startTime);
+		this.endTime = new Date(endTime.getTime());
+	}
+
 	public List<Racer> getRacers()
 	{
 		return racers;

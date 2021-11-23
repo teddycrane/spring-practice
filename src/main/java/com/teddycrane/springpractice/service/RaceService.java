@@ -10,6 +10,8 @@ import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,12 +21,14 @@ import java.util.stream.Stream;
 public class RaceService implements IRaceService
 {
 
+	private final Logger logger;
 	private final RaceRepository raceRepository;
 
 	private final RacerRepository racerRepository;
 
 	public RaceService(RaceRepository raceRepository, RacerRepository racerRepository)
 	{
+		this.logger = LogManager.getLogger(this.getClass());
 		this.raceRepository = raceRepository;
 		this.racerRepository = racerRepository;
 	}
@@ -32,7 +36,7 @@ public class RaceService implements IRaceService
 	@Override
 	public List<Race> getAllRaces()
 	{
-		System.out.println("RaceService.getAllRaces called");
+		this.logger.trace("RaceService.getAllRaces called");
 		Iterable<Race> response = raceRepository.findAll();
 		List<Race> result = new ArrayList<>();
 		response.forEach(result::add);
@@ -42,7 +46,7 @@ public class RaceService implements IRaceService
 	@Override
 	public Race getRace(UUID id) throws RaceNotFoundException
 	{
-		System.out.println("RaceService.getRace called");
+		this.logger.trace("RaceService.getRace called");
 		Optional<Race> result = this.raceRepository.findById(id);
 
 		if (result.isPresent())
@@ -50,7 +54,7 @@ public class RaceService implements IRaceService
 			return new Race(result.get());
 		} else
 		{
-			System.out.println("Unable to find race");
+			this.logger.error("Unable to find race");
 			String message = String.format("Unable to find a race with id %s\n", id);
 			throw new RaceNotFoundException(message);
 		}
@@ -59,19 +63,38 @@ public class RaceService implements IRaceService
 	@Override
 	public Race createRace(String name, Category category) throws DuplicateItemException
 	{
-		System.out.println("RaceService.createRace called");
+		this.logger.trace("RaceService.createRace called");
 		Optional<Race> existing = this.raceRepository.findByName(name);
 
 		if (existing.isPresent())
 		{
 			if (existing.get().getCategory() == category && existing.get().getName().equals(name))
 			{
-				System.out.println("Name collision detected!");
+				this.logger.error("Name collision detected!");
 				throw new DuplicateItemException(
 						String.format("An event for category %s with name %s already exists!", EnumHelpers.getCategoryMapping(category), name));
 			}
 		}
 		return this.raceRepository.save(new Race(name, category));
+	}
+
+	@Override
+	public Race createRace(String name, Category category, Date startDate) throws DuplicateItemException
+	{
+		this.logger.trace("RaceService.createRace called");
+
+		Optional<Race> existing = this.raceRepository.findByName(name);
+
+		if(existing.isPresent())
+		{
+			Race race = new Race(existing.get());
+			if (race.getName().equals(name) && race.getCategory() == category && race.getStartTime().equals(startDate))
+			{
+				this.logger.error("Name collision detected!");
+				throw new DuplicateItemException("A race with this same name already exists!");
+			}
+		}
+		return this.raceRepository.save(new Race(name, category, startDate));
 	}
 
 	@Override
