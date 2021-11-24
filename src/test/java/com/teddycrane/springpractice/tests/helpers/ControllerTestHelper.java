@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.tests.helpers;
 
+import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
@@ -48,6 +49,24 @@ public class ControllerTestHelper
 			temp.setRacers(generateRacerList(5));
 			result.add(i, temp);
 		}
+		return result;
+	}
+
+	public static @NotNull Event generateEvent()
+	{
+		Event e = new Event();
+		e.setName(RandomStringUtils.randomAlphabetic(10));
+		return e;
+	}
+
+	public static @NotNull List<Event> generateEventList(int size)
+	{
+		List<Event> result = new ArrayList<>(size);
+		for (int i = 0; i < size; i++)
+		{
+			result.add(generateEvent());
+		}
+
 		return result;
 	}
 }
