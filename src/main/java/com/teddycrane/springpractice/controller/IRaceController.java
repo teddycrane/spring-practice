@@ -32,4 +32,7 @@ public interface IRaceController
 
 	@PostMapping(path = "/start-race")
 	Race startRace(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException, StartException;
+
+	@PostMapping(path = "/end-race")
+	Race endRace(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException;
 }

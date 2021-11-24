@@ -82,7 +82,7 @@ public class RaceService implements IRaceService
 
 		Optional<Race> existing = this.raceRepository.findByName(name);
 
-		if(existing.isPresent())
+		if (existing.isPresent())
 		{
 			Race race = new Race(existing.get());
 			if (race.getName().equals(name) && race.getCategory() == category && race.getStartTime().equals(startTime))
@@ -101,11 +101,11 @@ public class RaceService implements IRaceService
 
 		Optional<Race> existing = this.raceRepository.findByName(name);
 
-		if(existing.isPresent())
+		if (existing.isPresent())
 		{
 			Race race = new Race(existing.get());
 
-			if(race.getName().equals(name) && race.getCategory() == category)
+			if (race.getName().equals(name) && race.getCategory() == category)
 			{
 				this.logger.error("Name collision detected!");
 				throw new DuplicateItemException("A race with the same name already exists!");
@@ -210,13 +210,54 @@ public class RaceService implements IRaceService
 			Race race = new Race(_race.get());
 
 			// check if the start time exists, and if so, throw error
-			if (race.getStartTime() != null) {
+			if (race.getStartTime() != null)
+			{
 				this.logger.error("Unable to start a race that has already been started!");
 				throw new StartException("Unable to start a race that has already been started!");
+			} else if (race.getEndTime() != null)
+			{
+				this.logger.error("Unable to start a race that has already finished!");
+				throw new StartException("Unable to start a race that is already finished");
 			} else
 			{
 				this.logger.info(String.format("Starting race %s at time %s", id, new Date()));
 				race.setStartTime(new Date());
+				return this.raceRepository.save(race);
+			}
+		} else
+		{
+			String message = String.format("Unable to find a race with the id %s", id);
+			this.logger.error(message);
+			throw new RaceNotFoundException(message);
+		}
+	}
+
+	@Override
+	public Race endRace(UUID id) throws RaceNotFoundException, IllegalAccessException
+	{
+		this.logger.trace("RaceService.endRace called");
+		Optional<Race> _race = this.raceRepository.findById(id);
+
+		if (_race.isPresent())
+		{
+			Race race = new Race(_race.get());
+
+			// if the start time exists and is in the past, continue
+			if (race.getStartTime() == null)
+			{
+				this.logger.error("Unable to end a race that has not started");
+				throw new IllegalAccessException("Unable to end a race that has not started!");
+			} else if (race.getStartTime().after(new Date()))
+			{
+				this.logger.error("Unable to end a race that starts in the future!");
+				throw new IllegalAccessException("Unable to start a race that starts in the future");
+			} else if (race.getEndTime() != null)
+			{
+				this.logger.error("Unable to end a race that has already finished!");
+				throw new IllegalAccessException("Unable to end a race that has already finished!");
+			} else
+			{
+				race.setEndTime(new Date());
 				return this.raceRepository.save(race);
 			}
 		} else

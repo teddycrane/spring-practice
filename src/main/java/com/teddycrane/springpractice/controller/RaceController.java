@@ -6,6 +6,7 @@ import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
 import com.teddycrane.springpractice.service.IRaceService;
+import net.bytebuddy.pool.TypePool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
@@ -176,6 +177,29 @@ public class RaceController implements IRaceController
 		} catch (StartException e)
 		{
 			throw new StartException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Race endRace(String raceId) throws RaceNotFoundException, BadRequestException
+	{
+		this.logger.trace("RaceController.endRace called");
+
+		try
+		{
+			UUID id = UUID.fromString(raceId);
+			return this.raceService.endRace(id);
+		} catch (RaceNotFoundException e)
+		{
+			throw new RaceNotFoundException(e.getMessage());
+		} catch (IllegalArgumentException e)
+		{
+			String message = String.format("Unable to parse id %s", raceId);
+			this.logger.error(message);
+			throw new BadRequestException(message);
+		} catch (IllegalAccessException e)
+		{
+			throw new BadRequestException(e.getMessage());
 		}
 	}
 }

@@ -27,4 +27,6 @@ public interface IRaceService {
 	Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException;
 
 	Race startRace(UUID id) throws RaceNotFoundException, StartException;
+
+	Race endRace(UUID id) throws RaceNotFoundException, IllegalAccessException;
 }
