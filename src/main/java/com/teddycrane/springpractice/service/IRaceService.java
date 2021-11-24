@@ -2,10 +2,7 @@ package com.teddycrane.springpractice.service;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
-import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
-import com.teddycrane.springpractice.exceptions.UpdateException;
+import com.teddycrane.springpractice.exceptions.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -28,4 +25,6 @@ public interface IRaceService {
 	Race updateRace(UUID id, String name, Category category) throws UpdateException, RaceNotFoundException, DuplicateItemException;
 
 	Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException;
+
+	Race startRace(UUID id) throws RaceNotFoundException, StartException;
 }

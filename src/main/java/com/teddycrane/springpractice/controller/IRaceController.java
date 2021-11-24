@@ -1,10 +1,7 @@
 package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.entity.Race;
-import com.teddycrane.springpractice.exceptions.BadRequestException;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
-import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
+import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
@@ -32,4 +29,7 @@ public interface IRaceController
 
 	@PatchMapping(path = "/add-racer")
 	Race addRacer(@RequestBody @Valid AddRacerRequest request, @RequestParam String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException;
+
+	@PostMapping(path = "/start-race")
+	Race startRace(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException, StartException;
 }

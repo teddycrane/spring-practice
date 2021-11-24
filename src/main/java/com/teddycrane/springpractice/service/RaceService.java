@@ -3,10 +3,7 @@ package com.teddycrane.springpractice.service;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
-import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
-import com.teddycrane.springpractice.exceptions.UpdateException;
+import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
@@ -200,5 +197,33 @@ public class RaceService implements IRaceService
 			throw new RaceNotFoundException(String.format("Unable to find Race with id %s", id));
 		}
 
+	}
+
+	@Override
+	public Race startRace(UUID id) throws RaceNotFoundException, StartException
+	{
+		this.logger.trace("RaceService.startRace called!");
+		Optional<Race> _race = this.raceRepository.findById(id);
+
+		if (_race.isPresent())
+		{
+			Race race = new Race(_race.get());
+
+			// check if the start time exists, and if so, throw error
+			if (race.getStartTime() != null) {
+				this.logger.error("Unable to start a race that has already been started!");
+				throw new StartException("Unable to start a race that has already been started!");
+			} else
+			{
+				this.logger.info(String.format("Starting race %s at time %s", id, new Date()));
+				race.setStartTime(new Date());
+				return this.raceRepository.save(race);
+			}
+		} else
+		{
+			String message = String.format("Unable to find a race with the id %s", id);
+			this.logger.error(message);
+			throw new RaceNotFoundException(message);
+		}
 	}
 }

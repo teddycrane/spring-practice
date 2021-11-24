@@ -156,4 +156,26 @@ public class RaceController implements IRaceController
 			throw new BadRequestException(message);
 		}
 	}
+
+	@Override
+	public Race startRace(String raceId) throws RaceNotFoundException, BadRequestException, StartException
+	{
+		this.logger.trace("RaceController.startRace called");
+
+		try
+		{
+			UUID id = UUID.fromString(raceId);
+			return this.raceService.startRace(id);
+		} catch (IllegalArgumentException e)
+		{
+			this.logger.error("Unable to parse id!", e);
+			throw new BadRequestException(e.getMessage());
+		} catch (RaceNotFoundException e)
+		{
+			throw new RaceNotFoundException(e.getMessage());
+		} catch (StartException e)
+		{
+			throw new StartException(e.getMessage());
+		}
+	}
 }
