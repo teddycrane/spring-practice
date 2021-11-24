@@ -4,13 +4,15 @@ import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
+import com.teddycrane.springpractice.models.SetResultRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
 import com.teddycrane.springpractice.service.IRaceService;
-import net.bytebuddy.pool.TypePool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -200,6 +202,29 @@ public class RaceController implements IRaceController
 		} catch (IllegalAccessException e)
 		{
 			throw new BadRequestException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Race setRacerResult(String raceId, SetResultRequest request) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException
+	{
+		this.logger.trace("RaceController.setRacerResult called");
+
+		try
+		{
+			UUID mappedRaceId = UUID.fromString(raceId);
+			ArrayList<UUID> mappedIds = new ArrayList<>();
+			String[] requestIds = request.getIds();
+
+			for (String id : requestIds)
+				mappedIds.add(UUID.fromString(id));
+
+			return this.raceService.placeRacersInFinishOrder(mappedRaceId, mappedIds);
+		} catch (IllegalArgumentException e)
+		{
+			String message = String.format("Unable to parse one of the ids  raceId: %s, racerId: %s", raceId, Arrays.toString(request.getIds()));
+			this.logger.error(message);
+			throw new BadRequestException(message);
 		}
 	}
 }

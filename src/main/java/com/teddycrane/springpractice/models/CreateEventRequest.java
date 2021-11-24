@@ -6,13 +6,23 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Optional;
 
-public class CreateEventRequest {
+public class CreateEventRequest
+{
 
 	@NotNull
-	private String name;
+	private String name = "";
 
 	@Nullable
-	private Date startDate, endDate;
+	private final Date startDate;
+	@Nullable
+	private final Date endDate;
+
+	public CreateEventRequest()
+	{
+		name = "";
+		startDate = null;
+		endDate = null;
+	}
 
 	public CreateEventRequest(String name, Date startDate, Date endDate)
 	{
@@ -22,15 +32,18 @@ public class CreateEventRequest {
 	}
 
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public Optional<Date> getStartDate() {
+	public Optional<Date> getStartDate()
+	{
 		return Optional.ofNullable(this.startDate);
 	}
 
-	public Optional<Date> getEndDate() {
+	public Optional<Date> getEndDate()
+	{
 		return Optional.ofNullable(this.endDate);
 	}
 }

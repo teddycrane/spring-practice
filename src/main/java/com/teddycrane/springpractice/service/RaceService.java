@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -159,10 +160,9 @@ public class RaceService implements IRaceService
 	@Override
 	public Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException
 	{
-		this.logger.trace("RaceService.addRacer called");
+		this.logger.trace("addRacer called");
 
 		// remove duplicates from within the list of ids
-		List<UUID> deDupedIds = new ArrayList<>(new HashSet<>(racerIds));
 		List<Racer> racers;
 		Optional<Race> _race = this.raceRepository.findById(id);
 		Race r;
@@ -170,13 +170,11 @@ public class RaceService implements IRaceService
 		if (_race.isPresent())
 		{
 			r = new Race(_race.get());
+
+			// create set to de-dupe
 			racers = new ArrayList<>(r.getRacers());
-			Stream<Racer> racerListStream = racers.stream();
-			// check for potential duplicate entries, and throw out if duplicates
-			deDupedIds.forEach((racerId) -> {
-				if (racerListStream.anyMatch((element) -> element.getId().equals(racerId)))
-					deDupedIds.remove(racerId);
-			});
+			Set<UUID> idSet = racers.stream().map(Racer::getId).collect(Collectors.toSet());
+			List<UUID> deDupedIds = racerIds.stream().filter((element) -> !idSet.contains(element)).collect(Collectors.toList());
 
 			try
 			{
@@ -257,12 +255,58 @@ public class RaceService implements IRaceService
 				throw new IllegalAccessException("Unable to end a race that has already finished!");
 			} else
 			{
+				// if the checks above ALL fail, then the race is able to be finished
 				race.setEndTime(new Date());
 				return this.raceRepository.save(race);
 			}
 		} else
 		{
 			String message = String.format("Unable to find a race with the id %s", id);
+			this.logger.error(message);
+			throw new RaceNotFoundException(message);
+		}
+	}
+
+	@Override
+	public Race placeRacersInFinishOrder(UUID raceId, ArrayList<UUID> requestIds) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException
+	{
+		this.logger.trace("placeRacerInFinishOrder called");
+
+		Optional<Race> _race = this.raceRepository.findById(raceId);
+
+		if (_race.isPresent())
+		{
+			Race race = new Race(_race.get());
+			Iterable<Racer> result = this.racerRepository.findAllById(requestIds);
+			ArrayList<Racer> racers = new ArrayList<>();
+			result.forEach(racers::add);
+
+			if (racers.size() < requestIds.size())
+			{
+				// throw error here
+				// todo update the message
+				String message = String.format("one or more of the provided id's was not found.  Ids: %s", racers);
+				this.logger.error(message);
+				throw new RacerNotFoundException(message);
+			} else if (race.getStartTime() != null)
+			{
+				// ensure that the race has been started
+				// set finish date for racers to now
+				Date finishDate = new Date();
+				Map<Racer, Date> resultMap = race.getFinishOrder();
+				racers.forEach((racer) -> resultMap.put(racer, finishDate));
+				race.setFinishOrder(resultMap);
+				return this.raceRepository.save(race);
+			} else
+			{
+				this.logger.error("Cannot set finishers for a race that has not been started!");
+				throw new StartException("Cannot set finishers for a race that is not started");
+			}
+
+			// todo add in error throwing for races not being started
+		} else
+		{
+			String message = String.format("Unable to find a race with the id %s", raceId);
 			this.logger.error(message);
 			throw new RaceNotFoundException(message);
 		}

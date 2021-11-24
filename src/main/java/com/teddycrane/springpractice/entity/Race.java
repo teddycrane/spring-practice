@@ -34,8 +34,8 @@ public class Race
 	{
 		this.id = UUID.randomUUID();
 		this.racers = new ArrayList<>();
-		this.startTime = new Date();
-		this.endTime = new Date();
+		this.startTime = null;
+		this.endTime = null;
 		this.finishOrder = new HashMap<>();
 	}
 

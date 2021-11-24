@@ -11,6 +11,11 @@ public class AddRacerRequest
 	@NotEmpty
 	private final List<UUID> racerIds;
 
+	public AddRacerRequest()
+	{
+		racerIds = new ArrayList<>();
+	}
+
 	public AddRacerRequest(List<UUID> racerIds)
 	{
 		this.racerIds = new ArrayList<>(racerIds);

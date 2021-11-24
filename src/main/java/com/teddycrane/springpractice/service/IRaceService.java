@@ -5,6 +5,7 @@ import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -29,4 +30,6 @@ public interface IRaceService {
 	Race startRace(UUID id) throws RaceNotFoundException, StartException;
 
 	Race endRace(UUID id) throws RaceNotFoundException, IllegalAccessException;
+
+	Race placeRacersInFinishOrder(UUID raceId, ArrayList<UUID> requestIds) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException;
 }

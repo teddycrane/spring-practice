@@ -18,6 +18,14 @@ public class CreateRaceRequest
 	@Nullable
 	private final Date startTime, endTime;
 
+	public CreateRaceRequest()
+	{
+		this.name = "";
+		this.category = Category.CAT_5;
+		this.startTime = null;
+		this.endTime = null;
+	}
+
 	public CreateRaceRequest(String name, Category category)
 	{
 		this.name = name;
