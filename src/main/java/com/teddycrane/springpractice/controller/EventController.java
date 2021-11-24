@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/events")
-class EventController implements IEventController
+public class EventController implements IEventController
 {
 
 	private final Logger logger;
