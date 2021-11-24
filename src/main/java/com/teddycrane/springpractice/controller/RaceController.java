@@ -34,7 +34,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race getRace(String id) throws RaceNotFoundException, BadRequestException
 	{
-		this.logger.info("RaceController.getRace called");
+		this.logger.info("getRace called");
 
 		try
 		{
@@ -54,7 +54,7 @@ public class RaceController implements IRaceController
 	@Override
 	public List<Race> getAllRaces() throws RaceNotFoundException
 	{
-		this.logger.info("RaceController.getAllRaces called");
+		this.logger.info("getAllRaces called");
 		return this.raceService.getAllRaces();
 	}
 
@@ -69,7 +69,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race createRace(CreateRaceRequest request) throws BadRequestException, DuplicateItemException
 	{
-		this.logger.info("RaceController.createRace called");
+		this.logger.info("createRace called");
 		try
 		{
 			if (request == null)
@@ -89,7 +89,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race updateRace(UpdateRaceRequest request, String id) throws BadRequestException, DuplicateItemException, RaceNotFoundException
 	{
-		this.logger.info("RaceController.updateRace called");
+		this.logger.info("updateRace called");
 
 		try
 		{
@@ -131,7 +131,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race addRacer(AddRacerRequest request, String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException
 	{
-		this.logger.info("RaceController.addRacer called");
+		this.logger.info("addRacer called");
 
 		try
 		{
@@ -163,7 +163,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race startRace(String raceId) throws RaceNotFoundException, BadRequestException, StartException
 	{
-		this.logger.trace("RaceController.startRace called");
+		this.logger.trace("startRace called");
 
 		try
 		{
@@ -185,7 +185,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race endRace(String raceId) throws RaceNotFoundException, BadRequestException
 	{
-		this.logger.trace("RaceController.endRace called");
+		this.logger.trace("endRace called");
 
 		try
 		{
@@ -208,7 +208,7 @@ public class RaceController implements IRaceController
 	@Override
 	public Race setRacerResult(String raceId, SetResultRequest request) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException
 	{
-		this.logger.trace("RaceController.setRacerResult called");
+		this.logger.trace("setRacerResult called");
 
 		try
 		{
