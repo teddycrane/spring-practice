@@ -6,10 +6,7 @@ import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class Race
@@ -28,6 +25,9 @@ public class Race
 	@OneToMany
 	private List<Racer> racers;
 
+	@ElementCollection
+	private Map<Racer, Date> finishOrder;
+
 	private Date startTime, endTime;
 
 	public Race()
@@ -36,6 +36,7 @@ public class Race
 		this.racers = new ArrayList<>();
 		this.startTime = new Date();
 		this.endTime = new Date();
+		this.finishOrder = new HashMap<>();
 	}
 
 	public Race(@NotNull Race other)
@@ -46,6 +47,7 @@ public class Race
 		this.racers = new ArrayList<>(other.racers);
 		this.startTime = other.startTime;
 		this.endTime = other.endTime;
+		this.finishOrder = new HashMap<>(other.finishOrder);
 	}
 
 	public Race(String name)
@@ -123,6 +125,17 @@ public class Race
 		this.endTime = endTime;
 	}
 
+	public Map<Racer, Date> getFinishOrder()
+	{
+		return new HashMap<>(this.finishOrder);
+	}
+
+	// we may not want to expose the setter fully todo TC
+	public void setFinishOrder(Map<Racer, Date> finishOrder)
+	{
+		this.finishOrder = new HashMap<>(finishOrder);
+	}
+
 	public UUID getId()
 	{
 		return this.id;
@@ -142,7 +155,7 @@ public class Race
 		if (primitiveCompare && this.racers.size() == other.racers.size())
 		{
 			// todo update this to actually compare the order as well
-			return this.racers.containsAll(other.racers);
+			return this.racers.containsAll(other.racers) && this.finishOrder.equals(other.finishOrder);
 		}
 
 		return primitiveCompare;
@@ -179,6 +192,7 @@ public class Race
 		hash = 31 * hash + this.name.hashCode();
 		hash = 31 * hash + this.category.hashCode();
 		hash = 31 * hash + this.racers.hashCode();
+		hash = 31 * hash + this.finishOrder.hashCode();
 
 		return hash;
 	}
