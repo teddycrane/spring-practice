@@ -3,7 +3,6 @@ package com.teddycrane.springpractice.service;
 import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,5 +23,5 @@ public interface IEventService
 
 	Event addRacesToEvent(UUID id, List<UUID> raceIds) throws EventNotFoundException;
 
-	Event setEventAsActive(UUID id) throws EventNotFoundException;
+	Event setEventAsActive(UUID id, boolean active) throws EventNotFoundException;
 }

@@ -33,4 +33,7 @@ public interface IEventController
 
 	@PostMapping(path = "/start-event")
 	Event startEvent(@RequestParam String eventId) throws EventNotFoundException;
+
+	@PostMapping(path = "/end-event")
+	Event endEvent(@RequestParam String eventId) throws EventNotFoundException;
 }

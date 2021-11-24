@@ -125,7 +125,7 @@ class EventService implements IEventService
 	}
 
 	@Override
-	public Event setEventAsActive(UUID id) throws EventNotFoundException
+	public Event setEventAsActive(UUID id, boolean active) throws EventNotFoundException
 	{
 		this.logger.trace("EventService.setEventAsActive called");
 		Optional<Event> event = this.eventRepository.findById(id);

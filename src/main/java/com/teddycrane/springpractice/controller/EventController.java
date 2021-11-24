@@ -124,7 +124,7 @@ public class EventController implements IEventController
 		try
 		{
 			UUID id = UUID.fromString(eventId);
-			return this.eventService.setEventAsActive(id);
+			return this.eventService.setEventAsActive(id, true);
 		} catch (IllegalArgumentException e)
 		{
 			this.logger.error("Unable to parse id!", e);
@@ -135,4 +135,22 @@ public class EventController implements IEventController
 		}
 	}
 
+	@Override
+	public Event endEvent(String eventId) throws EventNotFoundException
+	{
+		this.logger.trace("EventController.endEvent called");
+
+		try
+		{
+			UUID id = UUID.fromString(eventId);
+			return this.eventService.setEventAsActive(id, false);
+		} catch (IllegalArgumentException e)
+		{
+			this.logger.error("Unable to parse id", e);
+			throw new BadRequestException(e.getMessage());
+		} catch (EventNotFoundException e)
+		{
+			throw new EventNotFoundException(e.getMessage());
+		}
+	}
 }
