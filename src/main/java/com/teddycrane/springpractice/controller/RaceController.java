@@ -194,14 +194,11 @@ public class RaceController implements IRaceController
 		} catch (RaceNotFoundException e)
 		{
 			throw new RaceNotFoundException(e.getMessage());
-		} catch (IllegalArgumentException e)
+		} catch (EndException e)
 		{
 			String message = String.format("Unable to parse id %s", raceId);
 			this.logger.error(message);
 			throw new BadRequestException(message);
-		} catch (IllegalAccessException e)
-		{
-			throw new BadRequestException(e.getMessage());
 		}
 	}
 

@@ -29,7 +29,7 @@ public interface IRaceService {
 
 	Race startRace(UUID id) throws RaceNotFoundException, StartException;
 
-	Race endRace(UUID id) throws RaceNotFoundException, IllegalAccessException;
+	Race endRace(UUID id) throws RaceNotFoundException, EndException;
 
 	Race placeRacersInFinishOrder(UUID raceId, ArrayList<UUID> requestIds) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException;
 }

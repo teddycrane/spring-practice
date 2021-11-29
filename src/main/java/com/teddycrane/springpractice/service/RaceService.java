@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class RaceService implements IRaceService
@@ -231,7 +230,7 @@ public class RaceService implements IRaceService
 	}
 
 	@Override
-	public Race endRace(UUID id) throws RaceNotFoundException, IllegalAccessException
+	public Race endRace(UUID id) throws RaceNotFoundException, EndException
 	{
 		this.logger.trace("RaceService.endRace called");
 		Optional<Race> _race = this.raceRepository.findById(id);
@@ -244,15 +243,15 @@ public class RaceService implements IRaceService
 			if (race.getStartTime() == null)
 			{
 				this.logger.error("Unable to end a race that has not started");
-				throw new IllegalAccessException("Unable to end a race that has not started!");
+				throw new EndException("Unable to end a race that has not started!");
 			} else if (race.getStartTime().after(new Date()))
 			{
 				this.logger.error("Unable to end a race that starts in the future!");
-				throw new IllegalAccessException("Unable to start a race that starts in the future");
+				throw new EndException("Unable to start a race that starts in the future");
 			} else if (race.getEndTime() != null)
 			{
 				this.logger.error("Unable to end a race that has already finished!");
-				throw new IllegalAccessException("Unable to end a race that has already finished!");
+				throw new EndException("Unable to end a race that has already finished!");
 			} else
 			{
 				// if the checks above ALL fail, then the race is able to be finished

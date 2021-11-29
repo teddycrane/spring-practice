@@ -4,9 +4,9 @@ import com.teddycrane.springpractice.controller.RaceController;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
+import com.teddycrane.springpractice.models.SetResultRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
 import com.teddycrane.springpractice.service.IRaceService;
 import com.teddycrane.springpractice.tests.helpers.ControllerTestHelper;
@@ -24,34 +24,57 @@ import java.util.UUID;
 
 import static com.teddycrane.springpractice.tests.helpers.ControllerTestHelper.generateRacer;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RaceControllerTest
 {
 
+	private final String requestString = UUID.randomUUID().toString();
+	private final UUID requestUUID = UUID.fromString(requestString);
 	private Race race;
 	private RaceController raceController;
-
 	private List<Racer> racerList;
 	private List<Race> raceList;
-
 	@Mock
 	private IRaceService raceService;
+
+
+	/**
+	 * Maps the mock service layer results based on the provided inputs
+	 *
+	 * @param race The Race object to be returned from the service layer
+	 */
+	private void setupMockResponses(Race race)
+	{
+		when(raceService.getRace(requestUUID)).thenReturn(race);
+		when(raceService.createRace(eq("test name"), any(Category.class))).thenReturn(race);
+		when(raceService.updateRace(requestUUID, "test name", Category.CAT_4)).thenReturn(race);
+		when(raceService.startRace(requestUUID)).thenReturn(race);
+		when(raceService.endRace(requestUUID)).thenReturn(race);
+		when(raceService.placeRacersInFinishOrder(eq(requestUUID), any(ArrayList.class))).thenReturn(race);
+	}
 
 	@Before
 	public void init()
 	{
 		MockitoAnnotations.openMocks(this);
 		raceController = new RaceController(raceService);
-		race = new Race();
-
 		// generate racers
 		racerList = ControllerTestHelper.generateRacerList(5);
-
+		this.race = new Race();
+		race.setName("default name");
 		// generate race list
 		raceList = ControllerTestHelper.generateRaceList(5);
+
+		race.setRacers(racerList);
+
+		// after all other set-up, create mock responses
+		this.setupMockResponses(this.race);
 	}
+
+	// happy path tests
 
 	@Test
 	public void shouldGetAllRaces()
@@ -71,30 +94,22 @@ public class RaceControllerTest
 	@Test
 	public void getRaceShouldReturnARace()
 	{
-		when(raceService.getRace(any(UUID.class))).thenReturn(race);
-
-		// test
-		Race result = this.raceController.getRace(UUID.randomUUID().toString());
+		Race result = this.raceController.getRace(requestString);
 		Assert.assertTrue(result.equals(race));
 	}
 
 	@Test
 	public void shouldCreateRace()
 	{
-		when(raceService.createRace(any(String.class), any(Category.class))).thenReturn(race);
-
 		// test
-		Race result = this.raceController.createRace(new CreateRaceRequest("name", Category.CAT_5));
+		Race result = this.raceController.createRace(new CreateRaceRequest("test name", Category.CAT_5));
 		Assert.assertTrue(result.equals(race));
 	}
 
 	@Test
 	public void shouldUpdateRace()
 	{
-		when(raceService.updateRace(any(UUID.class), any(String.class), any(Category.class))).thenReturn(race);
-
-		// test
-		Race result = this.raceController.updateRace(new UpdateRaceRequest("name", Category.CAT_5), UUID.randomUUID().toString());
+		Race result = this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT_4), requestString);
 		Assert.assertTrue(result.equals(race));
 	}
 
@@ -111,5 +126,29 @@ public class RaceControllerTest
 		// test
 		Race result = this.raceController.addRacer(new AddRacerRequest(ids), testUUID.toString());
 		Assert.assertTrue(result.equals(testResult));
+	}
+
+	@Test
+	public void shouldStartRace()
+	{
+		Race result = this.raceController.startRace(requestString);
+		Assert.assertTrue(result.equals(race));
+	}
+
+	@Test
+	public void shouldEndRace()
+	{
+		Race result = this.raceController.endRace(requestString);
+		Assert.assertTrue(result.equals(race));
+	}
+
+	@Test
+	public void shouldSetRacerResult()
+	{
+		String[] ids = new String[1];
+		ids[0] = racerList.get(0).getId().toString();
+		SetResultRequest request = new SetResultRequest(ids);
+		Race result = this.raceController.setRacerResult(requestString, request);
+		Assert.assertTrue(result.equals(race));
 	}
 }
