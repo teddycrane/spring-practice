@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-class EventService implements IEventService
+public class EventService implements IEventService
 {
 
 	private final Logger logger;
