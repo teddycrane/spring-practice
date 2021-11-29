@@ -111,7 +111,7 @@ public class RaceService implements IRaceService
 				throw new DuplicateItemException("A race with the same name already exists!");
 			}
 		}
-		return this.raceRepository.save(new Race(name, category, startTime));
+		return this.raceRepository.save(new Race(name, category, startTime, endTime));
 	}
 
 	@Override
@@ -134,21 +134,20 @@ public class RaceService implements IRaceService
 			}
 
 			Optional<Race> other = this.raceRepository.findByName(name);
+			System.out.println(race);
+			System.out.println(other.isPresent());
 
 			// name collision validation
-			if (other.isPresent() && other.get().getName().equals(name) && other.get().getCategory() == category)
+			if (other.isPresent())
 			{
-				this.logger.error("An item with the name {} in the same category already exists.  Please try again.", name);
-				throw new DuplicateItemException(String.format("An item with the name %s and category %s already exists!", name, EnumHelpers.getCategoryMapping(category)));
+				if (other.get().getName().equals(name) && other.get().getCategory() == category)
+				{
+					this.logger.error("An item with the name {} in the same category already exists.  Please try again.", name);
+					throw new DuplicateItemException(String.format("An item with the name %s and category %s already exists!", name, EnumHelpers.getCategoryMapping(category)));
+				}
 			}
 
-			try
-			{
-				return this.raceRepository.save(race);
-			} catch (Exception e)
-			{
-				throw new UpdateException(String.format("Unable to update race with id %s", id));
-			}
+			return this.raceRepository.save(race);
 		} else
 		{
 			this.logger.error("Unable to find a race with the id {}", id);
@@ -267,7 +266,7 @@ public class RaceService implements IRaceService
 	}
 
 	@Override
-	public Race placeRacersInFinishOrder(UUID raceId, ArrayList<UUID> requestIds) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException
+	public Race placeRacersInFinishOrder(UUID raceId, List<UUID> requestIds) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException
 	{
 		this.logger.trace("placeRacerInFinishOrder called");
 
