@@ -3,6 +3,7 @@ package com.teddycrane.springpractice.service;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.*;
+import com.teddycrane.springpractice.models.RaceResult;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,4 +33,6 @@ public interface IRaceService {
 	Race endRace(UUID id) throws RaceNotFoundException, EndException;
 
 	Race placeRacersInFinishOrder(UUID raceId, ArrayList<UUID> requestIds) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException;
+
+	RaceResult getResults(UUID raceId) throws RaceNotFoundException;
 }

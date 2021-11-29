@@ -2,10 +2,7 @@ package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.*;
-import com.teddycrane.springpractice.models.AddRacerRequest;
-import com.teddycrane.springpractice.models.CreateRaceRequest;
-import com.teddycrane.springpractice.models.SetResultRequest;
-import com.teddycrane.springpractice.models.UpdateRaceRequest;
+import com.teddycrane.springpractice.models.*;
 import com.teddycrane.springpractice.service.IRaceService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -219,9 +216,27 @@ public class RaceController implements IRaceController
 			return this.raceService.placeRacersInFinishOrder(mappedRaceId, mappedIds);
 		} catch (IllegalArgumentException e)
 		{
-			String message = String.format("Unable to parse one of the ids  raceId: %s, racerId: %s", raceId, Arrays.toString(request.getIds()));
-			this.logger.error(message);
-			throw new BadRequestException(message);
+			this.logger.error("Unable to parse one of the ids  raceId: {}, racerId: {}", raceId, Arrays.toString(request.getIds()));
+			throw new BadRequestException(String.format("Unable to parse one of the ids  raceId: %s, racerId: %s", raceId, Arrays.toString(request.getIds())));
+		}
+	}
+
+	@Override
+	public RaceResult getResults(String raceId) throws RaceNotFoundException, BadRequestException
+	{
+		this.logger.trace("getResults called");
+
+		try
+		{
+			UUID id = UUID.fromString(raceId);
+			return this.raceService.getResults(id);
+		} catch (IllegalArgumentException e)
+		{
+			this.logger.error("Unable to parse the provided id {}", raceId);
+			throw new BadRequestException("Unable to parse the provided id!");
+		} catch (RaceNotFoundException e)
+		{
+			throw new RaceNotFoundException(e.getMessage());
 		}
 	}
 }

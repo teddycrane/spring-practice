@@ -2,10 +2,7 @@ package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.*;
-import com.teddycrane.springpractice.models.AddRacerRequest;
-import com.teddycrane.springpractice.models.CreateRaceRequest;
-import com.teddycrane.springpractice.models.SetResultRequest;
-import com.teddycrane.springpractice.models.UpdateRaceRequest;
+import com.teddycrane.springpractice.models.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,4 +36,7 @@ public interface IRaceController
 
 	@PostMapping(path = "/place")
 	Race setRacerResult(@RequestParam String raceId, @RequestBody @Valid SetResultRequest request) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException;
+
+	@GetMapping(path = "/results")
+	RaceResult getResults(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException;
 }
