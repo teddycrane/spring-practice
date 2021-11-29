@@ -342,4 +342,25 @@ public class RaceService implements IRaceService
 			throw new RaceNotFoundException(String.format("Unable to find a race with the provided id %s", raceId));
 		}
 	}
+
+	@Override
+	public Race deleteRace(UUID raceId) throws RaceNotFoundException
+	{
+		this.logger.trace("deleteRace called");
+		Optional<Race> _race = this.raceRepository.findById(raceId);
+
+		if (_race.isPresent())
+		{
+			Race race = new Race(_race.get());
+
+			this.logger.trace("Found a race with the id {}", raceId);
+			this.raceRepository.delete(race);
+
+			return race;
+		} else
+		{
+			this.logger.error("Unable to find a race with the id {}", raceId);
+			throw new RaceNotFoundException(String.format("Unable to find a race with the id %s", raceId));
+		}
+	}
 }

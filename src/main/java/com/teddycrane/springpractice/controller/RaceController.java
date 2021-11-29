@@ -239,4 +239,23 @@ public class RaceController implements IRaceController
 			throw new RaceNotFoundException(e.getMessage());
 		}
 	}
+
+	@Override
+	public Race deleteRace(String raceId) throws BadRequestException, RaceNotFoundException
+	{
+		this.logger.trace("deleteRace called");
+
+		try
+		{
+			UUID id = UUID.fromString(raceId);
+			return this.raceService.deleteRace(id);
+		} catch (RaceNotFoundException e)
+		{
+			throw new RaceNotFoundException(e.getMessage());
+		} catch (IllegalArgumentException e)
+		{
+			this.logger.error("Unable to parse the id {}", raceId);
+			throw new BadRequestException(e.getMessage());
+		}
+	}
 }

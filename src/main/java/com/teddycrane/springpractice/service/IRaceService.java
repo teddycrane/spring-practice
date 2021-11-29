@@ -35,4 +35,6 @@ public interface IRaceService {
 	Race placeRacersInFinishOrder(UUID raceId, ArrayList<UUID> requestIds) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException;
 
 	RaceResult getResults(UUID raceId) throws RaceNotFoundException;
+
+	Race deleteRace(UUID raceId) throws RaceNotFoundException;
 }

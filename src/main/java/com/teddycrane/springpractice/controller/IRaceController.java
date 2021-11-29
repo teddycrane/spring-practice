@@ -39,4 +39,7 @@ public interface IRaceController
 
 	@GetMapping(path = "/results")
 	RaceResult getResults(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException;
+
+	@DeleteMapping
+	Race deleteRace(@RequestParam String raceId) throws BadRequestException, RaceNotFoundException;
 }
