@@ -8,27 +8,22 @@ import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
 import com.teddycrane.springpractice.service.IRacerService;
-import com.teddycrane.springpractice.tests.helpers.RacerControllerHelper;
+import com.teddycrane.springpractice.tests.helpers.ControllerTestHelper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest
 public class RacerControllerTest
 {
 
@@ -36,8 +31,6 @@ public class RacerControllerTest
 
 	private List<Racer> racerList;
 
-	@Autowired
-	@InjectMocks
 	private RacerController racerController;
 
 	@Mock
@@ -47,11 +40,12 @@ public class RacerControllerTest
 	public void init()
 	{
 		MockitoAnnotations.openMocks(this);
+		racerController = new RacerController(racerService);
 		racer = new Racer("Firstname", "Lastname");
 		racerList = new ArrayList<>();
 		for (int i = 0; i < 5; i++)
 		{
-			racerList.add(RacerControllerHelper.generateRacer());
+			racerList.add(ControllerTestHelper.generateRacer());
 		}
 	}
 

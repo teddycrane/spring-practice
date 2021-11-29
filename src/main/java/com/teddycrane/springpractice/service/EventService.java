@@ -4,28 +4,33 @@ import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.repository.EventRepository;
 import com.teddycrane.springpractice.repository.RaceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-class EventService implements IEventService
+public class EventService implements IEventService
 {
 
-	@Autowired
-	private EventRepository eventRepository;
-	@Autowired
-	private RaceRepository raceRepository;
+	private final Logger logger;
+	private final EventRepository eventRepository;
+	private final RaceRepository raceRepository;
+
+	public EventService(EventRepository eventRepository, RaceRepository raceRepository)
+	{
+		this.logger = LogManager.getLogger(this.getClass());
+		this.eventRepository = eventRepository;
+		this.raceRepository = raceRepository;
+	}
 
 	@Override
 	public List<Event> getAllEvents()
 	{
-		System.out.println("EventService.getAllEvents called");
+		this.logger.trace("EventService.getAllEvents called");
 		List<Event> result = new ArrayList<>();
 		Iterable<Event> response = this.eventRepository.findAll();
 		response.forEach(result::add);
@@ -35,7 +40,7 @@ class EventService implements IEventService
 	@Override
 	public Event getEvent(UUID id) throws EventNotFoundException
 	{
-		System.out.println("EventService.getEvent called");
+		this.logger.trace("EventService.getEvent called");
 		Optional<Event> response = this.eventRepository.findById(id);
 
 		if (response.isPresent())
@@ -43,7 +48,7 @@ class EventService implements IEventService
 			return response.get();
 		} else
 		{
-			System.out.println("No event found!");
+			this.logger.error("No event found!");
 			throw new EventNotFoundException(String.format("No event exists for id %s", id));
 		}
 	}
@@ -51,13 +56,13 @@ class EventService implements IEventService
 	@Override
 	public Event createEvent(String name, Date startDate, Date endDate) throws DuplicateItemException
 	{
-		System.out.println("EventService.createEvent called");
+		this.logger.trace("EventService.createEvent called");
 		Optional<Event> existing = this.eventRepository.findByName(name);
 		Event e = new Event(name);
 
 		if (existing.isPresent() && existing.get().getStartDate().equals(startDate) && existing.get().getEndDate().equals(endDate))
 		{
-			System.out.println("Duplicate item detected");
+			this.logger.info("Duplicate item detected");
 			throw new DuplicateItemException(String.format("An event with the name %s already exists! Try adding a race to this event instead. ", name));
 		}
 
@@ -74,7 +79,7 @@ class EventService implements IEventService
 	@Override
 	public Event deleteEvent(UUID id) throws EventNotFoundException
 	{
-		System.out.println("EventService.deleteEvent called");
+		this.logger.trace("EventService.deleteEvent called");
 		Optional<Event> existing = this.eventRepository.findById(id);
 		Event e;
 
@@ -85,6 +90,7 @@ class EventService implements IEventService
 			return e;
 		} else
 		{
+			this.logger.error("Event Service was unable to find an event!");
 			throw new EventNotFoundException(String.format("No event found with id %s", id));
 		}
 	}
@@ -92,7 +98,7 @@ class EventService implements IEventService
 	@Override
 	public Event addRacesToEvent(UUID id, List<UUID> raceIds) throws EventNotFoundException
 	{
-		System.out.println("EventService.addRacesToEvent called");
+		this.logger.trace("EventService.addRacesToEvent called");
 		Optional<Event> existing = this.eventRepository.findById(id);
 
 		if (existing.isPresent())
@@ -113,7 +119,26 @@ class EventService implements IEventService
 			return this.eventRepository.save(e);
 		} else
 		{
+			this.logger.error("The event service was unable to find an event!");
 			throw new EventNotFoundException(String.format("No event found with id %s", id));
+		}
+	}
+
+	@Override
+	public Event setEventAsActive(UUID id, boolean active) throws EventNotFoundException
+	{
+		this.logger.trace("EventService.setEventAsActive called");
+		Optional<Event> event = this.eventRepository.findById(id);
+
+		if (event.isPresent())
+		{
+			Event e = new Event(event.get());
+			e.setIsActive(true);
+			return this.eventRepository.save(e);
+		} else
+		{
+			this.logger.error("The event service was unable to find the event!");
+			throw new EventNotFoundException(String.format("No event found with the id %s", id));
 		}
 	}
 

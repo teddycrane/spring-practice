@@ -7,7 +7,8 @@ import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.models.CreateEventRequest;
 import com.teddycrane.springpractice.models.UpdateEventRequest;
 import com.teddycrane.springpractice.service.IEventService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,27 +16,34 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/events")
-class EventController implements IEventController
+public class EventController implements IEventController
 {
 
-	@Autowired
-	private IEventService eventService;
+	private final Logger logger;
+
+	private final IEventService eventService;
+
+	public EventController(IEventService eventService)
+	{
+		this.logger = LogManager.getLogger(this.getClass());
+		this.eventService = eventService;
+	}
 
 	@Override
 	public List<Event> getAllEvents()
 	{
-		System.out.println("EventController.getAllEvents called");
+		this.logger.info("EventController.getAllEvents called");
 		return this.eventService.getAllEvents();
 	}
 
 	@Override
-	public Event getEvent(@RequestParam String id) throws BadRequestException, EventNotFoundException
+	public Event getEvent(String eventId) throws BadRequestException, EventNotFoundException
 	{
-		System.out.println("EventController.getEvent called");
+		this.logger.info("EventController.getEvent called");
 
 		try
 		{
-			UUID uuid = UUID.fromString(id);
+			UUID uuid = UUID.fromString(eventId);
 			return this.eventService.getEvent(uuid);
 		} catch (EventNotFoundException e)
 		{
@@ -43,14 +51,14 @@ class EventController implements IEventController
 		} catch (IllegalArgumentException e)
 		{
 			System.out.println("Bad id provided");
-			throw new BadRequestException(String.format("The id %s was provided in a format that was not readable. ", id));
+			throw new BadRequestException(String.format("The id %s was provided in a format that was not readable. ", eventId));
 		}
 	}
 
 	@Override
 	public Event createEvent(CreateEventRequest request) throws DuplicateItemException, BadRequestException
 	{
-		System.out.println("EventController.createEvent called");
+		this.logger.info("EventController.createEvent called");
 
 		try
 		{
@@ -69,19 +77,17 @@ class EventController implements IEventController
 	}
 
 	@Override
-	public Event deleteEvent(String requestId) throws BadRequestException, EventNotFoundException
+	public Event deleteEvent(String id) throws BadRequestException, EventNotFoundException
 	{
-		System.out.println("EventController.deleteEvent called");
-		UUID id;
-
+		this.logger.info("EventController.deleteEvent called");
 		try
 		{
-			id = UUID.fromString(requestId);
-			return this.eventService.deleteEvent(id);
+			UUID eventId = UUID.fromString(id);
+			return this.eventService.deleteEvent(eventId);
 		} catch (IllegalArgumentException e)
 		{
-			System.out.printf("Unable to parse provided id %s", requestId);
-			throw new BadRequestException(String.format("Unable to handle id %s.  Please check the provided id and try again. ", requestId));
+			this.logger.error(String.format("Unable to parse provided id %s", id), e);
+			throw new BadRequestException(String.format("Unable to handle id %s.  Please check the provided id and try again. ", id));
 		} catch (EventNotFoundException e)
 		{
 			throw new EventNotFoundException(e.getMessage());
@@ -89,12 +95,12 @@ class EventController implements IEventController
 	}
 
 	@Override
-	public Event addRacesToEvent(String requestId, UpdateEventRequest request) throws EventNotFoundException, BadRequestException
+	public Event addRacesToEvent(String eventId, UpdateEventRequest request) throws EventNotFoundException, BadRequestException
 	{
-		System.out.println("EventController.addRacesToEvent called");
+		this.logger.info("EventController.addRacesToEvent called");
 		try
 		{
-			UUID id = UUID.fromString(requestId);
+			UUID id = UUID.fromString(eventId);
 			if (request.getRaceIds().size() <= 0)
 			{
 				throw new BadRequestException("No race ids provided!");
@@ -102,12 +108,49 @@ class EventController implements IEventController
 			return this.eventService.addRacesToEvent(id, request.getRaceIds());
 		} catch (IllegalArgumentException e)
 		{
-			System.out.println("Bad UUID!");
-			throw new BadRequestException(String.format("Unable to parse the id %s", requestId));
+			this.logger.trace("Bad UUID!", e);
+			throw new BadRequestException(String.format("Unable to parse the id %s", eventId));
 		} catch (EventNotFoundException e)
 		{
 			throw new EventNotFoundException(e.getMessage());
 		}
 	}
 
+	@Override
+	public Event startEvent(String eventId) throws EventNotFoundException
+	{
+		this.logger.trace("EventController.startEvent called");
+
+		try
+		{
+			UUID id = UUID.fromString(eventId);
+			return this.eventService.setEventAsActive(id, true);
+		} catch (IllegalArgumentException e)
+		{
+			this.logger.error("Unable to parse id!", e);
+			throw new BadRequestException(e.getMessage());
+		} catch (EventNotFoundException e)
+		{
+			throw new EventNotFoundException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Event endEvent(String eventId) throws EventNotFoundException
+	{
+		this.logger.trace("EventController.endEvent called");
+
+		try
+		{
+			UUID id = UUID.fromString(eventId);
+			return this.eventService.setEventAsActive(id, false);
+		} catch (IllegalArgumentException e)
+		{
+			this.logger.error("Unable to parse id", e);
+			throw new BadRequestException(e.getMessage());
+		} catch (EventNotFoundException e)
+		{
+			throw new EventNotFoundException(e.getMessage());
+		}
+	}
 }

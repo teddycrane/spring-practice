@@ -13,13 +13,11 @@ public class Event
 	@Type(type = "uuid-char")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private final UUID id;
-
+	private boolean isActive;
 	@Column(unique = true)
 	private String name;
-
 	@OneToMany
 	private List<Race> races;
-
 	private Date startDate, endDate;
 
 	public Event()
@@ -29,6 +27,7 @@ public class Event
 		this.startDate = new Date();
 		this.endDate = new Date();
 		this.name = "";
+		this.isActive = false;
 	}
 
 	public Event(String name)
@@ -56,6 +55,7 @@ public class Event
 		this.races = new ArrayList<>(other.races);
 		this.startDate = new Date(other.startDate.getTime());
 		this.endDate = new Date(other.endDate.getTime());
+		this.isActive = other.isActive;
 	}
 
 	public UUID getId()
@@ -103,9 +103,19 @@ public class Event
 		this.endDate = new Date(endDate.getTime());
 	}
 
+	public boolean getIsActive()
+	{
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive)
+	{
+		this.isActive = isActive;
+	}
+
 	public boolean equals(Event other)
 	{
-		return this.id.equals(other.id) && this.name.equals(other.name) && this.startDate.equals(other.startDate) && this.endDate.equals(other.endDate) && this.races.equals(other.races);
+		return this.id.equals(other.id) && this.name.equals(other.name) && this.startDate.equals(other.startDate) && this.endDate.equals(other.endDate) && this.races.equals(other.races) && this.isActive == other.isActive;
 	}
 
 	public String toString()
@@ -113,6 +123,7 @@ public class Event
 		StringBuilder builder = new StringBuilder();
 		builder.append("{\n");
 		builder.append(String.format("   \"id\": \"%s\",\n    \"name\": \"%s\",\n    \"startDate\": \"%s\",\n    \"endDate\": \"%s\",\n", id, name, startDate, endDate));
+		builder.append(String.format("    \"isActive\" : \"%s\",\n", isActive));
 		builder.append("    \"races\": [\n");
 
 		if (races.size() > 0) races.forEach((race) -> builder.append(String.format("%s,\n", race)));
@@ -129,6 +140,7 @@ public class Event
 		hash = 31 * hash + this.name.hashCode();
 		hash = 31 * hash + this.startDate.hashCode();
 		hash = 31 * hash + this.endDate.hashCode();
+		hash = this.isActive ? hash + (31) : hash;
 
 		if (this.races.size() > 0)
 		{

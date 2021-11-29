@@ -6,6 +6,12 @@ public class CreateRacerRequest
 	private final String firstName;
 	private final String lastName;
 
+	public CreateRacerRequest()
+	{
+		firstName = "";
+		lastName = "";
+	}
+
 	public CreateRacerRequest(String firstName, String lastName)
 	{
 		this.firstName = firstName;
