@@ -2,7 +2,8 @@ package com.teddycrane.springpractice.enums;
 
 public enum FilterType
 {
-	NAME("name-contains"),
+	FIRSTNAME("firstname"),
+	LASTNAME("lastname"),
 	CATEGORY("category");
 
 	private final String text;

@@ -148,12 +148,15 @@ public class RacerService implements IRacerService
 	public List<Racer> getRacersByType(FilterType filterType, String value) throws BadRequestException
 	{
 		this.logger.trace("getRacersByType called");
+		List<Racer> result;
 
 		switch (filterType)
 		{
 			case CATEGORY:
 			{
 				this.logger.trace("filtering racers by category {}", value);
+
+				// necessary to figure out enum value here since Java doesn't have union types
 				EnumSet<Category> values = EnumSet.allOf(Category.class);
 				if (!values.contains(Category.valueOf(value.toUpperCase())))
 				{
@@ -161,21 +164,26 @@ public class RacerService implements IRacerService
 					throw new BadRequestException("Unable to parse a category value!");
 				}
 
-				// todo move this value transform to the controller
-				return this.racerRepository.findByCategory(Category.valueOf(value.toUpperCase()));
+				result = this.racerRepository.findByCategory(Category.valueOf(value.toUpperCase()));
+				break;
 			}
-			case NAME:
+			case FIRSTNAME:
 			{
-				ArrayList<Racer> result = new ArrayList<>();
-				Iterable<Racer> iterable = this.racerRepository.findAll();
+				result = new ArrayList<>();
+				Iterable<Racer> iterable = this.racerRepository.findByFirstNameContaining(value);
 				iterable.forEach(result::add);
-				return result;
+				break;
+			}
+			case LASTNAME:
+			{
+				result = new ArrayList<>();
+				this.racerRepository.findByLastNameContaining(value).forEach(result::add);
+				break;
 			}
 			default:
-			{
-				return new ArrayList<>();
-			}
+				result = new ArrayList<>();
 		}
+		return result;
 	}
 
 }

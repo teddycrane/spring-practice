@@ -1,6 +1,7 @@
 package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.entity.Racer;
+import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
@@ -153,18 +154,7 @@ public class RacerController implements IRacerController
 	@Override
 	public List<Racer> getRacersByType(String type, String value) throws BadRequestException
 	{
-		this.logger.trace("getRacersByTypeCalled");
-
-		if (type == null)
-		{
-			this.logger.error("No type provided!");
-			throw new BadRequestException("No filter type provided!");
-		}
-		if (value == null)
-		{
-			this.logger.error("No filter value provided!");
-			throw new BadRequestException("No filter value provided!");
-		}
+		this.logger.trace("getRacersByType called");
 
 		// set of enum values
 		EnumSet<FilterType> rawValues = EnumSet.allOf(FilterType.class);
@@ -178,7 +168,19 @@ public class RacerController implements IRacerController
 			try
 			{
 				FilterType filterType = FilterType.valueOf(type.toUpperCase());
-				return this.racerService.getRacersByType(filterType, value);
+
+				// category validation
+				if (filterType == FilterType.CATEGORY)
+				{
+					EnumSet<Category> categorySet = EnumSet.allOf(Category.class);
+					if (!categorySet.contains(Category.valueOf(value.toUpperCase())))
+					{
+						this.logger.error("Unable to parse the category value {}", value);
+						throw new BadRequestException("Unable to parse the provided category value!");
+					}
+				}
+
+				return this.racerService.getRacersByType(filterType, value.toUpperCase());
 			} catch (BadRequestException e)
 			{
 				throw new BadRequestException(e.getMessage());
