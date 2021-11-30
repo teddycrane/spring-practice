@@ -3,6 +3,7 @@ package com.teddycrane.springpractice.tests.controllertests;
 import com.teddycrane.springpractice.controller.RacerController;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
@@ -13,8 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
@@ -35,6 +35,12 @@ public class RacerControllerTest
 
 	@Mock
 	private IRacerService racerService;
+
+	@Captor
+	private ArgumentCaptor<FilterType> filterArg;
+
+	@Captor
+	private ArgumentCaptor<String> valueArg;
 
 	@Before
 	public void init()
@@ -191,5 +197,28 @@ public class RacerControllerTest
 
 		// test
 		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.restoreRacer(UUID.randomUUID().toString()));
+	}
+
+	@Test
+	public void shouldFilterRacersByCategory()
+	{
+		when(racerService.getRacersByType(FilterType.CATEGORY, Category.CAT1.toString())).thenReturn(racerList);
+
+		// test
+		this.racerController.getRacersByType("category", "cat1");
+		Mockito.verify(racerService).getRacersByType(filterArg.capture(), valueArg.capture());
+		FilterType filter = filterArg.getValue();
+		String value = valueArg.getValue();
+
+		Assert.assertEquals(FilterType.CATEGORY, filter);
+		Assert.assertEquals("CAT1", value);
+	}
+
+	@Test
+	public void shouldHandleBadFilterTypes()
+	{
+		Assert.assertThrows(BadRequestException.class, () -> this.racerController.getRacersByType("bad value", "bad value"));
+
+		Assert.assertThrows(IllegalArgumentException.class, () -> this.racerController.getRacersByType("category", "bad value"));
 	}
 }
