@@ -6,6 +6,7 @@ import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
+import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
 import com.teddycrane.springpractice.service.IRacerService;
@@ -156,28 +157,18 @@ public class RacerController implements IRacerController
 	{
 		this.logger.trace("getRacersByType called");
 
-		// set of enum values
-		EnumSet<FilterType> rawValues = EnumSet.allOf(FilterType.class);
-		Set<String> enumValues = new HashSet<>();
-		rawValues.forEach((element) -> enumValues.add(element.toString()));
-
-
 		// validate that the query param is a valid enum type (non case-sensitive)
-		if (enumValues.contains(type.toLowerCase()))
+		if (EnumHelpers.testEnumValue(FilterType.class, type))
 		{
 			try
 			{
 				FilterType filterType = FilterType.valueOf(type.toUpperCase());
 
 				// category validation
-				if (filterType == FilterType.CATEGORY)
+				if (filterType == FilterType.CATEGORY && !EnumHelpers.testEnumValue(Category.class, value))
 				{
-					EnumSet<Category> categorySet = EnumSet.allOf(Category.class);
-					if (!categorySet.contains(Category.valueOf(value.toUpperCase())))
-					{
-						this.logger.error("Unable to parse the category value {}", value);
-						throw new BadRequestException("Unable to parse the provided category value!");
-					}
+					this.logger.error("Unable to parse the category value {}", value);
+					throw new BadRequestException("Unable to parse the provided category value!");
 				}
 
 				return this.racerService.getRacersByType(filterType, value.toUpperCase());
@@ -187,9 +178,31 @@ public class RacerController implements IRacerController
 			}
 		} else
 		{
-			this.logger.error("Unable to parse the provided filter type; The filter type {} is not a valid filter type", type);
-			throw new BadRequestException("Unable to parse the provided filter type.");
+			this.logger.error("The filter type {} is not a valid filter type", type);
+			throw new BadRequestException("The provided filter type is not a valid filter type");
 		}
+	}
 
+	/**
+	 * Searches for and returns racers that have a field that matches the provided search term
+	 *
+	 * @param searchField The racer property that should be searched for
+	 * @param searchTerm  The term to search for
+	 * @return A list of racers that match the search term
+	 * @throws BadRequestException
+	 */
+	@Override
+	public List<Racer> searchRacer(String searchField, String searchTerm) throws BadRequestException
+	{
+		this.logger.trace("searchRacer called");
+
+		try
+		{
+			return new ArrayList<>();
+		} catch (Exception e)
+		{
+			// todo remove
+			throw new BadRequestException("Temp");
+		}
 	}
 }
