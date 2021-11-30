@@ -34,5 +34,5 @@ public interface IRacerController
 	Racer restoreRacer(@RequestParam String id) throws RacerNotFoundException;
 
 	@GetMapping(path = "/filter")
-	List<Racer> getRacersByType(@RequestParam String type) throws BadRequestException;
+	List<Racer> getRacersByType(@RequestParam String type, @RequestParam String value) throws BadRequestException;
 }

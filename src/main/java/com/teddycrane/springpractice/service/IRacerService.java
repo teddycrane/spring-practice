@@ -2,6 +2,7 @@ package com.teddycrane.springpractice.service;
 
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +35,5 @@ public interface IRacerService {
 
 	Racer restoreRacer(UUID id) throws RacerNotFoundException;
 
-//	List<Racer> getRacersByType(SearchType searchType);
+	List<Racer> getRacersByType(FilterType filterType);
 }

@@ -151,7 +151,7 @@ public class RacerController implements IRacerController
 	 * @throws BadRequestException Throws if there is not a filter type provided, or if the filter type is invalid.
 	 */
 	@Override
-	public List<Racer> getRacersByType(String type) throws BadRequestException
+	public List<Racer> getRacersByType(String type, String value) throws BadRequestException
 	{
 		this.logger.trace("getRacersByTypeCalled");
 
@@ -159,6 +159,11 @@ public class RacerController implements IRacerController
 		{
 			this.logger.error("No type provided!");
 			throw new BadRequestException("No filter type provided!");
+		}
+		if (value == null)
+		{
+			this.logger.error("No filter value provided!");
+			throw new BadRequestException("No filter value provided!");
 		}
 
 		// set of enum values
@@ -169,7 +174,11 @@ public class RacerController implements IRacerController
 		// validate that the query param is a valid enum type (non case-sensitive)
 		if (enumValues.contains(type.toLowerCase()))
 		{
-
+			FilterType filterType = FilterType.valueOf(type.toLowerCase());
+			return this.racerService.getRacersByType(filterType);
+		} else
+		{
+			this.logger.error("Unable to parse the provided filter type; The filter type {} is not a valid filter type", type);
 		}
 	}
 }

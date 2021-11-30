@@ -2,6 +2,7 @@ package com.teddycrane.springpractice.service;
 
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import org.apache.logging.log4j.LogManager;
@@ -142,6 +143,18 @@ public class RacerService implements IRacerService
 		{
 			this.logger.trace("Unable to find with id {}", id);
 			throw new RacerNotFoundException(String.format("Unable to find a racer with id %s", id));
+		}
+	}
+
+	@Override
+	public List<Racer> getRacersByType(FilterType filterType)
+	{
+		this.logger.trace("getRacersByType called");
+
+		switch(filterType)
+		{
+			case CATEGORY:
+				return this.racerRepository.findByCategory()
 		}
 	}
 
