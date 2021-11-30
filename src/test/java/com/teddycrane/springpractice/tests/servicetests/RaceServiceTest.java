@@ -86,11 +86,11 @@ public class RaceServiceTest
 		when(raceRepository.findByName("name")).thenReturn(Optional.empty());
 
 		// test
-		this.raceService.createRace("name", Category.CAT_5);
+		this.raceService.createRace("name", Category.CAT5);
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
 		Assert.assertEquals("name", result.getName());
-		Assert.assertEquals(Category.CAT_5, result.getCategory());
+		Assert.assertEquals(Category.CAT5, result.getCategory());
 	}
 
 	@Test
@@ -98,11 +98,11 @@ public class RaceServiceTest
 	{
 		Race test = new Race(race);
 		test.setName("name");
-		test.setCategory(Category.CAT_5);
+		test.setCategory(Category.CAT5);
 		when(raceRepository.findByName("name")).thenReturn(Optional.of(test));
 
 		// test
-		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT_5));
+		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5));
 	}
 
 	@Test
@@ -112,11 +112,11 @@ public class RaceServiceTest
 		when(raceRepository.findByName("name")).thenReturn(Optional.empty());
 
 		// test
-		this.raceService.createRace("name", Category.CAT_5, startTime);
+		this.raceService.createRace("name", Category.CAT5, startTime);
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
 		Assert.assertEquals("name", result.getName());
-		Assert.assertEquals(Category.CAT_5, result.getCategory());
+		Assert.assertEquals(Category.CAT5, result.getCategory());
 		Assert.assertEquals(startTime, result.getStartTime());
 	}
 
@@ -127,13 +127,13 @@ public class RaceServiceTest
 		Date endTime = new Date();
 		Race expected = new Race(race);
 		expected.setName("name");
-		expected.setCategory(Category.CAT_5);
+		expected.setCategory(Category.CAT5);
 		expected.setStartTime(startTime);
 		expected.setEndTime(endTime);
 		when(raceRepository.findByName("name")).thenReturn(Optional.empty());
 
 		// test
-		this.raceService.createRace("name", Category.CAT_5, startTime, endTime);
+		this.raceService.createRace("name", Category.CAT5, startTime, endTime);
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
 
@@ -149,12 +149,12 @@ public class RaceServiceTest
 		Date startTime = new Date();
 		Race test = new Race(race);
 		test.setName("name");
-		test.setCategory(Category.CAT_5);
+		test.setCategory(Category.CAT5);
 		test.setStartTime(startTime);
 		when(raceRepository.findByName("name")).thenReturn(Optional.of(test));
 
 		// test
-		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT_5, startTime));
+		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5, startTime));
 	}
 
 	@Test
@@ -164,13 +164,13 @@ public class RaceServiceTest
 		Date endTime = new Date();
 		Race test = new Race(race);
 		test.setName("name");
-		test.setCategory(Category.CAT_5);
+		test.setCategory(Category.CAT5);
 		test.setStartTime(startTime);
 		test.setEndTime(endTime);
 		when(raceRepository.findByName("name")).thenReturn(Optional.of(test));
 
 		// test
-		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT_5, startTime, endTime));
+		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5, startTime, endTime));
 	}
 
 	@Test
@@ -179,13 +179,13 @@ public class RaceServiceTest
 		Race test = new Race(race);
 		Race expected = new Race(test);
 		expected.setName("New Name");
-		expected.setCategory(Category.CAT_4);
+		expected.setCategory(Category.CAT4);
 
 		when(raceRepository.findById(any(UUID.class))).thenReturn(Optional.of(test));
 		when(raceRepository.findByName("New Name")).thenReturn(Optional.empty());
 
 		// test
-		this.raceService.updateRace(test.getId(), "New Name", Category.CAT_4);
+		this.raceService.updateRace(test.getId(), "New Name", Category.CAT4);
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race argument = this.argument.getValue();
 		Assert.assertTrue(argument.equals(expected));
@@ -194,12 +194,12 @@ public class RaceServiceTest
 	@Test
 	public void shouldHandleDuplicationErrors()
 	{
-		Race existing = new Race("New Name", Category.CAT_5);
+		Race existing = new Race("New Name", Category.CAT5);
 		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
 		when(raceRepository.findByName("New Name")).thenReturn(Optional.of(existing));
 
 		// test
-		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.updateRace(requestUUID, "New Name", Category.CAT_5));
+		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.updateRace(requestUUID, "New Name", Category.CAT5));
 	}
 
 	@Test

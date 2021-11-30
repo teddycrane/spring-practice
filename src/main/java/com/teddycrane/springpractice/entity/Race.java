@@ -20,7 +20,8 @@ public class Race
 	@Column(unique = true)
 	private String name = "";
 
-	private Category category = Category.CAT_5;
+	@Enumerated(EnumType.STRING)
+	private Category category = Category.CAT5;
 
 	@OneToMany
 	private List<Racer> racers;

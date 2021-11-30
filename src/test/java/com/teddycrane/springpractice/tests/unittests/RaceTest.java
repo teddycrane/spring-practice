@@ -34,9 +34,9 @@ public class RaceTest
 		Assert.assertTrue(race.equals(new Race(race)));
 
 		// Test name constructor
-		Race namedRace = new Race("name", Category.CAT_4);
+		Race namedRace = new Race("name", Category.CAT4);
 		Assert.assertEquals("name", namedRace.getName());
-		Assert.assertEquals(Category.CAT_4, namedRace.getCategory());
+		Assert.assertEquals(Category.CAT4, namedRace.getCategory());
 		Assert.assertNotNull(namedRace.getId());
 		Assert.assertNotNull(namedRace.getRacers());
 	}
@@ -72,8 +72,8 @@ public class RaceTest
 		Assert.assertEquals("test", race.getName());
 
 		// category setter
-		race.setCategory(Category.CAT_1);
-		Assert.assertEquals(Category.CAT_1, race.getCategory());
+		race.setCategory(Category.CAT1);
+		Assert.assertEquals(Category.CAT1, race.getCategory());
 
 		// adding racer
 		race.addRacer(new Racer());

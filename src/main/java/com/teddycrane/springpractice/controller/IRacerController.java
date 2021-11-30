@@ -32,4 +32,7 @@ public interface IRacerController
 
 	@PatchMapping(path = "/restore")
 	Racer restoreRacer(@RequestParam String id) throws RacerNotFoundException;
+
+	@GetMapping(path = "/filter")
+	List<Racer> getRacersByType(@RequestParam String type, @RequestParam String value) throws BadRequestException;
 }

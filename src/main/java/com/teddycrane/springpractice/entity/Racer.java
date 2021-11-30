@@ -5,10 +5,7 @@ import com.teddycrane.springpractice.helper.EnumHelpers;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +17,8 @@ public class Racer {
 	private final UUID id;
 	private String firstName = "";
 	private String lastName = "";
-	private Category category = Category.CAT_5;
+	@Enumerated(EnumType.STRING)
+	private Category category = Category.CAT5;
 	private boolean isDeleted = false;
 
 	private Racer(UUID id, String firstName, String lastName, Category category, boolean isDeleted) {
@@ -43,7 +41,7 @@ public class Racer {
 		this();
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.category = Category.CAT_5;
+		this.category = Category.CAT5;
 	}
 
 	public UUID getId() {

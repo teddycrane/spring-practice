@@ -2,16 +2,15 @@ package com.teddycrane.springpractice.service;
 
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.FilterType;
+import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class RacerService implements IRacerService
@@ -143,6 +142,48 @@ public class RacerService implements IRacerService
 			this.logger.trace("Unable to find with id {}", id);
 			throw new RacerNotFoundException(String.format("Unable to find a racer with id %s", id));
 		}
+	}
+
+	@Override
+	public List<Racer> getRacersByType(FilterType filterType, String value) throws BadRequestException
+	{
+		this.logger.trace("getRacersByType called");
+		List<Racer> result;
+
+		switch (filterType)
+		{
+			case CATEGORY:
+			{
+				this.logger.trace("filtering racers by category {}", value);
+
+				// necessary to figure out enum value here since Java doesn't have union types
+				EnumSet<Category> values = EnumSet.allOf(Category.class);
+				if (!values.contains(Category.valueOf(value.toUpperCase())))
+				{
+					this.logger.error("Unable to parse a category value for {}", value);
+					throw new BadRequestException("Unable to parse a category value!");
+				}
+
+				result = this.racerRepository.findByCategory(Category.valueOf(value.toUpperCase()));
+				break;
+			}
+			case FIRSTNAME:
+			{
+				result = new ArrayList<>();
+				Iterable<Racer> iterable = this.racerRepository.findByFirstNameContaining(value);
+				iterable.forEach(result::add);
+				break;
+			}
+			case LASTNAME:
+			{
+				result = new ArrayList<>();
+				this.racerRepository.findByLastNameContaining(value).forEach(result::add);
+				break;
+			}
+			default:
+				result = new ArrayList<>();
+		}
+		return result;
 	}
 
 }
