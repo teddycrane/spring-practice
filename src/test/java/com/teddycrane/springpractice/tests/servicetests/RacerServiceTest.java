@@ -2,6 +2,7 @@ package com.teddycrane.springpractice.tests.servicetests;
 
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.IRacerService;
@@ -168,5 +169,15 @@ public class RacerServiceTest
 		Assert.assertEquals(3, result.size());
 
 		Assert.assertTrue(result.stream().anyMatch(Racer::getIsDeleted));
+	}
+
+	@Test
+	public void getRacersWithFilter()
+	{
+		when(racerRepository.findByCategory(Category.CAT1)).thenReturn(mockRacers);
+
+		// test
+		this.racerService.getRacersByType(FilterType.CATEGORY, "CAT1");
+		Mockito.verify(racerRepository).findByCategory(Category.CAT1);
 	}
 }
