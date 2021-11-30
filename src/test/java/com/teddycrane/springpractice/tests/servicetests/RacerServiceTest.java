@@ -95,14 +95,14 @@ public class RacerServiceTest
 		when(racerRepository.findById(request.getId())).thenReturn(Optional.of(request));
 
 		// test
-		this.racerService.updateRacer(request.getId(), "updatedFname", "updatedLname", Category.CAT_1);
+		this.racerService.updateRacer(request.getId(), "updatedFname", "updatedLname", Category.CAT1);
 		Mockito.verify(racerRepository).save(argument.capture());
 		Racer result = argument.getValue();
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals("updatedFname", result.getFirstName());
 		Assert.assertEquals("updatedLname", result.getLastName());
-		Assert.assertEquals(Category.CAT_1, result.getCategory());
+		Assert.assertEquals(Category.CAT1, result.getCategory());
 	}
 
 	@Test

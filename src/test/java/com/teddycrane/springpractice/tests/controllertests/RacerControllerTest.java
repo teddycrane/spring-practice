@@ -123,7 +123,7 @@ public class RacerControllerTest
 		when(racerService.updateRacer(any(UUID.class), any(String.class), any(String.class), any(Category.class))).thenReturn(racer);
 
 		// test
-		Racer result = this.racerController.updateRacer(new UpdateRacerRequest("firstName", "lastName", Category.CAT_5), UUID.randomUUID().toString());
+		Racer result = this.racerController.updateRacer(new UpdateRacerRequest("firstName", "lastName", Category.CAT5), UUID.randomUUID().toString());
 		Assert.assertTrue(result.equals(racer));
 	}
 
@@ -151,7 +151,7 @@ public class RacerControllerTest
 	public void updateShouldThrowBadRequestExceptionWhenTheUUIDIsBad()
 	{
 		// test
-		UpdateRacerRequest request = new UpdateRacerRequest("Firstname", "LastName", Category.CAT_5);
+		UpdateRacerRequest request = new UpdateRacerRequest("Firstname", "LastName", Category.CAT5);
 		Assert.assertThrows(BadRequestException.class, () -> this.racerController.updateRacer(request, "z!"));
 	}
 

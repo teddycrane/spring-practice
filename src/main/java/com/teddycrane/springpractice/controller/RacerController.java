@@ -171,14 +171,23 @@ public class RacerController implements IRacerController
 		Set<String> enumValues = new HashSet<>();
 		rawValues.forEach((element) -> enumValues.add(element.toString()));
 
+
 		// validate that the query param is a valid enum type (non case-sensitive)
 		if (enumValues.contains(type.toLowerCase()))
 		{
-			FilterType filterType = FilterType.valueOf(type.toLowerCase());
-			return this.racerService.getRacersByType(filterType);
+			try
+			{
+				FilterType filterType = FilterType.valueOf(type.toUpperCase());
+				return this.racerService.getRacersByType(filterType, value);
+			} catch (BadRequestException e)
+			{
+				throw new BadRequestException(e.getMessage());
+			}
 		} else
 		{
 			this.logger.error("Unable to parse the provided filter type; The filter type {} is not a valid filter type", type);
+			throw new BadRequestException("Unable to parse the provided filter type.");
 		}
+
 	}
 }

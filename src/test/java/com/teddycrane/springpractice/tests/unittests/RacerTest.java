@@ -38,7 +38,7 @@ public class RacerTest
 		Assert.assertEquals(fullConstructorTestRacer.getFirstName(), "fname");
 		Assert.assertEquals(fullConstructorTestRacer.getLastName(), "lname");
 		Assert.assertFalse(fullConstructorTestRacer.getIsDeleted());
-		Assert.assertEquals(fullConstructorTestRacer.getCategory(), Category.CAT_5);
+		Assert.assertEquals(fullConstructorTestRacer.getCategory(), Category.CAT5);
 	}
 
 	@Test
@@ -53,8 +53,8 @@ public class RacerTest
 		Assert.assertEquals(racer.getLastName(), "set last name");
 
 		// test category setter
-		racer.setCategory(Category.CAT_1);
-		Assert.assertEquals(racer.getCategory(), Category.CAT_1);
+		racer.setCategory(Category.CAT1);
+		Assert.assertEquals(racer.getCategory(), Category.CAT1);
 
 		// test deletion setter
 		racer.setIsDeleted(true);

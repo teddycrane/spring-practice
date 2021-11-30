@@ -50,7 +50,7 @@ public class RaceControllerTest
 	{
 		when(raceService.getRace(requestUUID)).thenReturn(race);
 		when(raceService.createRace(eq("test name"), any(Category.class))).thenReturn(race);
-		when(raceService.updateRace(requestUUID, "test name", Category.CAT_4)).thenReturn(race);
+		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenReturn(race);
 		when(raceService.startRace(requestUUID)).thenReturn(race);
 		when(raceService.endRace(requestUUID)).thenReturn(race);
 		when(raceService.placeRacersInFinishOrder(eq(requestUUID), any(ArrayList.class))).thenReturn(race);
@@ -102,14 +102,14 @@ public class RaceControllerTest
 	public void shouldCreateRace()
 	{
 		// test
-		Race result = this.raceController.createRace(new CreateRaceRequest("test name", Category.CAT_5));
+		Race result = this.raceController.createRace(new CreateRaceRequest("test name", Category.CAT5));
 		Assert.assertTrue(result.equals(race));
 	}
 
 	@Test
 	public void shouldUpdateRace()
 	{
-		Race result = this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT_4), requestString);
+		Race result = this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT4), requestString);
 		Assert.assertTrue(result.equals(race));
 	}
 

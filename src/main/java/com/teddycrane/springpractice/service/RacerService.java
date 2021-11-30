@@ -3,16 +3,14 @@ package com.teddycrane.springpractice.service;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.FilterType;
+import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class RacerService implements IRacerService
@@ -147,14 +145,36 @@ public class RacerService implements IRacerService
 	}
 
 	@Override
-	public List<Racer> getRacersByType(FilterType filterType)
+	public List<Racer> getRacersByType(FilterType filterType, String value) throws BadRequestException
 	{
 		this.logger.trace("getRacersByType called");
 
-		switch(filterType)
+		switch (filterType)
 		{
 			case CATEGORY:
-				return this.racerRepository.findByCategory()
+			{
+				this.logger.trace("filtering racers by category {}", value);
+				EnumSet<Category> values = EnumSet.allOf(Category.class);
+				if (!values.contains(Category.valueOf(value.toUpperCase())))
+				{
+					this.logger.error("Unable to parse a category value for {}", value);
+					throw new BadRequestException("Unable to parse a category value!");
+				}
+
+				// todo move this value transform to the controller
+				return this.racerRepository.findByCategory(Category.valueOf(value.toUpperCase()));
+			}
+			case NAME:
+			{
+				ArrayList<Racer> result = new ArrayList<>();
+				Iterable<Racer> iterable = this.racerRepository.findAll();
+				iterable.forEach(result::add);
+				return result;
+			}
+			default:
+			{
+				return new ArrayList<>();
+			}
 		}
 	}
 

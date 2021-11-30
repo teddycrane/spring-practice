@@ -21,7 +21,7 @@ public class CreateRaceRequest
 	public CreateRaceRequest()
 	{
 		this.name = "";
-		this.category = Category.CAT_5;
+		this.category = Category.CAT5;
 		this.startTime = null;
 		this.endTime = null;
 	}
