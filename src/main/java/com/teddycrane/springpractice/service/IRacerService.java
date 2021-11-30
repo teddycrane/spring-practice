@@ -33,4 +33,6 @@ public interface IRacerService {
 	List<Racer> getAllRacersWithDeleted();
 
 	Racer restoreRacer(UUID id) throws RacerNotFoundException;
+
+//	List<Racer> getRacersByType(SearchType searchType);
 }

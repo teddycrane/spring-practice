@@ -1,6 +1,7 @@
 package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.entity.Racer;
+import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
@@ -12,9 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping(path = "/racer")
@@ -34,7 +33,7 @@ public class RacerController implements IRacerController
 	@Override
 	public List<Racer> getAllRacers(boolean isDeleted)
 	{
-		this.logger.info("RacerController.getAllRaces called");
+		this.logger.trace("RacerController.getAllRaces called");
 		if (isDeleted)
 		{
 			return racerService.getAllRacersWithDeleted();
@@ -47,7 +46,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer getRacer(String id) throws RacerNotFoundException
 	{
-		this.logger.info("RacerController.getRacer called");
+		this.logger.trace("RacerController.getRacer called");
 		try
 		{
 
@@ -64,7 +63,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer addRacer(CreateRacerRequest request) throws BadRequestException
 	{
-		this.logger.info("RacerController.addRacer called");
+		this.logger.trace("RacerController.addRacer called");
 
 		try
 		{
@@ -86,7 +85,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer updateRacer(UpdateRacerRequest request, String id) throws RacerNotFoundException, BadRequestException
 	{
-		this.logger.info("RacerController.updateRacer called");
+		this.logger.trace("RacerController.updateRacer called");
 		try
 		{
 			UUID uuid = UUID.fromString(id);
@@ -115,7 +114,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer deleteRacer(String id) throws RacerNotFoundException
 	{
-		this.logger.info("RacerController.deleteRacer called");
+		this.logger.trace("RacerController.deleteRacer called");
 
 		try
 		{
@@ -131,7 +130,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer restoreRacer(String id) throws RacerNotFoundException
 	{
-		this.logger.info("RacerController.restoreRacer called");
+		this.logger.trace("RacerController.restoreRacer called");
 
 		try
 		{
@@ -141,6 +140,36 @@ public class RacerController implements IRacerController
 		{
 			logger.error("Unable to find the specified racer", e);
 			throw new RacerNotFoundException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Handles requests to return a list of racers by the provided type.
+	 *
+	 * @param type The String value of the FilterType enum to use for the search
+	 * @return A List of Racers matching the filter type
+	 * @throws BadRequestException Throws if there is not a filter type provided, or if the filter type is invalid.
+	 */
+	@Override
+	public List<Racer> getRacersByType(String type) throws BadRequestException
+	{
+		this.logger.trace("getRacersByTypeCalled");
+
+		if (type == null)
+		{
+			this.logger.error("No type provided!");
+			throw new BadRequestException("No filter type provided!");
+		}
+
+		// set of enum values
+		EnumSet<FilterType> rawValues = EnumSet.allOf(FilterType.class);
+		Set<String> enumValues = new HashSet<>();
+		rawValues.forEach((element) -> enumValues.add(element.toString()));
+
+		// validate that the query param is a valid enum type (non case-sensitive)
+		if (enumValues.contains(type.toLowerCase()))
+		{
+
 		}
 	}
 }
