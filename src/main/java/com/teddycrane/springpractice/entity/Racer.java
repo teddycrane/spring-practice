@@ -9,7 +9,8 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-public class Racer {
+public class Racer
+{
 
 	@Id
 	@Type(type = "uuid-char")
@@ -21,7 +22,8 @@ public class Racer {
 	private Category category = Category.CAT5;
 	private boolean isDeleted = false;
 
-	private Racer(UUID id, String firstName, String lastName, Category category, boolean isDeleted) {
+	private Racer(UUID id, String firstName, String lastName, Category category, boolean isDeleted)
+	{
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -29,58 +31,71 @@ public class Racer {
 		this.isDeleted = isDeleted;
 	}
 
-	public Racer() {
+	public Racer()
+	{
 		this.id = UUID.randomUUID();
 	}
 
-	public Racer(@NotNull Racer other) {
+	public Racer(@NotNull Racer other)
+	{
 		this(other.id, other.firstName, other.lastName, other.category, other.isDeleted);
 	}
 
-	public Racer(String firstName, String lastName) {
+	public Racer(String firstName, String lastName)
+	{
 		this();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.category = Category.CAT5;
 	}
 
-	public UUID getId() {
+	public UUID getId()
+	{
 		return id;
 	}
 
-	public String getFirstName() {
+	public String getFirstName()
+	{
 		return firstName;
 	}
 
-	public void setFirstName(String firstName) {
+	public void setFirstName(String firstName)
+	{
 		this.firstName = firstName;
 	}
 
-	public String getLastName() {
+	public String getLastName()
+	{
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
+	public void setLastName(String lastName)
+	{
 		this.lastName = lastName;
 	}
 
-	public Category getCategory() {
+	public Category getCategory()
+	{
 		return category;
 	}
 
-	public void setCategory(Category category) {
+	public void setCategory(Category category)
+	{
 		this.category = category;
 	}
 
-	public boolean getIsDeleted() {
+	public boolean getIsDeleted()
+	{
 		return this.isDeleted;
 	}
 
-	public void setIsDeleted(boolean isDeleted) {
+	public void setIsDeleted(boolean isDeleted)
+	{
 		this.isDeleted = isDeleted;
 	}
 
-	public boolean equals(@NotNull Racer other) {
+	public boolean equals(@NotNull Racer other)
+	{
 		return this.id == other.id &&
 				this.category == other.category &&
 				this.firstName.equals(other.firstName) && this.lastName.equals(other.lastName) &&
@@ -88,7 +103,8 @@ public class Racer {
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "{\n" +
 				String.format("    \"id\": \"%s\",\n", this.id.toString()) +
 				String.format("    \"firstName\": \"%s\",\n", this.firstName) +
@@ -99,7 +115,8 @@ public class Racer {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		int hash = 7;
 		hash = 31 * hash + this.id.hashCode();
 		hash = 31 * hash + this.firstName.hashCode();
