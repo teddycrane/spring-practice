@@ -4,6 +4,7 @@ import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
+import com.teddycrane.springpractice.models.RacerTypeSearchRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,4 +33,7 @@ public interface IRacerController
 
 	@PatchMapping(path = "/restore")
 	Racer restoreRacer(@RequestParam String id) throws RacerNotFoundException;
+
+	@GetMapping(path = "/search")
+	List<Racer> getRacersByType(@RequestBody RacerTypeSearchRequest request) throws RacerNotFoundException, BadRequestException;
 }
