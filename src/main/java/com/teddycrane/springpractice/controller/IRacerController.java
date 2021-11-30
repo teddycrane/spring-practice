@@ -37,6 +37,4 @@ public interface IRacerController
 	@GetMapping(path = "/filter")
 	List<Racer> getRacersByType(@RequestParam String type, @RequestParam String value) throws BadRequestException;
 
-	@GetMapping(path = "/search")
-	List<Racer> searchRacer (@RequestParam String searchField, @RequestParam String searchTerm) throws BadRequestException;
 }

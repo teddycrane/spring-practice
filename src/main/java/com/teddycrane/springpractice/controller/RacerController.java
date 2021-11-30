@@ -182,27 +182,4 @@ public class RacerController implements IRacerController
 			throw new BadRequestException("The provided filter type is not a valid filter type");
 		}
 	}
-
-	/**
-	 * Searches for and returns racers that have a field that matches the provided search term
-	 *
-	 * @param searchField The racer property that should be searched for
-	 * @param searchTerm  The term to search for
-	 * @return A list of racers that match the search term
-	 * @throws BadRequestException
-	 */
-	@Override
-	public List<Racer> searchRacer(String searchField, String searchTerm) throws BadRequestException
-	{
-		this.logger.trace("searchRacer called");
-
-		try
-		{
-			return new ArrayList<>();
-		} catch (Exception e)
-		{
-			// todo remove
-			throw new BadRequestException("Temp");
-		}
-	}
 }
