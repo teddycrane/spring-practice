@@ -8,8 +8,8 @@ class BaseService
 {
 	protected final Logger logger;
 
-	public BaseService(Class<?> clazz)
+	public BaseService()
 	{
-		this.logger = LogManager.getLogger(clazz);
+		this.logger = LogManager.getLogger();
 	}
 }

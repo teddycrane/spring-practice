@@ -13,15 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class RacerService implements IRacerService
+public class RacerService extends BaseService implements IRacerService
 {
 
-	private final Logger logger;
 	private final RacerRepository racerRepository;
 
 	public RacerService(RacerRepository racerRepository)
 	{
-		this.logger = LogManager.getLogger(this.getClass());
+		super();
 		this.racerRepository = racerRepository;
 	}
 

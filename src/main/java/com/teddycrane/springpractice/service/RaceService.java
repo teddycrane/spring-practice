@@ -8,25 +8,22 @@ import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.RaceResult;
 import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class RaceService implements IRaceService
+public class RaceService extends BaseService implements IRaceService
 {
 
-	private final Logger logger;
 	private final RaceRepository raceRepository;
 
 	private final RacerRepository racerRepository;
 
 	public RaceService(RaceRepository raceRepository, RacerRepository racerRepository)
 	{
-		this.logger = LogManager.getLogger(this.getClass());
+		super();
 		this.raceRepository = raceRepository;
 		this.racerRepository = racerRepository;
 	}
@@ -299,8 +296,6 @@ public class RaceService implements IRaceService
 				this.logger.error("Cannot set finishers for a race that has not been started!");
 				throw new StartException("Cannot set finishers for a race that is not started");
 			}
-
-			// todo add in error throwing for races not being started
 		} else
 		{
 			String message = String.format("Unable to find a race with the id %s", raceId);

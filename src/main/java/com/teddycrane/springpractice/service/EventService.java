@@ -13,16 +13,15 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class EventService implements IEventService
+public class EventService extends BaseService implements IEventService
 {
 
-	private final Logger logger;
 	private final EventRepository eventRepository;
 	private final RaceRepository raceRepository;
 
 	public EventService(EventRepository eventRepository, RaceRepository raceRepository)
 	{
-		this.logger = LogManager.getLogger(this.getClass());
+		super();
 		this.eventRepository = eventRepository;
 		this.raceRepository = raceRepository;
 	}
