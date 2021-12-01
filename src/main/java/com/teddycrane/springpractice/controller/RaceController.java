@@ -15,16 +15,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/race")
-public class RaceController implements IRaceController
+public class RaceController extends BaseController implements IRaceController
 {
-
-	private final Logger logger;
 
 	private final IRaceService raceService;
 
 	public RaceController(IRaceService raceService)
 	{
-		this.logger = LogManager.getLogger(this.getClass());
+		super();
 		this.raceService = raceService;
 	}
 
