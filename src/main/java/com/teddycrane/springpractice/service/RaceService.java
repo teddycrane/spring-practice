@@ -369,9 +369,13 @@ public class RaceService extends BaseService implements IRaceService
 		if (_racer.isPresent())
 		{
 			Map<UUID, Integer> response = new HashMap<>();
+			List<Race> races = new ArrayList<>();
+			this.raceRepository.findAllById(this.raceRepository.findRacesWithRacer(id.toString())).forEach(races::add);
 
-			List<UUID> raceIds = this.raceRepository.findRacesWithRacer(id.toString());
-			logger.info("Found races with the specified racer listed as a finisher");
+			races.forEach((race) -> {
+				logger.info("Calculating finish place for racer {} in race {}", id, race.getId());
+				response.put(race.getId(), race.getFinishPlace(id));
+			});
 
 			return response;
 		} else

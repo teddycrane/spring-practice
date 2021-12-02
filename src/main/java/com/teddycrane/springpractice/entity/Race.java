@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Race
@@ -137,6 +138,19 @@ public class Race
 		this.finishOrder = new HashMap<>(finishOrder);
 	}
 
+	public int getFinishPlace(UUID racerId)
+	{
+		// todo update this later to handle same finish time collisions
+		List<UUID> sortedEntryList = finishOrder.entrySet()
+				.stream()
+				.sorted(new FinishOrderComparator())
+				.map((element) -> element.getKey().getId())
+				.collect(Collectors.toList());
+
+		// we add 1 to the result since no racer can be in 0th place
+		return sortedEntryList.indexOf(racerId) + 1;
+	}
+
 	public UUID getId()
 	{
 		return this.id;
@@ -196,5 +210,24 @@ public class Race
 		hash = 31 * hash + this.finishOrder.hashCode();
 
 		return hash;
+	}
+}
+
+class FinishOrderComparator implements Comparator<Map.Entry<Racer, Date>>
+{
+
+	@Override
+	public int compare(Map.Entry<Racer, Date> o1, Map.Entry<Racer, Date> o2)
+	{
+		if (o1.getValue().before(o2.getValue()))
+		{
+			return 1;
+		} else if (o2.getValue().before(o1.getValue()))
+		{
+			return -1;
+		} else
+		{
+			return 0;
+		}
 	}
 }
