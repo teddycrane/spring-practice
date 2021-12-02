@@ -7,7 +7,7 @@ import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.RaceResult;
 import com.teddycrane.springpractice.repository.RaceRepository;
-import com.teddycrane.springpractice.repository.RacerRepository;
+import com.teddycrane.springpractice.repository.IRacerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,9 +19,9 @@ public class RaceService extends BaseService implements IRaceService
 
 	private final RaceRepository raceRepository;
 
-	private final RacerRepository racerRepository;
+	private final IRacerRepository racerRepository;
 
-	public RaceService(RaceRepository raceRepository, RacerRepository racerRepository)
+	public RaceService(RaceRepository raceRepository, IRacerRepository racerRepository)
 	{
 		super();
 		this.raceRepository = raceRepository;

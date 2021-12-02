@@ -8,6 +8,7 @@ import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -37,4 +38,6 @@ public interface IRacerService {
 	Racer restoreRacer(UUID id) throws RacerNotFoundException;
 
 	List<Racer> getRacersByType(FilterType filterType, String value) throws BadRequestException;
+
+	Map<UUID, Integer> getResultsForRacer(UUID id) throws RacerNotFoundException;
 }
