@@ -6,7 +6,7 @@ import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.repository.RaceRepository;
-import com.teddycrane.springpractice.repository.IRacerRepository;
+import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.IRaceService;
 import com.teddycrane.springpractice.service.RaceService;
 import com.teddycrane.springpractice.tests.helpers.ControllerTestHelper;
@@ -32,7 +32,7 @@ public class RaceServiceTest
 	@Mock
 	private RaceRepository raceRepository;
 	@Mock
-	private IRacerRepository racerRepository;
+	private RacerRepository racerRepository;
 	private IRaceService raceService;
 	private List<Race> raceList;
 	private Race race;

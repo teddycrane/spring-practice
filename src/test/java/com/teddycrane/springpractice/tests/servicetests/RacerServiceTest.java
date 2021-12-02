@@ -4,7 +4,7 @@ import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
-import com.teddycrane.springpractice.repository.IRacerRepository;
+import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.IRacerService;
 import com.teddycrane.springpractice.service.RacerService;
 import org.junit.Assert;
@@ -32,7 +32,7 @@ public class RacerServiceTest
 	private Racer request;
 	private IRacerService racerService;
 	@Mock
-	private IRacerRepository racerRepository;
+	private RacerRepository racerRepository;
 
 	@Before
 	public void init()

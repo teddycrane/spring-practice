@@ -5,7 +5,9 @@ import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
-import com.teddycrane.springpractice.repository.IRacerRepository;
+import com.teddycrane.springpractice.repository.RacerRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,9 +16,9 @@ import java.util.*;
 public class RacerService extends BaseService implements IRacerService
 {
 
-	private final IRacerRepository racerRepository;
+	private final RacerRepository racerRepository;
 
-	public RacerService(IRacerRepository racerRepository)
+	public RacerService(RacerRepository racerRepository)
 	{
 		super();
 		this.racerRepository = racerRepository;
@@ -181,30 +183,6 @@ public class RacerService extends BaseService implements IRacerService
 				result = new ArrayList<>();
 		}
 		return result;
-	}
-
-	@Override
-	public Map<UUID, Integer> getResultsForRacer(UUID id) throws RacerNotFoundException
-	{
-		logger.trace("getResultsForRacer called");
-
-		Optional<Racer> _racer = this.racerRepository.findById(id);
-
-		if (_racer.isPresent())
-		{
-			// create empty result set
-			Map<UUID, Integer> result = new HashMap<>();
-			Racer r = _racer.get();
-
-			List<UUID> queryResults = this.racerRepository.findRacesWithRacer(id);
-			this.logger.warn("query results {}", queryResults);
-
-			return result;
-		} else
-		{
-			logger.error("Unable to find a racer with id {}", id);
-			throw new RacerNotFoundException("Unable to find a racer with the provided id!");
-		}
 	}
 
 }

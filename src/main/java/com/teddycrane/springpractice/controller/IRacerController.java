@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/racer")
@@ -39,6 +37,4 @@ public interface IRacerController
 	@GetMapping(path = "/filter")
 	List<Racer> getRacersByType(@RequestParam String type, @RequestParam String value) throws BadRequestException;
 
-	@GetMapping(path = "/results")
-	Map<UUID, Integer> getResultsForRacer(@RequestParam String id) throws BadRequestException, RacerNotFoundException;
 }

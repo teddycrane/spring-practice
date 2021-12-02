@@ -177,21 +177,4 @@ public class RacerController extends BaseController implements IRacerController
 			throw new BadRequestException("The provided filter type is not a valid filter type");
 		}
 	}
-
-	@Override
-	public Map<UUID, Integer> getResultsForRacer(String id) throws BadRequestException, RacerNotFoundException
-	{
-		logger.trace("getResultsForRacer called");
-
-		try
-		{
-			UUID racerId = UUID.fromString(id);
-			return this.racerService.getResultsForRacer(racerId);
-		} catch (IllegalArgumentException e)
-		{
-			logger.error("Unable to parse id {}", id);
-			throw new BadRequestException("Unable to parse the provided id");
-		}
-	}
-
 }
