@@ -7,8 +7,6 @@ import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.models.CreateEventRequest;
 import com.teddycrane.springpractice.models.UpdateEventRequest;
 import com.teddycrane.springpractice.service.IEventService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,16 +14,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/events")
-public class EventController implements IEventController
+public class EventController extends BaseController implements IEventController
 {
-
-	private final Logger logger;
 
 	private final IEventService eventService;
 
 	public EventController(IEventService eventService)
 	{
-		this.logger = LogManager.getLogger(this.getClass());
+		super();
 		this.eventService = eventService;
 	}
 

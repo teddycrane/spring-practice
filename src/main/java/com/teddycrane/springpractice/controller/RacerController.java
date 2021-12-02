@@ -6,35 +6,32 @@ import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
+import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
 import com.teddycrane.springpractice.service.IRacerService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@Controller
+@RestController
 @RequestMapping(path = "/racer")
-public class RacerController implements IRacerController
+public class RacerController extends BaseController implements IRacerController
 {
-
-	private final Logger logger;
 
 	private final IRacerService racerService;
 
 	public RacerController(IRacerService racerService)
 	{
-		this.logger = LogManager.getLogger(this.getClass());
+		super();
 		this.racerService = racerService;
 	}
 
 	@Override
 	public List<Racer> getAllRacers(boolean isDeleted)
 	{
-		this.logger.trace("RacerController.getAllRaces called");
+		this.logger.trace("getAllRaces called");
 		if (isDeleted)
 		{
 			return racerService.getAllRacersWithDeleted();
@@ -47,7 +44,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer getRacer(String id) throws RacerNotFoundException
 	{
-		this.logger.trace("RacerController.getRacer called");
+		this.logger.trace("getRacer called");
 		try
 		{
 
@@ -56,7 +53,7 @@ public class RacerController implements IRacerController
 
 		} catch (RacerNotFoundException e)
 		{
-			logger.error("No racer found!", e);
+			logger.error("No racer found for the given id {}", id);
 			throw new RacerNotFoundException(String.format("No racer found with id %s", id));
 		}
 	}
@@ -64,7 +61,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer addRacer(CreateRacerRequest request) throws BadRequestException
 	{
-		this.logger.trace("RacerController.addRacer called");
+		this.logger.trace("addRacer called");
 
 		try
 		{
@@ -86,7 +83,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer updateRacer(UpdateRacerRequest request, String id) throws RacerNotFoundException, BadRequestException
 	{
-		this.logger.trace("RacerController.updateRacer called");
+		this.logger.trace("updateRacer called");
 		try
 		{
 			UUID uuid = UUID.fromString(id);
@@ -99,15 +96,14 @@ public class RacerController implements IRacerController
 					request.getCategory().isPresent() ? request.getCategory().get() : null);
 		} catch (BadRequestException e)
 		{
-			logger.error("Bad request", e);
 			throw new BadRequestException(e.getMessage());
 		} catch (RacerNotFoundException e)
 		{
-			logger.error("No racer found!", e);
+			logger.error("No racer found with the id {}", id);
 			throw new RacerNotFoundException(String.format("No racer found with id %s.", id));
 		} catch (IllegalArgumentException e)
 		{
-			logger.error("Unable to parse the provided id", e);
+			logger.error("Unable to parse the id {}", id);
 			throw new BadRequestException(String.format("Unable to parse the id %s. Please try again", id));
 		}
 	}
@@ -115,7 +111,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer deleteRacer(String id) throws RacerNotFoundException
 	{
-		this.logger.trace("RacerController.deleteRacer called");
+		this.logger.trace("deleteRacer called");
 
 		try
 		{
@@ -123,7 +119,7 @@ public class RacerController implements IRacerController
 			return this.racerService.deleteRacer(uuid);
 		} catch (NoSuchElementException e)
 		{
-			logger.error("No element found with the provided id", e);
+			logger.error("No element found with the id {}", id);
 			throw new RacerNotFoundException(e.getMessage());
 		}
 	}
@@ -131,7 +127,7 @@ public class RacerController implements IRacerController
 	@Override
 	public Racer restoreRacer(String id) throws RacerNotFoundException
 	{
-		this.logger.trace("RacerController.restoreRacer called");
+		this.logger.trace("restoreRacer called");
 
 		try
 		{
@@ -139,7 +135,7 @@ public class RacerController implements IRacerController
 			return this.racerService.restoreRacer(uuid);
 		} catch (RacerNotFoundException e)
 		{
-			logger.error("Unable to find the specified racer", e);
+			logger.error("Unable to find a racer with id {}", id);
 			throw new RacerNotFoundException(e.getMessage());
 		}
 	}
@@ -156,28 +152,18 @@ public class RacerController implements IRacerController
 	{
 		this.logger.trace("getRacersByType called");
 
-		// set of enum values
-		EnumSet<FilterType> rawValues = EnumSet.allOf(FilterType.class);
-		Set<String> enumValues = new HashSet<>();
-		rawValues.forEach((element) -> enumValues.add(element.toString()));
-
-
 		// validate that the query param is a valid enum type (non case-sensitive)
-		if (enumValues.contains(type.toLowerCase()))
+		if (EnumHelpers.testEnumValue(FilterType.class, type))
 		{
 			try
 			{
 				FilterType filterType = FilterType.valueOf(type.toUpperCase());
 
 				// category validation
-				if (filterType == FilterType.CATEGORY)
+				if (filterType == FilterType.CATEGORY && !EnumHelpers.testEnumValue(Category.class, value))
 				{
-					EnumSet<Category> categorySet = EnumSet.allOf(Category.class);
-					if (!categorySet.contains(Category.valueOf(value.toUpperCase())))
-					{
-						this.logger.error("Unable to parse the category value {}", value);
-						throw new BadRequestException("Unable to parse the provided category value!");
-					}
+					this.logger.error("Unable to parse the category value {}", value);
+					throw new BadRequestException("Unable to parse the provided category value!");
 				}
 
 				return this.racerService.getRacersByType(filterType, value.toUpperCase());
@@ -187,9 +173,8 @@ public class RacerController implements IRacerController
 			}
 		} else
 		{
-			this.logger.error("Unable to parse the provided filter type; The filter type {} is not a valid filter type", type);
-			throw new BadRequestException("Unable to parse the provided filter type.");
+			this.logger.error("The filter type {} is not a valid filter type", type);
+			throw new BadRequestException("The provided filter type is not a valid filter type");
 		}
-
 	}
 }

@@ -6,10 +6,7 @@ import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.models.RaceResult;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public interface IRaceService {
@@ -37,4 +34,6 @@ public interface IRaceService {
 	RaceResult getResults(UUID raceId) throws RaceNotFoundException;
 
 	Race deleteRace(UUID raceId) throws RaceNotFoundException;
+
+	Map<UUID, Integer> getResultsForRacer(UUID id) throws RacerNotFoundException;
 }

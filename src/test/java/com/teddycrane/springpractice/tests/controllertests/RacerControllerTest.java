@@ -219,6 +219,6 @@ public class RacerControllerTest
 	{
 		Assert.assertThrows(BadRequestException.class, () -> this.racerController.getRacersByType("bad value", "bad value"));
 
-		Assert.assertThrows(IllegalArgumentException.class, () -> this.racerController.getRacersByType("category", "bad value"));
+		Assert.assertThrows(BadRequestException.class, () -> this.racerController.getRacersByType("category", "bad value"));
 	}
 }

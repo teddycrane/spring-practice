@@ -5,6 +5,7 @@ import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,4 +36,5 @@ public interface IRacerController
 
 	@GetMapping(path = "/filter")
 	List<Racer> getRacersByType(@RequestParam String type, @RequestParam String value) throws BadRequestException;
+
 }
