@@ -8,10 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/race")
@@ -254,6 +251,25 @@ public class RaceController extends BaseController implements IRaceController
 		{
 			this.logger.error("Unable to parse the id {}", raceId);
 			throw new BadRequestException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Map<UUID, Integer> getResultsForRacer(String id) throws BadRequestException, RacerNotFoundException
+	{
+		logger.trace("getResultsForRacer called");
+
+		try
+		{
+			UUID racerId = UUID.fromString(id);
+			return this.raceService.getResultsForRacer(racerId);
+		} catch (IllegalArgumentException e)
+		{
+			logger.error("Unable to parse the id {}", id);
+			throw new BadRequestException("Unable to parse the provided id");
+		} catch (RacerNotFoundException e)
+		{
+			throw new RacerNotFoundException(e.getMessage());
 		}
 	}
 }

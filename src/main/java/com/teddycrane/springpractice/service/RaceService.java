@@ -357,4 +357,27 @@ public class RaceService extends BaseService implements IRaceService
 			throw new RaceNotFoundException(String.format("Unable to find a race with the id %s", raceId));
 		}
 	}
+
+
+	@Override
+	public Map<UUID, Integer> getResultsForRacer(UUID id) throws RacerNotFoundException
+	{
+		logger.trace("getResultsForRacer called");
+
+		Optional<Racer> _racer = this.racerRepository.findById(id);
+
+		if (_racer.isPresent())
+		{
+			Map<UUID, Integer> response = new HashMap<>();
+
+			List<UUID> raceIds = this.raceRepository.findRacesWithRacer(id.toString());
+			logger.info("Found races with the specified racer listed as a finisher");
+
+			return response;
+		} else
+		{
+			logger.error("Unable to find a racer with id {}", id);
+			throw new RacerNotFoundException("Unable to find a racer with the provided id!");
+		}
+	}
 }
