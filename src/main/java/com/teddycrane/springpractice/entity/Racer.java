@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -21,14 +22,16 @@ public class Racer
 	@Enumerated(EnumType.STRING)
 	private Category category = Category.CAT5;
 	private boolean isDeleted = false;
+	private Date birthDate;
 
-	private Racer(UUID id, String firstName, String lastName, Category category, boolean isDeleted)
+	private Racer(UUID id, String firstName, String lastName, Category category, boolean isDeleted, Date birthDate)
 	{
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.category = category;
 		this.isDeleted = isDeleted;
+		this.birthDate = birthDate;
 	}
 
 	public Racer()
@@ -38,7 +41,7 @@ public class Racer
 
 	public Racer(@NotNull Racer other)
 	{
-		this(other.id, other.firstName, other.lastName, other.category, other.isDeleted);
+		this(other.id, other.firstName, other.lastName, other.category, other.isDeleted, other.birthDate);
 	}
 
 	public Racer(String firstName, String lastName)
@@ -47,6 +50,12 @@ public class Racer
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.category = Category.CAT5;
+	}
+
+	public Racer(String firstName, String lastName, Date birthDate)
+	{
+		this(firstName, lastName);
+		this.birthDate = birthDate;
 	}
 
 	public UUID getId()
@@ -94,12 +103,23 @@ public class Racer
 		this.isDeleted = isDeleted;
 	}
 
+	public Date getBirthDate()
+	{
+		return birthDate;
+	}
+
+	public void setBirthDate(Date birthDate)
+	{
+		this.birthDate = birthDate;
+	}
+
 	public boolean equals(@NotNull Racer other)
 	{
 		return this.id == other.id &&
 				this.category == other.category &&
 				this.firstName.equals(other.firstName) && this.lastName.equals(other.lastName) &&
-				this.isDeleted == other.isDeleted;
+				this.isDeleted == other.isDeleted &&
+				this.birthDate.equals(other.birthDate);
 	}
 
 	@Override
@@ -110,7 +130,8 @@ public class Racer
 				String.format("    \"firstName\": \"%s\",\n", this.firstName) +
 				String.format("    \"lastName\": \"%s\",\n", this.lastName) +
 				String.format("    \"category\": \"%s\",\n", EnumHelpers.getCategoryMapping(this.category)) +
-				String.format("    \"isDeleted\": \"%s\"\n", this.isDeleted) +
+				String.format("    \"isDeleted\": \"%s\",\n", this.isDeleted) +
+				String.format("    \"birthDate\" : \"%s\"\n", this.birthDate) +
 				"}";
 	}
 
@@ -122,6 +143,7 @@ public class Racer
 		hash = 31 * hash + this.firstName.hashCode();
 		hash = 31 * hash + this.lastName.hashCode();
 		hash = 31 * hash + this.category.hashCode();
+		hash = 31 * hash + this.birthDate.hashCode();
 		if (this.isDeleted) hash++;
 
 		return hash;
