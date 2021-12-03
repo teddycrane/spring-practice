@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.controller;
+package com.teddycrane.springpractice.controller.model;
 
 import com.teddycrane.springpractice.models.Health;
 import org.springframework.web.bind.annotation.GetMapping;

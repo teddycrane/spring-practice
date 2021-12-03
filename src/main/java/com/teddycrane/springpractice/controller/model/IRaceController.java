@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.controller;
+package com.teddycrane.springpractice.controller.model;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.*;

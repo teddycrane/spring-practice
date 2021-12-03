@@ -3,7 +3,7 @@
     <module name="spring-practice" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.teddycrane.springpractice.controller.*" />
+        <option name="PATTERN" value="com.teddycrane.springpractice.controller.model.*" />
         <option name="ENABLED" value="true" />
       </pattern>
       <pattern>

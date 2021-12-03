@@ -1,7 +1,7 @@
 package com.teddycrane.springpractice.tests.controllertests;
 
 import com.teddycrane.springpractice.controller.EventController;
-import com.teddycrane.springpractice.controller.IEventController;
+import com.teddycrane.springpractice.controller.model.IEventController;
 import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.models.CreateEventRequest;
 import com.teddycrane.springpractice.service.IEventService;

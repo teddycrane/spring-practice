@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.controller;
 
+import com.teddycrane.springpractice.controller.model.IEventController;
 import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;

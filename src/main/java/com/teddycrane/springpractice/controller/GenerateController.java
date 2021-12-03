@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.controller;
 
+import com.teddycrane.springpractice.controller.model.IGenerateController;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
