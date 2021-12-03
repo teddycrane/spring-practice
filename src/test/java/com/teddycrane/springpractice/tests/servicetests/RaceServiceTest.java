@@ -7,7 +7,7 @@ import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
-import com.teddycrane.springpractice.service.IRaceService;
+import com.teddycrane.springpractice.service.model.IRaceService;
 import com.teddycrane.springpractice.service.RaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;

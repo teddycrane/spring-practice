@@ -10,6 +10,6 @@ abstract class BaseService
 
 	public BaseService()
 	{
-		this.logger = LogManager.getLogger();
+		this.logger = LogManager.getLogger(this.getClass());
 	}
 }

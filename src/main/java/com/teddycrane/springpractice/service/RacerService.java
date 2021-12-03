@@ -6,8 +6,7 @@ import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.teddycrane.springpractice.service.model.IRacerService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

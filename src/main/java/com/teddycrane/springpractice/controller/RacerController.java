@@ -10,7 +10,7 @@ import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
-import com.teddycrane.springpractice.service.IRacerService;
+import com.teddycrane.springpractice.service.model.IRacerService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;

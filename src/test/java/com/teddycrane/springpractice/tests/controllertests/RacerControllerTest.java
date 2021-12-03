@@ -8,7 +8,7 @@ import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
-import com.teddycrane.springpractice.service.IRacerService;
+import com.teddycrane.springpractice.service.model.IRacerService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;
 import org.junit.Before;

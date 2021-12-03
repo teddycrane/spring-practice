@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping(path = "/generate")
 public interface IGenerateController
 {
 	@PostMapping(path = "/racer")
-	Racer generateSingleRacer(@RequestParam(required = false) String category) throws BadRequestException;
+	Collection<Racer> generateRacer(@RequestParam(required = false) String category, @RequestParam(required = false) Integer number) throws BadRequestException;
 }

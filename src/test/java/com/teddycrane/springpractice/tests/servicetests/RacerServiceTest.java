@@ -5,7 +5,7 @@ import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.FilterType;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
-import com.teddycrane.springpractice.service.IRacerService;
+import com.teddycrane.springpractice.service.model.IRacerService;
 import com.teddycrane.springpractice.service.RacerService;
 import org.junit.Assert;
 import org.junit.Before;

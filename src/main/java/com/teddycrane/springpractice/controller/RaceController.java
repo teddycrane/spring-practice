@@ -4,7 +4,7 @@ import com.teddycrane.springpractice.controller.model.IRaceController;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.models.*;
-import com.teddycrane.springpractice.service.IRaceService;
+import com.teddycrane.springpractice.service.model.IRaceService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;

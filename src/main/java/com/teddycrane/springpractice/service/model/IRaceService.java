@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.service;
+package com.teddycrane.springpractice.service.model;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.enums.Category;
@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service
-public interface IRaceService {
+@Service public interface IRaceService {
 
 	List<Race> getAllRaces();
 

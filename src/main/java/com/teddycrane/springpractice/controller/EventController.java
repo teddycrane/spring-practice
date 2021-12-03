@@ -7,7 +7,7 @@ import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.models.CreateEventRequest;
 import com.teddycrane.springpractice.models.UpdateEventRequest;
-import com.teddycrane.springpractice.service.IEventService;
+import com.teddycrane.springpractice.service.model.IEventService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

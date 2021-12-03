@@ -6,8 +6,7 @@ import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.repository.EventRepository;
 import com.teddycrane.springpractice.repository.RaceRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.teddycrane.springpractice.service.model.IEventService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

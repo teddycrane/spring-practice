@@ -1,50 +1,54 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="All Tests" type="JUnit" factoryName="JUnit">
-        <module name="spring-practice"/>
-        <extension name="coverage">
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.controller.model.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.controller.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.entity.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.enums.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.exceptions.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.helper.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.models.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.repository.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-            <pattern>
-                <option name="PATTERN" value="com.teddycrane.springpractice.service.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-        </extension>
-        <option name="PACKAGE_NAME" value="com.teddycrane.springpractice"/>
-        <option name="MAIN_CLASS_NAME" value=""/>
-        <option name="METHOD_NAME" value=""/>
-        <option name="TEST_OBJECT" value="package"/>
-        <method v="2">
-            <option name="Make" enabled="true"/>
-        </method>
-    </configuration>
+  <configuration default="false" name="All Tests" type="JUnit" factoryName="JUnit">
+    <module name="spring-practice" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.controller.model.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.controller.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.entity.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.enums.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.exceptions.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.helper.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.models.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.repository.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.service.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.service.model.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="PACKAGE_NAME" value="com.teddycrane.springpractice" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="package" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
 </component>

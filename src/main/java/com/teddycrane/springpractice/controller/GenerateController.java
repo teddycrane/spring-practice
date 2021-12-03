@@ -5,9 +5,12 @@ import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.helper.EnumHelpers;
-import com.teddycrane.springpractice.service.IGenerateService;
+import com.teddycrane.springpractice.service.model.IGenerateService;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping(path = "/generate")
@@ -23,23 +26,33 @@ public class GenerateController extends BaseController implements IGenerateContr
 	}
 
 	@Override
-	public Racer generateSingleRacer(String category) throws BadRequestException
+	public Collection<Racer> generateRacer(@Nullable String category, @Nullable Integer number) throws BadRequestException
 	{
-		logger.trace("generateSingleRacer called");
+		logger.trace("generateRacer called");
 
-		if (category != null)
+		boolean validCategory = category != null && EnumHelpers.testEnumValue(Category.class, category);
+		boolean validNumber = number != null;
+
+		if (validNumber && validCategory)
 		{
-			// test if category is valid
-			if (EnumHelpers.testEnumValue(Category.class, category))
-			{
-				return this.generateService.generateSingleRacer(Category.valueOf(category.toUpperCase()));
-			} else {
-				logger.error("The provided value {} is not a valid category value!", category);
-				throw new BadRequestException("");
-			}
+			logger.trace("Creating {} racers with category {}", number, category);
+			return this.generateService.generateRacers(number, Category.valueOf(category.toUpperCase()));
+		} else if (validNumber)
+		{
+			logger.trace("Creating {} racers", number);
+			return this.generateService.generateRacers(number);
+		} else if (validCategory)
+		{
+			logger.trace("Creating racer with category {}", category);
+			return this.generateService.generateRacer(Category.valueOf(category.toUpperCase()));
+		} else if (category != null && !EnumHelpers.testEnumValue(Category.class, category))
+		{
+			logger.error("{} is not a valid Category!", category);
+			throw new BadRequestException("The provided category value is not valid");
 		} else
 		{
-			return this.generateService.generateSingleRacer();
+			logger.trace("returning single new Racer");
+			return this.generateService.generateRacer();
 		}
 	}
 }

@@ -4,7 +4,7 @@ import com.teddycrane.springpractice.controller.EventController;
 import com.teddycrane.springpractice.controller.model.IEventController;
 import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.models.CreateEventRequest;
-import com.teddycrane.springpractice.service.IEventService;
+import com.teddycrane.springpractice.service.model.IEventService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;
 import org.junit.Before;

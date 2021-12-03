@@ -4,7 +4,11 @@ import com.github.javafaker.Faker;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.repository.RacerRepository;
+import com.teddycrane.springpractice.service.model.IGenerateService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Service
 public class GenerateService extends BaseService implements IGenerateService
@@ -20,24 +24,57 @@ public class GenerateService extends BaseService implements IGenerateService
 		this.faker = new Faker();
 	}
 
-
 	@Override
-	public Racer generateSingleRacer()
+	public Collection<Racer> generateRacers(Integer number, Category category)
 	{
-		logger.trace("generateSingleRacer called");
-		Racer r = new Racer(faker.name().firstName(), faker.name().lastName(), faker.date().birthday(10, 99));
+		logger.trace("generateRacers called: number: {}, category: {}", number, category);
 
-		return this.racerRepository.save(r);
+		Collection<Racer> result = new ArrayList<>();
+		for (int i = 0; i < number; i++)
+		{
+			Racer r = new Racer(faker.name().firstName(), faker.name().lastName(), faker.date().birthday(10, 99));
+			r.setCategory(category);
+			result.add(this.racerRepository.save(r));
+		}
+
+		return result;
 	}
 
 	@Override
-	public Racer generateSingleRacer(Category category)
+	public Collection<Racer> generateRacers(Integer number)
 	{
-		logger.trace("generateSingleRacer called with category {}", category);
+		logger.trace("generateRacers called: number: {}", number);
 
+		Collection<Racer> result = new ArrayList<>();
+
+		for (int i = 0; i < number; i++)
+		{
+			result.add(this.racerRepository.save(new Racer(faker.name().firstName(), faker.name().lastName(), faker.date().birthday(10, 99))));
+		}
+
+		return result;
+	}
+
+	@Override
+	public Collection<Racer> generateRacer(Category category)
+	{
+		logger.trace("generateRacer called with category: {}", category);
+
+		Collection<Racer> result = new ArrayList<>();
 		Racer r = new Racer(faker.name().firstName(), faker.name().lastName(), faker.date().birthday(10, 99));
 		r.setCategory(category);
+		result.add(this.racerRepository.save(r));
 
-		return this.racerRepository.save(r);
+		return result;
+	}
+
+	@Override
+	public Collection<Racer> generateRacer()
+	{
+		logger.trace("generateRacer called");
+
+		Collection<Racer> result = new ArrayList<>();
+		result.add(this.racerRepository.save(new Racer(faker.name().firstName(), faker.name().lastName(), faker.date().birthday(10, 99))));
+		return result;
 	}
 }
