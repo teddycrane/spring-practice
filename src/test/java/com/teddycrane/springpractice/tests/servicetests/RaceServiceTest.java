@@ -9,7 +9,7 @@ import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.IRaceService;
 import com.teddycrane.springpractice.service.RaceService;
-import com.teddycrane.springpractice.tests.helpers.ControllerTestHelper;
+import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class RaceServiceTest
 	{
 		MockitoAnnotations.openMocks(this);
 		this.raceService = new RaceService(raceRepository, racerRepository);
-		this.raceList = ControllerTestHelper.generateRaceList(10);
+		this.raceList = TestResourceGenerator.generateRaceList(10);
 		this.race = new Race();
 
 		// DB response mocking
@@ -219,7 +219,7 @@ public class RaceServiceTest
 		for (int i = 0; i < 5; i++)
 			racerIds.add(UUID.randomUUID());
 
-		when(racerRepository.findAllById(any(Iterable.class))).thenReturn(ControllerTestHelper.generateRacerList(5));
+		when(racerRepository.findAllById(any(Iterable.class))).thenReturn(TestResourceGenerator.generateRacerList(5));
 		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
 
 		// test
@@ -266,7 +266,7 @@ public class RaceServiceTest
 	@Test
 	public void shouldSetRacersInFinishPlaces()
 	{
-		List<Racer> racerList = ControllerTestHelper.generateRacerList(5);
+		List<Racer> racerList = TestResourceGenerator.generateRacerList(5);
 		Date startTime = new Date();
 		Race expected = new Race(race);
 		expected.setStartTime(startTime);

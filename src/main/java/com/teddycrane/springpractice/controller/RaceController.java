@@ -4,8 +4,6 @@ import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.models.*;
 import com.teddycrane.springpractice.service.IRaceService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -62,19 +60,19 @@ public class RaceController extends BaseController implements IRaceController
 	public Race createRace(CreateRaceRequest request) throws BadRequestException, DuplicateItemException
 	{
 		this.logger.info("createRace called");
+		if (request == null)
+		{
+			logger.error("No request body provided!");
+			throw new BadRequestException("The request body cannot be empty");
+		}
+
 		try
 		{
-			if (request == null)
-				throw new IllegalArgumentException("Request cannot be null");
 			return this.raceService.createRace(request.getName(), request.getCategory());
 		} catch (DuplicateItemException e)
 		{
 			this.logger.error("Unable to create a duplicate item", e);
 			throw new DuplicateItemException(e.getMessage());
-		} catch (IllegalArgumentException e)
-		{
-			this.logger.error("Bad request", e);
-			throw new BadRequestException(e.getMessage());
 		}
 	}
 

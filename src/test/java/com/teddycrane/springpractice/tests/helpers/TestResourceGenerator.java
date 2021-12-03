@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ControllerTestHelper
+public class TestResourceGenerator
 {
 
 	public static @NotNull Racer generateRacer()

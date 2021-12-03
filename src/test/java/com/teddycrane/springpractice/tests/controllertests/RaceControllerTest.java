@@ -4,28 +4,30 @@ import com.teddycrane.springpractice.controller.RaceController;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.exceptions.BadRequestException;
+import com.teddycrane.springpractice.exceptions.DuplicateItemException;
+import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.models.AddRacerRequest;
 import com.teddycrane.springpractice.models.CreateRaceRequest;
 import com.teddycrane.springpractice.models.SetResultRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
 import com.teddycrane.springpractice.service.IRaceService;
-import com.teddycrane.springpractice.tests.helpers.ControllerTestHelper;
+import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.teddycrane.springpractice.tests.helpers.ControllerTestHelper.generateRacer;
+import static com.teddycrane.springpractice.tests.helpers.TestResourceGenerator.generateRacer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RaceControllerTest
@@ -40,6 +42,9 @@ public class RaceControllerTest
 	@Mock
 	private IRaceService raceService;
 
+	@Captor
+	private ArgumentCaptor<UUID> idCaptor;
+
 
 	/**
 	 * Maps the mock service layer results based on the provided inputs
@@ -48,8 +53,6 @@ public class RaceControllerTest
 	 */
 	private void setupMockResponses(Race race)
 	{
-		when(raceService.getRace(requestUUID)).thenReturn(race);
-		when(raceService.createRace(eq("test name"), any(Category.class))).thenReturn(race);
 		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenReturn(race);
 		when(raceService.startRace(requestUUID)).thenReturn(race);
 		when(raceService.endRace(requestUUID)).thenReturn(race);
@@ -62,11 +65,11 @@ public class RaceControllerTest
 		MockitoAnnotations.openMocks(this);
 		raceController = new RaceController(raceService);
 		// generate racers
-		racerList = ControllerTestHelper.generateRacerList(5);
+		racerList = TestResourceGenerator.generateRacerList(5);
 		this.race = new Race();
 		race.setName("default name");
 		// generate race list
-		raceList = ControllerTestHelper.generateRaceList(5);
+		raceList = TestResourceGenerator.generateRaceList(5);
 
 		race.setRacers(racerList);
 
@@ -74,7 +77,8 @@ public class RaceControllerTest
 		this.setupMockResponses(this.race);
 	}
 
-	// happy path tests
+
+	// get all races tests
 
 	@Test
 	public void shouldGetAllRaces()
@@ -91,20 +95,62 @@ public class RaceControllerTest
 		}
 	}
 
+	// get single race
+
 	@Test
 	public void getRaceShouldReturnARace()
 	{
+		when(raceService.getRace(requestUUID)).thenReturn(race);
+
+		// test
 		Race result = this.raceController.getRace(requestString);
+		verify(raceService).getRace(idCaptor.capture());
+		UUID request = idCaptor.getValue();
+
 		Assert.assertTrue(result.equals(race));
+		Assert.assertEquals(requestUUID, request);
 	}
+
+	@Test
+	public void shouldHandleServiceExceptions()
+	{
+		when(raceService.getRace(requestUUID)).thenThrow(RaceNotFoundException.class);
+
+		// test
+		Assert.assertThrows(RaceNotFoundException.class, () -> this.raceController.getRace(requestString));
+		Assert.assertThrows(BadRequestException.class, () -> this.raceController.getRace("test bad uuid"));
+	}
+
+	// Create race
 
 	@Test
 	public void shouldCreateRace()
 	{
+		when(raceService.createRace(eq("test name"), any(Category.class))).thenReturn(race);
+		ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Category> category = ArgumentCaptor.forClass(Category.class);
+
 		// test
 		Race result = this.raceController.createRace(new CreateRaceRequest("test name", Category.CAT5));
+		verify(raceService).createRace(name.capture(), category.capture());
+
+		Assert.assertEquals("test name", name.getValue());
+		Assert.assertEquals(Category.CAT5, category.getValue());
 		Assert.assertTrue(result.equals(race));
 	}
+
+	@Test
+	public void shouldHandleCreateErrors()
+	{
+		when(raceService.createRace("test name", Category.CAT5)).thenThrow(DuplicateItemException.class);
+
+		Assert.assertThrows(BadRequestException.class, () -> this.raceController.createRace(null));
+
+		Assert.assertThrows(DuplicateItemException.class,
+				() -> this.raceController.createRace(new CreateRaceRequest("test name", Category.CAT5)));
+	}
+
+	// Update Race
 
 	@Test
 	public void shouldUpdateRace()
