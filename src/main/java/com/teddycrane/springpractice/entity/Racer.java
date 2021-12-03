@@ -115,24 +115,28 @@ public class Racer
 
 	public boolean equals(@NotNull Racer other)
 	{
-		return this.id == other.id &&
+		boolean result = this.id == other.id &&
 				this.category == other.category &&
 				this.firstName.equals(other.firstName) && this.lastName.equals(other.lastName) &&
-				this.isDeleted == other.isDeleted &&
-				this.birthDate.equals(other.birthDate);
+				this.isDeleted == other.isDeleted;
+		if (this.birthDate != null && other.birthDate != null)
+			result = result && this.birthDate.equals(other.birthDate);
+		return result;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "{\n" +
-				String.format("    \"id\": \"%s\",\n", this.id.toString()) +
-				String.format("    \"firstName\": \"%s\",\n", this.firstName) +
-				String.format("    \"lastName\": \"%s\",\n", this.lastName) +
-				String.format("    \"category\": \"%s\",\n", EnumHelpers.getCategoryMapping(this.category)) +
-				String.format("    \"isDeleted\": \"%s\",\n", this.isDeleted) +
-				String.format("    \"birthDate\" : \"%s\"\n", this.birthDate) +
-				"}";
+		StringBuilder result = new StringBuilder();
+		result.append("{\n");
+		result.append(String.format("    \"id\": \"%s\",\n", this.id));
+		result.append(String.format("    \"firstName\": \"%s\",\n", this.firstName));
+		result.append(String.format("    \"lastName\": \"%s\",\n", this.lastName));
+		result.append(String.format("    \"category\": \"%s\",\n", EnumHelpers.getCategoryMapping(this.category)));
+		if (birthDate != null) result.append(String.format("    \"birthDate\" : \"%s\"\n", this.birthDate));
+		result.append(String.format("    \"isDeleted\": \"%s\"\n", this.isDeleted));
+		result.append("}");
+		return result.toString();
 	}
 
 	@Override
@@ -143,7 +147,7 @@ public class Racer
 		hash = 31 * hash + this.firstName.hashCode();
 		hash = 31 * hash + this.lastName.hashCode();
 		hash = 31 * hash + this.category.hashCode();
-		hash = 31 * hash + this.birthDate.hashCode();
+		if (this.birthDate != null) hash = 31 * hash + this.birthDate.hashCode();
 		if (this.isDeleted) hash++;
 
 		return hash;
