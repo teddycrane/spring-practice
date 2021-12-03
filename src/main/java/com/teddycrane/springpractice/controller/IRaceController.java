@@ -25,7 +25,7 @@ public interface IRaceController
 	Race createRace(@RequestBody @Valid CreateRaceRequest request) throws BadRequestException, DuplicateItemException;
 
 	@PatchMapping
-	Race updateRace(@RequestBody @Valid UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, DuplicateItemException;
+	Race updateRace(@RequestBody @Valid UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, RaceNotFoundException, UpdateException;
 
 	@PatchMapping(path = "/add-racer")
 	Race addRacer(@RequestBody @Valid AddRacerRequest request, @RequestParam String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException;

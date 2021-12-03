@@ -13,6 +13,7 @@ import com.teddycrane.springpractice.models.SetResultRequest;
 import com.teddycrane.springpractice.models.UpdateRaceRequest;
 import com.teddycrane.springpractice.service.IRaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
+import org.hibernate.sql.Update;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +54,6 @@ public class RaceControllerTest
 	 */
 	private void setupMockResponses(Race race)
 	{
-		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenReturn(race);
 		when(raceService.startRace(requestUUID)).thenReturn(race);
 		when(raceService.endRace(requestUUID)).thenReturn(race);
 		when(raceService.placeRacersInFinishOrder(eq(requestUUID), any(ArrayList.class))).thenReturn(race);
@@ -155,8 +155,29 @@ public class RaceControllerTest
 	@Test
 	public void shouldUpdateRace()
 	{
+		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenReturn(race);
+		ArgumentCaptor<String> newName = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Category> newCategory = ArgumentCaptor.forClass(Category.class);
+
+		// test
 		Race result = this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT4), requestString);
+		verify(raceService).updateRace(idCaptor.capture(), newName.capture(), newCategory.capture());
+
+		// should use the correct parameters
+		Assert.assertEquals(requestUUID, idCaptor.getValue());
+		Assert.assertEquals("test name", newName.getValue());
+		Assert.assertEquals(Category.CAT4, newCategory.getValue());
 		Assert.assertTrue(result.equals(race));
+	}
+
+	@Test
+	public void shouldHandleUpdateErrors()
+	{
+		// both  params invalid
+		Assert.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest(null, null), UUID.randomUUID().toString()));
+
+		// bad UUID
+		Assert.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), "bad value"));
 	}
 
 	@Test

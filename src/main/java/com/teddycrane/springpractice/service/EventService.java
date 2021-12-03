@@ -61,7 +61,7 @@ public class EventService extends BaseService implements IEventService
 
 		if (existing.isPresent() && existing.get().getStartDate().equals(startDate) && existing.get().getEndDate().equals(endDate))
 		{
-			this.logger.info("Duplicate item detected");
+			this.logger.error("Duplicate item detected for name {}", name);
 			throw new DuplicateItemException(String.format("An event with the name %s already exists! Try adding a race to this event instead. ", name));
 		}
 

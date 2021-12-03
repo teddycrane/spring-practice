@@ -28,14 +28,14 @@ public class EventController extends BaseController implements IEventController
 	@Override
 	public List<Event> getAllEvents()
 	{
-		this.logger.info("EventController.getAllEvents called");
+		logger.trace("getAllEvents called");
 		return this.eventService.getAllEvents();
 	}
 
 	@Override
 	public Event getEvent(String eventId) throws BadRequestException, EventNotFoundException
 	{
-		this.logger.info("EventController.getEvent called");
+		logger.trace("getEvent called");
 
 		try
 		{
@@ -54,7 +54,7 @@ public class EventController extends BaseController implements IEventController
 	@Override
 	public Event createEvent(CreateEventRequest request) throws DuplicateItemException, BadRequestException
 	{
-		this.logger.info("EventController.createEvent called");
+		this.logger.trace("createEvent called");
 
 		try
 		{
@@ -75,7 +75,7 @@ public class EventController extends BaseController implements IEventController
 	@Override
 	public Event deleteEvent(String id) throws BadRequestException, EventNotFoundException
 	{
-		this.logger.info("EventController.deleteEvent called");
+		this.logger.trace("deleteEvent called");
 		try
 		{
 			UUID eventId = UUID.fromString(id);
@@ -93,7 +93,7 @@ public class EventController extends BaseController implements IEventController
 	@Override
 	public Event addRacesToEvent(String eventId, UpdateEventRequest request) throws EventNotFoundException, BadRequestException
 	{
-		this.logger.info("EventController.addRacesToEvent called");
+		logger.trace("addRacesToEvent called");
 		try
 		{
 			UUID id = UUID.fromString(eventId);

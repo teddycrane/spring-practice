@@ -24,7 +24,7 @@ public class RaceController extends BaseController implements IRaceController
 	@Override
 	public Race getRace(String id) throws RaceNotFoundException, BadRequestException
 	{
-		this.logger.info("getRace called");
+		this.logger.trace("getRace called");
 
 		try
 		{
@@ -44,7 +44,7 @@ public class RaceController extends BaseController implements IRaceController
 	@Override
 	public List<Race> getAllRaces() throws RaceNotFoundException
 	{
-		this.logger.info("getAllRaces called");
+		this.logger.trace("getAllRaces called");
 		return this.raceService.getAllRaces();
 	}
 
@@ -59,7 +59,7 @@ public class RaceController extends BaseController implements IRaceController
 	@Override
 	public Race createRace(CreateRaceRequest request) throws BadRequestException, DuplicateItemException
 	{
-		this.logger.info("createRace called");
+		this.logger.trace("createRace called");
 		if (request == null)
 		{
 			logger.error("No request body provided!");
@@ -77,37 +77,34 @@ public class RaceController extends BaseController implements IRaceController
 	}
 
 	@Override
-	public Race updateRace(UpdateRaceRequest request, String id) throws BadRequestException, DuplicateItemException, RaceNotFoundException
+	public Race updateRace(UpdateRaceRequest request, String id) throws BadRequestException, RaceNotFoundException, UpdateException
 	{
-		this.logger.info("updateRace called");
-
+		logger.trace("updateRace called");
 		try
 		{
 			UUID raceId = UUID.fromString(id);
+
+			// verify requred parameters
 			if (request.getName().isPresent() || request.getCategory().isPresent())
 			{
 				return this.raceService.updateRace(raceId, request.getName().get(), request.getCategory().get());
 			} else
 			{
-				this.logger.error("No valid parameters");
+				this.logger.error("No valid parameters in the request {}", request);
 				throw new BadRequestException("No valid parameters provided!");
 			}
 		} catch (IllegalArgumentException e)
 		{
-			this.logger.error("Unable to parse the provided id", e);
+			this.logger.error("Unable to parse the provided id {}", id);
 			throw new BadRequestException(String.format("Unable to parse id %s", id));
 		} catch (UpdateException e)
 		{
-			this.logger.error("Unable to update the specified race!", e);
+			this.logger.error("Unable to update the specified race {}", id);
 			throw new UpdateException(e.getMessage());
 		} catch (RaceNotFoundException e)
 		{
-			this.logger.error("Unable to find the specified race!", e);
+			this.logger.error("Unable to find a race with id {}", id);
 			throw new RaceNotFoundException(e.getMessage());
-		} catch (DuplicateItemException e)
-		{
-			this.logger.error("Unable to have duplicate entrants in a race!", e);
-			throw new DuplicateItemException(e.getMessage());
 		}
 	}
 
@@ -121,7 +118,7 @@ public class RaceController extends BaseController implements IRaceController
 	@Override
 	public Race addRacer(AddRacerRequest request, String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException
 	{
-		this.logger.info("addRacer called");
+		this.logger.trace("addRacer called");
 
 		try
 		{
