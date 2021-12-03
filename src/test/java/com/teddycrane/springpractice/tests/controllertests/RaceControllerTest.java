@@ -181,6 +181,9 @@ public class RaceControllerTest
 		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenThrow(UpdateException.class);
 
 		Assert.assertThrows(UpdateException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT4), requestString));
+
+		when(raceService.updateRace(any(UUID.class), any(String.class), any(Category.class))).thenThrow(RaceNotFoundException.class);
+		Assert.assertThrows(RaceNotFoundException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), requestString));
 	}
 
 	@Test
