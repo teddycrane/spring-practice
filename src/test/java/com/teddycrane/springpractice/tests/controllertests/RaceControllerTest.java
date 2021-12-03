@@ -7,10 +7,8 @@ import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
-import com.teddycrane.springpractice.models.AddRacerRequest;
-import com.teddycrane.springpractice.models.CreateRaceRequest;
-import com.teddycrane.springpractice.models.SetResultRequest;
-import com.teddycrane.springpractice.models.UpdateRaceRequest;
+import com.teddycrane.springpractice.exceptions.UpdateException;
+import com.teddycrane.springpractice.models.*;
 import com.teddycrane.springpractice.service.IRaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.hibernate.sql.Update;
@@ -178,6 +176,11 @@ public class RaceControllerTest
 
 		// bad UUID
 		Assert.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), "bad value"));
+
+		// generic update exception
+		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenThrow(UpdateException.class);
+
+		Assert.assertThrows(UpdateException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT4), requestString));
 	}
 
 	@Test
