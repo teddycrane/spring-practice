@@ -1,8 +1,10 @@
 package com.teddycrane.springpractice.service;
 
 import com.github.javafaker.Faker;
+import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.model.IGenerateService;
 import org.springframework.stereotype.Service;
@@ -15,12 +17,14 @@ public class GenerateService extends BaseService implements IGenerateService
 {
 
 	private final RacerRepository racerRepository;
+	private final RaceRepository raceRepository;
 	private final Faker faker;
 
-	public GenerateService(RacerRepository racerRepository)
+	public GenerateService(RacerRepository racerRepository, RaceRepository raceRepository)
 	{
 		super();
 		this.racerRepository = racerRepository;
+		this.raceRepository = raceRepository;
 		this.faker = new Faker();
 	}
 
@@ -75,6 +79,18 @@ public class GenerateService extends BaseService implements IGenerateService
 
 		Collection<Racer> result = new ArrayList<>();
 		result.add(this.racerRepository.save(new Racer(faker.name().firstName(), faker.name().lastName(), faker.date().birthday(10, 99))));
+		return result;
+	}
+
+	@Override
+	public Collection<Race> generateRace(Integer number)
+	{
+		logger.trace("generateRace called");
+		Collection<Race> result = new ArrayList<>();
+
+		for (int i = 0; i < number; i++)
+			result.add(this.raceRepository.save(new Race(faker.aquaTeenHungerForce().character())));
+
 		return result;
 	}
 }

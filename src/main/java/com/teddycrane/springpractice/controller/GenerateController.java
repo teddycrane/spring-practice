@@ -1,6 +1,7 @@
 package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.controller.model.IGenerateController;
+import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
@@ -54,6 +55,22 @@ public class GenerateController extends BaseController implements IGenerateContr
 		{
 			logger.trace("returning single new Racer");
 			return this.generateService.generateRacer();
+		}
+	}
+
+	@Override
+	public Collection<Race> generateRace(@Nullable Integer number)
+	{
+		logger.trace("generateRace called!");
+
+		if (number != null)
+		{
+			logger.trace("Creating {} races", number);
+			return this.generateService.generateRace(number);
+		} else
+		{
+			logger.trace("Creating 1 race");
+			return this.generateService.generateRace(1);
 		}
 	}
 }
