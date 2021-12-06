@@ -5,6 +5,8 @@ import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
+import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
+import com.teddycrane.springpractice.exceptions.UpdateException;
 import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.model.IRaceService;
@@ -18,6 +20,7 @@ import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -290,5 +293,29 @@ public class RaceServiceTest
 		Assert.assertNotNull(result);
 		Assert.assertEquals(2, result.getFinishOrder().size());
 		Assert.assertTrue(result.getFinishOrder().containsKey(racerList.get(0)));
+	}
+
+
+	@Test
+	public void shouldThrowExceptionWhenAddingRacersToRaceThatHasAlreadyStarted()
+	{
+		List<UUID> racerList = TestResourceGenerator.generateRacerList(3).stream().map(Racer::getId).collect(Collectors.toList());
+		Date startTime = new Date();
+		Race existing = new Race(race);
+		existing.setStartTime(startTime);
+		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(existing));
+
+		// test
+		Assert.assertThrows(UpdateException.class, () -> this.raceService.addRacer(requestUUID, racerList));
+	}
+
+	@Test
+	public void shouldThrowExceptionWhenRaceIsNotFound()
+	{
+		List<UUID> racerList = new ArrayList<>();
+		when(raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+		// test
+		Assert.assertThrows(RaceNotFoundException.class, () -> this.raceService.addRacer(requestUUID, racerList));
 	}
 }

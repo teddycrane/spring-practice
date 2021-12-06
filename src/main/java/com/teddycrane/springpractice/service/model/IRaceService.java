@@ -22,7 +22,7 @@ import java.util.*;
 
 	Race updateRace(UUID id, String name, Category category) throws UpdateException, RaceNotFoundException, DuplicateItemException;
 
-	Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException;
+	Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException, UpdateException;
 
 	Race startRace(UUID id) throws RaceNotFoundException, StartException;
 

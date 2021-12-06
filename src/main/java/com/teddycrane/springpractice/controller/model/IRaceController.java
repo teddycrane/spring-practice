@@ -28,7 +28,7 @@ public interface IRaceController
 	Race updateRace(@RequestBody @Valid UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, RaceNotFoundException, UpdateException;
 
 	@PatchMapping(path = "/add-racer")
-	Race addRacer(@RequestBody @Valid AddRacerRequest request, @RequestParam String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException;
+	Race addRacer(@RequestBody @Valid AddRacerRequest request, @RequestParam String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException, UpdateException;
 
 	@PostMapping(path = "/start-race")
 	Race startRace(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException, StartException;

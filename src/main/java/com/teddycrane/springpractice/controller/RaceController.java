@@ -117,7 +117,7 @@ public class RaceController extends BaseController implements IRaceController
 	 * @throws BadRequestException Thrown if the racer is unable to be added to the Race object
 	 */
 	@Override
-	public Race addRacer(AddRacerRequest request, String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException
+	public Race addRacer(AddRacerRequest request, String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException, UpdateException
 	{
 		this.logger.trace("addRacer called");
 

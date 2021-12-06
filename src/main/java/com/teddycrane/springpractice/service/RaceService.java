@@ -154,7 +154,7 @@ public class RaceService extends BaseService implements IRaceService
 	}
 
 	@Override
-	public Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException
+	public Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException, UpdateException
 	{
 		this.logger.trace("addRacer called");
 
@@ -166,6 +166,13 @@ public class RaceService extends BaseService implements IRaceService
 		if (_race.isPresent())
 		{
 			r = new Race(_race.get());
+
+			// throw exception if the race has already started
+			if (r.isStarted())
+			{
+				logger.error("Cannot add racers to a race that is already started! Start time: {}", r.getStartTime());
+				throw new UpdateException("Cannot add racers to a race that has already started!");
+			}
 
 			// create set to de-dupe
 			racers = new ArrayList<>(r.getRacers());
