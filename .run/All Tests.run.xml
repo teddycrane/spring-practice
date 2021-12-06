@@ -3,6 +3,10 @@
     <module name="spring-practice" />
     <extension name="coverage">
       <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.controller.model.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
         <option name="PATTERN" value="com.teddycrane.springpractice.controller.*" />
         <option name="ENABLED" value="true" />
       </pattern>
@@ -32,6 +36,10 @@
       </pattern>
       <pattern>
         <option name="PATTERN" value="com.teddycrane.springpractice.service.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.teddycrane.springpractice.service.model.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

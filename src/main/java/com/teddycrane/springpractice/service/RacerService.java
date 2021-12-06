@@ -2,12 +2,11 @@ package com.teddycrane.springpractice.service;
 
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.enums.FilterType;
+import com.teddycrane.springpractice.enums.RacerFilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.repository.RacerRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.teddycrane.springpractice.service.model.IRacerService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -144,7 +143,7 @@ public class RacerService extends BaseService implements IRacerService
 	}
 
 	@Override
-	public List<Racer> getRacersByType(FilterType filterType, String value) throws BadRequestException
+	public List<Racer> getRacersByType(RacerFilterType filterType, String value) throws BadRequestException
 	{
 		this.logger.trace("getRacersByType called");
 		List<Racer> result;

@@ -1,11 +1,13 @@
 package com.teddycrane.springpractice.controller;
 
+import com.teddycrane.springpractice.controller.model.IRaceController;
 import com.teddycrane.springpractice.entity.Race;
+import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.RaceFilterType;
 import com.teddycrane.springpractice.exceptions.*;
+import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.*;
-import com.teddycrane.springpractice.service.IRaceService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.teddycrane.springpractice.service.model.IRaceService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -26,7 +28,7 @@ public class RaceController extends BaseController implements IRaceController
 	@Override
 	public Race getRace(String id) throws RaceNotFoundException, BadRequestException
 	{
-		this.logger.info("getRace called");
+		this.logger.trace("getRace called");
 
 		try
 		{
@@ -46,7 +48,7 @@ public class RaceController extends BaseController implements IRaceController
 	@Override
 	public List<Race> getAllRaces() throws RaceNotFoundException
 	{
-		this.logger.info("getAllRaces called");
+		this.logger.trace("getAllRaces called");
 		return this.raceService.getAllRaces();
 	}
 
@@ -61,55 +63,52 @@ public class RaceController extends BaseController implements IRaceController
 	@Override
 	public Race createRace(CreateRaceRequest request) throws BadRequestException, DuplicateItemException
 	{
-		this.logger.info("createRace called");
+		this.logger.trace("createRace called");
+		if (request == null)
+		{
+			logger.error("No request body provided!");
+			throw new BadRequestException("The request body cannot be empty");
+		}
+
 		try
 		{
-			if (request == null)
-				throw new IllegalArgumentException("Request cannot be null");
 			return this.raceService.createRace(request.getName(), request.getCategory());
 		} catch (DuplicateItemException e)
 		{
 			this.logger.error("Unable to create a duplicate item", e);
 			throw new DuplicateItemException(e.getMessage());
-		} catch (IllegalArgumentException e)
-		{
-			this.logger.error("Bad request", e);
-			throw new BadRequestException(e.getMessage());
 		}
 	}
 
 	@Override
-	public Race updateRace(UpdateRaceRequest request, String id) throws BadRequestException, DuplicateItemException, RaceNotFoundException
+	public Race updateRace(UpdateRaceRequest request, String id) throws BadRequestException, RaceNotFoundException, UpdateException
 	{
-		this.logger.info("updateRace called");
-
+		logger.trace("updateRace called");
 		try
 		{
 			UUID raceId = UUID.fromString(id);
+
+			// verify requred parameters
 			if (request.getName().isPresent() || request.getCategory().isPresent())
 			{
 				return this.raceService.updateRace(raceId, request.getName().get(), request.getCategory().get());
 			} else
 			{
-				this.logger.error("No valid parameters");
+				this.logger.error("No valid parameters in the request {}", request);
 				throw new BadRequestException("No valid parameters provided!");
 			}
 		} catch (IllegalArgumentException e)
 		{
-			this.logger.error("Unable to parse the provided id", e);
+			this.logger.error("Unable to parse the provided id {}", id);
 			throw new BadRequestException(String.format("Unable to parse id %s", id));
 		} catch (UpdateException e)
 		{
-			this.logger.error("Unable to update the specified race!", e);
+			this.logger.error("Unable to update the specified race {}", id);
 			throw new UpdateException(e.getMessage());
 		} catch (RaceNotFoundException e)
 		{
-			this.logger.error("Unable to find the specified race!", e);
+			this.logger.error("Unable to find a race with id {}", id);
 			throw new RaceNotFoundException(e.getMessage());
-		} catch (DuplicateItemException e)
-		{
-			this.logger.error("Unable to have duplicate entrants in a race!", e);
-			throw new DuplicateItemException(e.getMessage());
 		}
 	}
 
@@ -121,34 +120,25 @@ public class RaceController extends BaseController implements IRaceController
 	 * @throws BadRequestException Thrown if the racer is unable to be added to the Race object
 	 */
 	@Override
-	public Race addRacer(AddRacerRequest request, String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException
+	public Race addRacer(AddRacerRequest request, String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException, UpdateException
 	{
-		this.logger.info("addRacer called");
+		this.logger.trace("addRacer called");
 
 		try
 		{
+			// validate that request is in fact, not null
 			UUID id = UUID.fromString(raceId);
-			if (request != null)
-			{
-				return this.raceService.addRacer(id, request.getRacerIds());
-			} else
-			{
-				this.logger.error("Request body is not valid");
-				throw new BadRequestException("Request body cannot be null!");
-			}
+			return this.raceService.addRacer(id, request.getRacerIds());
 		} catch (RacerNotFoundException e)
 		{
-			this.logger.error("Unable to find a racer!", e);
 			throw new RacerNotFoundException(e.getMessage());
 		} catch (RaceNotFoundException e)
 		{
-			this.logger.error("Unable to find the specified race!", e);
 			throw new RaceNotFoundException(e.getMessage());
 		} catch (IllegalArgumentException e)
 		{
-			String message = String.format("Unable to parse the provided id %s", raceId);
-			this.logger.error(message, e);
-			throw new BadRequestException(message);
+			logger.error("Unable to parse the id {}", raceId);
+			throw new BadRequestException(String.format("Unable to parse the provided id %s", raceId));
 		}
 	}
 
@@ -270,6 +260,49 @@ public class RaceController extends BaseController implements IRaceController
 		} catch (RacerNotFoundException e)
 		{
 			throw new RacerNotFoundException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Collection<Race> filterRaces(String type, String value) throws BadRequestException
+	{
+		logger.trace("filterRaces called");
+
+		// validate if type is a valid race filter type
+		if (EnumHelpers.testEnumValue(RaceFilterType.class, type))
+		{
+			try
+			{
+				RaceFilterType filterType = RaceFilterType.valueOf(type.toUpperCase());
+				boolean isValidCategory = EnumHelpers.testEnumValue(Category.class, value);
+
+				// validate category, if provided
+				if (filterType == RaceFilterType.CATEGORY && isValidCategory)
+				{
+					return this.raceService.filterRace(filterType, Either.right(Category.valueOf(value.toUpperCase())));
+				} else if (filterType == RaceFilterType.CATEGORY)
+				{
+					// if the type is category but it's invalid
+					logger.error("{} is not a valid category!", value);
+					throw new BadRequestException("The provided value is not a valid category");
+				} else if (filterType == RaceFilterType.NAME)
+				{
+					return this.raceService.filterRace(filterType, Either.left(value));
+				} else
+				{
+					logger.error("Unknown error occurred!");
+					throw new InternalServerError("An unknown error occurred!");
+				}
+
+			} catch (IllegalArgumentException e)
+			{
+				logger.error("{} is an invalid filter type", type);
+				throw new BadRequestException("Invalid filter type provided!");
+			}
+		} else
+		{
+			logger.error("{} is not a valid filter type", type);
+			throw new BadRequestException("The provided filter type is not a valid filter type");
 		}
 	}
 }

@@ -3,13 +3,13 @@ package com.teddycrane.springpractice.tests.controllertests;
 import com.teddycrane.springpractice.controller.RacerController;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.enums.FilterType;
+import com.teddycrane.springpractice.enums.RacerFilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
-import com.teddycrane.springpractice.service.IRacerService;
-import com.teddycrane.springpractice.tests.helpers.ControllerTestHelper;
+import com.teddycrane.springpractice.service.model.IRacerService;
+import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class RacerControllerTest
 	private IRacerService racerService;
 
 	@Captor
-	private ArgumentCaptor<FilterType> filterArg;
+	private ArgumentCaptor<RacerFilterType> filterArg;
 
 	@Captor
 	private ArgumentCaptor<String> valueArg;
@@ -51,7 +51,7 @@ public class RacerControllerTest
 		racerList = new ArrayList<>();
 		for (int i = 0; i < 5; i++)
 		{
-			racerList.add(ControllerTestHelper.generateRacer());
+			racerList.add(TestResourceGenerator.generateRacer());
 		}
 	}
 
@@ -202,15 +202,15 @@ public class RacerControllerTest
 	@Test
 	public void shouldFilterRacersByCategory()
 	{
-		when(racerService.getRacersByType(FilterType.CATEGORY, Category.CAT1.toString())).thenReturn(racerList);
+		when(racerService.getRacersByType(RacerFilterType.CATEGORY, Category.CAT1.toString())).thenReturn(racerList);
 
 		// test
 		this.racerController.getRacersByType("category", "cat1");
 		Mockito.verify(racerService).getRacersByType(filterArg.capture(), valueArg.capture());
-		FilterType filter = filterArg.getValue();
+		RacerFilterType filter = filterArg.getValue();
 		String value = valueArg.getValue();
 
-		Assert.assertEquals(FilterType.CATEGORY, filter);
+		Assert.assertEquals(RacerFilterType.CATEGORY, filter);
 		Assert.assertEquals("CAT1", value);
 	}
 

@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.controller;
+package com.teddycrane.springpractice.controller.model;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.exceptions.*;
@@ -6,11 +6,11 @@ import com.teddycrane.springpractice.models.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@RestController
 @RequestMapping(path = "/race")
 public interface IRaceController
 {
@@ -25,10 +25,10 @@ public interface IRaceController
 	Race createRace(@RequestBody @Valid CreateRaceRequest request) throws BadRequestException, DuplicateItemException;
 
 	@PatchMapping
-	Race updateRace(@RequestBody @Valid UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, DuplicateItemException;
+	Race updateRace(@RequestBody @Valid UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, RaceNotFoundException, UpdateException;
 
 	@PatchMapping(path = "/add-racer")
-	Race addRacer(@RequestBody @Valid AddRacerRequest request, @RequestParam String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException;
+	Race addRacer(@RequestBody @Valid AddRacerRequest request, @RequestParam String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException, UpdateException;
 
 	@PostMapping(path = "/start-race")
 	Race startRace(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException, StartException;
@@ -47,4 +47,7 @@ public interface IRaceController
 
 	@GetMapping(path = "/racer-results")
 	Map<UUID, Integer> getResultsForRacer(@RequestParam String racerId) throws BadRequestException, RacerNotFoundException;
+
+	@GetMapping(path = "/filter")
+	Collection<Race> filterRaces(@RequestParam String type, @RequestParam String value) throws BadRequestException;
 }

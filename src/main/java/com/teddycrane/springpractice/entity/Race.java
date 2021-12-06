@@ -122,6 +122,11 @@ public class Race
 		return endTime;
 	}
 
+	public boolean isStarted()
+	{
+		return this.startTime != null && this.startTime.before(new Date());
+	}
+
 	public void setEndTime(Date endTime)
 	{
 		this.endTime = endTime;

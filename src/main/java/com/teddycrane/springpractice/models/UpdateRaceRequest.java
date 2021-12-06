@@ -29,4 +29,13 @@ public class UpdateRaceRequest
 	{
 		return Optional.ofNullable(category);
 	}
+
+	@Override
+	public String toString()
+	{
+		return "{\n" +
+				String.format("    \"name\" : \"%s\",\n", name) +
+				String.format("    \"category\" : \"%s\"\n", category) +
+				"}";
+	}
 }

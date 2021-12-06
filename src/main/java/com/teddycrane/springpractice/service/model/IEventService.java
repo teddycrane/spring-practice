@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.service;
+package com.teddycrane.springpractice.service.model;
 
 import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;

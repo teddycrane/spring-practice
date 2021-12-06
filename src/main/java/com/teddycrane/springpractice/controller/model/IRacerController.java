@@ -1,17 +1,15 @@
-package com.teddycrane.springpractice.controller;
+package com.teddycrane.springpractice.controller.model;
 
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.models.CreateRacerRequest;
 import com.teddycrane.springpractice.models.UpdateRacerRequest;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController
 @RequestMapping(path = "/racer")
 public interface IRacerController
 {

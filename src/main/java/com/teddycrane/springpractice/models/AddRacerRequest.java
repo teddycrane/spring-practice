@@ -9,7 +9,7 @@ public class AddRacerRequest
 {
 
 	@NotEmpty
-	private final List<UUID> racerIds;
+	private List<UUID> racerIds;
 
 	public AddRacerRequest()
 	{

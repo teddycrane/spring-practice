@@ -1,12 +1,11 @@
 package com.teddycrane.springpractice.tests.controllertests;
 
 import com.teddycrane.springpractice.controller.EventController;
-import com.teddycrane.springpractice.controller.IEventController;
+import com.teddycrane.springpractice.controller.model.IEventController;
 import com.teddycrane.springpractice.entity.Event;
-import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.models.CreateEventRequest;
-import com.teddycrane.springpractice.service.IEventService;
-import com.teddycrane.springpractice.tests.helpers.ControllerTestHelper;
+import com.teddycrane.springpractice.service.model.IEventService;
+import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +37,8 @@ public class EventControllerTest
 	{
 		MockitoAnnotations.openMocks(this);
 		this.eventController = new EventController(eventService);
-		event = ControllerTestHelper.generateEvent();
-		eventList = ControllerTestHelper.generateEventList(10);
+		event = TestResourceGenerator.generateEvent();
+		eventList = TestResourceGenerator.generateEventList(10);
 	}
 
 	@Test

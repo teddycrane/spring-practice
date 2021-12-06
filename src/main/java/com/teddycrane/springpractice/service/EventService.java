@@ -6,8 +6,7 @@ import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.repository.EventRepository;
 import com.teddycrane.springpractice.repository.RaceRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.teddycrane.springpractice.service.model.IEventService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -61,7 +60,7 @@ public class EventService extends BaseService implements IEventService
 
 		if (existing.isPresent() && existing.get().getStartDate().equals(startDate) && existing.get().getEndDate().equals(endDate))
 		{
-			this.logger.info("Duplicate item detected");
+			this.logger.error("Duplicate item detected for name {}", name);
 			throw new DuplicateItemException(String.format("An event with the name %s already exists! Try adding a race to this event instead. ", name));
 		}
 

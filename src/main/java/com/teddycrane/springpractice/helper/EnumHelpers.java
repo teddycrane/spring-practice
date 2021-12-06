@@ -1,13 +1,13 @@
 package com.teddycrane.springpractice.helper;
 
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.enums.FilterType;
+import com.teddycrane.springpractice.enums.RaceFilterType;
+import com.teddycrane.springpractice.enums.RacerFilterType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class EnumHelpers
 {
@@ -23,11 +23,22 @@ public class EnumHelpers
 	 * @param value The value to test for inclusion in the set of values for FilterType.
 	 * @return True if the value set for FilterType includes the test value, false if it does not.
 	 */
-	private static boolean filterTypesContains(@NotNull String value)
+	private static boolean racerFilterTypesContains(@NotNull String value)
 	{
 		try
 		{
-			return EnumSet.allOf(FilterType.class).contains(FilterType.valueOf(value.toUpperCase()));
+			return EnumSet.allOf(RacerFilterType.class).contains(RacerFilterType.valueOf(value.toUpperCase()));
+		} catch (IllegalArgumentException e)
+		{
+			return false;
+		}
+	}
+
+	private static boolean raceFilterTypesContains(@NotNull String value)
+	{
+		try
+		{
+			return EnumSet.allOf(RaceFilterType.class).contains(RaceFilterType.valueOf(value.toUpperCase()));
 		} catch (IllegalArgumentException e)
 		{
 			return false;
@@ -57,8 +68,10 @@ public class EnumHelpers
 		{
 			case "Category":
 				return categoryTypesContains(value);
-			case "FilterType":
-				return filterTypesContains(value);
+			case "RacerFilterType":
+				return racerFilterTypesContains(value);
+			case "RaceFilterType":
+				return raceFilterTypesContains(value);
 			default:
 				return false;
 		}

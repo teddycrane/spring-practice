@@ -3,7 +3,7 @@ package com.teddycrane.springpractice.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class BaseController
+abstract class BaseController
 {
 	protected final Logger logger;
 

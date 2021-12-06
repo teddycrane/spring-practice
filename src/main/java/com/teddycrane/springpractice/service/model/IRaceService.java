@@ -1,15 +1,16 @@
-package com.teddycrane.springpractice.service;
+package com.teddycrane.springpractice.service.model;
 
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.RaceFilterType;
 import com.teddycrane.springpractice.exceptions.*;
+import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.models.RaceResult;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service
-public interface IRaceService {
+@Service public interface IRaceService {
 
 	List<Race> getAllRaces();
 
@@ -23,7 +24,7 @@ public interface IRaceService {
 
 	Race updateRace(UUID id, String name, Category category) throws UpdateException, RaceNotFoundException, DuplicateItemException;
 
-	Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException;
+	Race addRacer(UUID id, List<UUID> racerIds) throws RacerNotFoundException, RaceNotFoundException, UpdateException;
 
 	Race startRace(UUID id) throws RaceNotFoundException, StartException;
 
@@ -36,4 +37,6 @@ public interface IRaceService {
 	Race deleteRace(UUID raceId) throws RaceNotFoundException;
 
 	Map<UUID, Integer> getResultsForRacer(UUID id) throws RacerNotFoundException;
+
+	Collection<Race> filterRace(RaceFilterType filter, Either<String, Category> value) throws BadRequestException, InternalServerError;
 }

@@ -1,12 +1,13 @@
 package com.teddycrane.springpractice.controller;
 
+import com.teddycrane.springpractice.controller.model.IEventController;
 import com.teddycrane.springpractice.entity.Event;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.EventNotFoundException;
 import com.teddycrane.springpractice.models.CreateEventRequest;
 import com.teddycrane.springpractice.models.UpdateEventRequest;
-import com.teddycrane.springpractice.service.IEventService;
+import com.teddycrane.springpractice.service.model.IEventService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,14 +29,14 @@ public class EventController extends BaseController implements IEventController
 	@Override
 	public List<Event> getAllEvents()
 	{
-		this.logger.info("EventController.getAllEvents called");
+		logger.trace("getAllEvents called");
 		return this.eventService.getAllEvents();
 	}
 
 	@Override
 	public Event getEvent(String eventId) throws BadRequestException, EventNotFoundException
 	{
-		this.logger.info("EventController.getEvent called");
+		logger.trace("getEvent called");
 
 		try
 		{
@@ -54,7 +55,7 @@ public class EventController extends BaseController implements IEventController
 	@Override
 	public Event createEvent(CreateEventRequest request) throws DuplicateItemException, BadRequestException
 	{
-		this.logger.info("EventController.createEvent called");
+		this.logger.trace("createEvent called");
 
 		try
 		{
@@ -75,7 +76,7 @@ public class EventController extends BaseController implements IEventController
 	@Override
 	public Event deleteEvent(String id) throws BadRequestException, EventNotFoundException
 	{
-		this.logger.info("EventController.deleteEvent called");
+		this.logger.trace("deleteEvent called");
 		try
 		{
 			UUID eventId = UUID.fromString(id);
@@ -93,7 +94,7 @@ public class EventController extends BaseController implements IEventController
 	@Override
 	public Event addRacesToEvent(String eventId, UpdateEventRequest request) throws EventNotFoundException, BadRequestException
 	{
-		this.logger.info("EventController.addRacesToEvent called");
+		logger.trace("addRacesToEvent called");
 		try
 		{
 			UUID id = UUID.fromString(eventId);
