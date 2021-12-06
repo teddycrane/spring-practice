@@ -2,7 +2,10 @@ package com.teddycrane.springpractice.controller;
 
 import com.teddycrane.springpractice.controller.model.IRaceController;
 import com.teddycrane.springpractice.entity.Race;
+import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.RaceFilterType;
 import com.teddycrane.springpractice.exceptions.*;
+import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.*;
 import com.teddycrane.springpractice.service.model.IRaceService;
 import org.springframework.web.bind.annotation.*;
@@ -257,6 +260,49 @@ public class RaceController extends BaseController implements IRaceController
 		} catch (RacerNotFoundException e)
 		{
 			throw new RacerNotFoundException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Collection<Race> filterRaces(String type, String value) throws BadRequestException
+	{
+		logger.trace("filterRaces called");
+
+		// validate if type is a valid race filter type
+		if (EnumHelpers.testEnumValue(RaceFilterType.class, type))
+		{
+			try
+			{
+				RaceFilterType filterType = RaceFilterType.valueOf(type.toUpperCase());
+				boolean isValidCategory = EnumHelpers.testEnumValue(Category.class, value);
+
+				// validate category, if provided
+				if (filterType == RaceFilterType.CATEGORY && isValidCategory)
+				{
+					return this.raceService.filterRace(filterType, Either.right(Category.valueOf(value.toUpperCase())));
+				} else if (filterType == RaceFilterType.CATEGORY)
+				{
+					// if the type is category but it's invalid
+					logger.error("{} is not a valid category!", value);
+					throw new BadRequestException("The provided value is not a valid category");
+				} else if (filterType == RaceFilterType.NAME)
+				{
+					return this.raceService.filterRace(filterType, Either.left(value));
+				} else
+				{
+					logger.error("Unknown error occurred!");
+					throw new InternalServerError("An unknown error occurred!");
+				}
+
+			} catch (IllegalArgumentException e)
+			{
+				logger.error("{} is an invalid filter type", type);
+				throw new BadRequestException("Invalid filter type provided!");
+			}
+		} else
+		{
+			logger.error("{} is not a valid filter type", type);
+			throw new BadRequestException("The provided filter type is not a valid filter type");
 		}
 	}
 }

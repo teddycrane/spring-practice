@@ -3,7 +3,7 @@ package com.teddycrane.springpractice.controller;
 import com.teddycrane.springpractice.controller.model.IRacerController;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.enums.FilterType;
+import com.teddycrane.springpractice.enums.RacerFilterType;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
@@ -153,14 +153,14 @@ public class RacerController extends BaseController implements IRacerController
 		this.logger.trace("getRacersByType called");
 
 		// validate that the query param is a valid enum type (non case-sensitive)
-		if (EnumHelpers.testEnumValue(FilterType.class, type))
+		if (EnumHelpers.testEnumValue(RacerFilterType.class, type))
 		{
 			try
 			{
-				FilterType filterType = FilterType.valueOf(type.toUpperCase());
+				RacerFilterType filterType = RacerFilterType.valueOf(type.toUpperCase());
 
 				// category validation
-				if (filterType == FilterType.CATEGORY && !EnumHelpers.testEnumValue(Category.class, value))
+				if (filterType == RacerFilterType.CATEGORY && !EnumHelpers.testEnumValue(Category.class, value))
 				{
 					this.logger.error("Unable to parse the category value {}", value);
 					throw new BadRequestException("Unable to parse the provided category value!");

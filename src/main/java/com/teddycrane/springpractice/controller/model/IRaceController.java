@@ -6,11 +6,11 @@ import com.teddycrane.springpractice.models.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@RestController
 @RequestMapping(path = "/race")
 public interface IRaceController
 {
@@ -47,4 +47,7 @@ public interface IRaceController
 
 	@GetMapping(path = "/racer-results")
 	Map<UUID, Integer> getResultsForRacer(@RequestParam String racerId) throws BadRequestException, RacerNotFoundException;
+
+	@GetMapping(path = "/filter")
+	Collection<Race> filterRaces(@RequestParam String type, @RequestParam String value) throws BadRequestException;
 }

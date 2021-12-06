@@ -1,6 +1,6 @@
 package com.teddycrane.springpractice.enums;
 
-public enum FilterType
+public enum RacerFilterType
 {
 	FIRSTNAME("firstname"),
 	LASTNAME("lastname"),
@@ -8,7 +8,7 @@ public enum FilterType
 
 	private final String text;
 
-	FilterType(final String text)
+	RacerFilterType(final String text)
 	{
 		this.text = text;
 	}

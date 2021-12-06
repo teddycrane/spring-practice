@@ -3,14 +3,17 @@ package com.teddycrane.springpractice.service;
 import com.teddycrane.springpractice.entity.Race;
 import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.RaceFilterType;
 import com.teddycrane.springpractice.exceptions.*;
 import com.teddycrane.springpractice.helper.EnumHelpers;
+import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.models.RaceResult;
 import com.teddycrane.springpractice.repository.RaceRepository;
 import com.teddycrane.springpractice.repository.RacerRepository;
 import com.teddycrane.springpractice.service.model.IRaceService;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -390,6 +393,43 @@ public class RaceService extends BaseService implements IRaceService
 		{
 			logger.error("Unable to find a racer with id {}", id);
 			throw new RacerNotFoundException("Unable to find a racer with the provided id!");
+		}
+	}
+
+	@Override
+	public Collection<Race> filterRace(RaceFilterType filter, Either<String, Category> value) throws BadRequestException, InternalServerError
+	{
+		logger.trace("filterRace called");
+		Optional<String> name = value.fromLeft();
+		Optional<Category> category = value.fromRight();
+
+		switch (filter)
+		{
+			case CATEGORY:
+			{
+				if (category.isEmpty())
+				{
+					logger.error("No category value supplied! Value provided: {}", value);
+					throw new InternalServerError("Internal server error");
+				}
+
+				return this.raceRepository.findByCategory(category.get());
+			}
+			case NAME:
+			{
+				if (name.isEmpty())
+				{
+					logger.error("No name provided! Value provided: {}", value);
+					throw new InternalServerError("Internal Server Error");
+				}
+
+				return this.raceRepository.findByNameContaining(name.get());
+			}
+			default:
+			{
+				logger.error("No filter type provided");
+				throw new BadRequestException("No filter type provided!");
+			}
 		}
 	}
 }
