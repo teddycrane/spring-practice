@@ -123,28 +123,19 @@ public class RaceController extends BaseController implements IRaceController
 
 		try
 		{
+			// validate that request is in fact, not null
 			UUID id = UUID.fromString(raceId);
-			if (request != null)
-			{
-				return this.raceService.addRacer(id, request.getRacerIds());
-			} else
-			{
-				this.logger.error("Request body is not valid");
-				throw new BadRequestException("Request body cannot be null!");
-			}
+			return this.raceService.addRacer(id, request.getRacerIds());
 		} catch (RacerNotFoundException e)
 		{
-			this.logger.error("Unable to find a racer!", e);
 			throw new RacerNotFoundException(e.getMessage());
 		} catch (RaceNotFoundException e)
 		{
-			this.logger.error("Unable to find the specified race!", e);
 			throw new RaceNotFoundException(e.getMessage());
 		} catch (IllegalArgumentException e)
 		{
-			String message = String.format("Unable to parse the provided id %s", raceId);
-			this.logger.error(message, e);
-			throw new BadRequestException(message);
+			logger.error("Unable to parse the id {}", raceId);
+			throw new BadRequestException(String.format("Unable to parse the provided id %s", raceId));
 		}
 	}
 
