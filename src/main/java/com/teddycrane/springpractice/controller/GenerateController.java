@@ -5,6 +5,7 @@ import com.teddycrane.springpractice.entity.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.helper.EnumHelpers;
+import com.teddycrane.springpractice.models.Health;
 import com.teddycrane.springpractice.service.model.IGenerateService;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestMapping;

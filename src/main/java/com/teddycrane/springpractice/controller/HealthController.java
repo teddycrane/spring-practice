@@ -14,6 +14,6 @@ public class HealthController extends BaseController implements IHealthControlle
 	public Health getHealth()
 	{
 		logger.trace("getHealth called");
-		return new Health();
+		return new Health("health");
 	}
 }
