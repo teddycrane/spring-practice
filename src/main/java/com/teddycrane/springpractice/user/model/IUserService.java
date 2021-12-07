@@ -17,5 +17,5 @@ public interface IUserService
 
 	User getUser(UUID id) throws UserNotFoundError;
 
-	User createUser(String firstName, String lastName, Optional<UserType> type) throws DuplicateItemException;
+	User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type) throws DuplicateItemException;
 }

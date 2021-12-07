@@ -54,11 +54,11 @@ public class UserService extends BaseService implements IUserService
 	}
 
 	@Override
-	public User createUser(String firstName, String lastName, Optional<UserType> type) throws DuplicateItemException
+	public User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type) throws DuplicateItemException
 	{
 		logger.trace("createUser called");
 
 		// allowing name duplication since we have the UUID as a differentiator
-		return this.userRepository.save(new User(firstName, lastName, type.orElse(UserType.USER)));
+		return this.userRepository.save(new User(firstName, lastName, type.orElse(UserType.USER), userName, password));
 	}
 }

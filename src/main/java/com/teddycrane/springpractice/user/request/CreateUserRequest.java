@@ -8,6 +8,11 @@ import java.util.Optional;
 
 public class CreateUserRequest
 {
+	@NotNull
+	private String userName;
+
+	@NotNull
+	private String password;
 
 	@NotNull
 	private String firstName;
@@ -27,6 +32,16 @@ public class CreateUserRequest
 	public String getLastName()
 	{
 		return lastName;
+	}
+
+	public String getUserName()
+	{
+		return userName;
+	}
+
+	public String getPassword()
+	{
+		return password;
 	}
 
 	public Optional<UserType> getType()

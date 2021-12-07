@@ -56,6 +56,10 @@ public class UserController extends BaseController implements IUserController
 	{
 		logger.trace("createUser called");
 
-		return this.userService.createUser(request.getFirstName(), request.getLastName(), request.getType());
+		return this.userService.createUser(request.getFirstName(),
+				request.getLastName(),
+				request.getUserName(),
+				request.getPassword(),
+				request.getType());
 	}
 }
