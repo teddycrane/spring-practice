@@ -5,6 +5,7 @@ import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -113,5 +114,11 @@ public class User
 		builder.append(String.format("    \"isDeleted\" : \"%s\"\n", isDeleted));
 		builder.append("}");
 		return builder.toString();
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(id, isDeleted, firstName, lastName, type);
 	}
 }
