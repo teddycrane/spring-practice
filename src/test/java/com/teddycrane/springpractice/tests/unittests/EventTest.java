@@ -1,7 +1,7 @@
 package com.teddycrane.springpractice.tests.unittests;
 
-import com.teddycrane.springpractice.entity.Event;
-import com.teddycrane.springpractice.entity.Race;
+import com.teddycrane.springpractice.event.Event;
+import com.teddycrane.springpractice.race.Race;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,9 +1,8 @@
 package com.teddycrane.springpractice.tests.helpers;
 
-import com.teddycrane.springpractice.entity.Event;
-import com.teddycrane.springpractice.entity.Race;
-import com.teddycrane.springpractice.entity.Racer;
-import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.event.Event;
+import com.teddycrane.springpractice.race.Race;
+import com.teddycrane.springpractice.racer.Racer;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jetbrains.annotations.NotNull;
 

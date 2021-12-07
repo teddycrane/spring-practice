@@ -1,12 +1,12 @@
 package com.teddycrane.springpractice.tests.servicetests;
 
-import com.teddycrane.springpractice.entity.Racer;
+import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.RacerFilterType;
 import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
-import com.teddycrane.springpractice.repository.RacerRepository;
-import com.teddycrane.springpractice.service.model.IRacerService;
-import com.teddycrane.springpractice.service.RacerService;
+import com.teddycrane.springpractice.racer.model.RacerRepository;
+import com.teddycrane.springpractice.racer.model.IRacerService;
+import com.teddycrane.springpractice.racer.RacerService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

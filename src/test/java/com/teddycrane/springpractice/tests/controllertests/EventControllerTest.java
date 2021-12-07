@@ -1,10 +1,10 @@
 package com.teddycrane.springpractice.tests.controllertests;
 
-import com.teddycrane.springpractice.controller.EventController;
-import com.teddycrane.springpractice.controller.model.IEventController;
-import com.teddycrane.springpractice.entity.Event;
-import com.teddycrane.springpractice.models.CreateEventRequest;
-import com.teddycrane.springpractice.service.model.IEventService;
+import com.teddycrane.springpractice.event.EventController;
+import com.teddycrane.springpractice.event.model.IEventController;
+import com.teddycrane.springpractice.event.Event;
+import com.teddycrane.springpractice.event.request.CreateEventRequest;
+import com.teddycrane.springpractice.event.model.IEventService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;
 import org.junit.Before;

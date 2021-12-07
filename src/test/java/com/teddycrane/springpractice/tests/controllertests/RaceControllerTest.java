@@ -1,15 +1,18 @@
 package com.teddycrane.springpractice.tests.controllertests;
 
-import com.teddycrane.springpractice.controller.RaceController;
-import com.teddycrane.springpractice.entity.Race;
-import com.teddycrane.springpractice.entity.Racer;
+import com.teddycrane.springpractice.event.request.SetResultRequest;
+import com.teddycrane.springpractice.race.request.CreateRaceRequest;
+import com.teddycrane.springpractice.race.RaceController;
+import com.teddycrane.springpractice.race.Race;
+import com.teddycrane.springpractice.race.request.UpdateRaceRequest;
+import com.teddycrane.springpractice.racer.request.AddRacerRequest;
+import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.exceptions.BadRequestException;
 import com.teddycrane.springpractice.exceptions.DuplicateItemException;
 import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
 import com.teddycrane.springpractice.exceptions.UpdateException;
-import com.teddycrane.springpractice.models.*;
-import com.teddycrane.springpractice.service.model.IRaceService;
+import com.teddycrane.springpractice.race.model.IRaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.Assert;
 import org.junit.Before;

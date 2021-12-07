@@ -1,7 +1,7 @@
 package com.teddycrane.springpractice.tests.unittests;
 
-import com.teddycrane.springpractice.entity.Race;
-import com.teddycrane.springpractice.entity.Racer;
+import com.teddycrane.springpractice.race.Race;
+import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import org.junit.Assert;
 import org.junit.Before;
