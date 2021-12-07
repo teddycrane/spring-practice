@@ -12,4 +12,6 @@ public interface UserRepository extends CrudRepository<User, UUID>
 {
 
 	Collection<User> findByFirstNameAndLastName(String firstName, String lastName);
+
+	Collection<User> findByUserName(String userName);
 }

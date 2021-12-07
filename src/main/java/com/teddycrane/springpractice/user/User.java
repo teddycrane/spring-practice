@@ -21,6 +21,8 @@ public class User
 	private String userName;
 	@NotNull
 	private String password;
+	@NotNull
+	private String salt;
 	private boolean isDeleted = false;
 	private String firstName, lastName;
 	@Enumerated(EnumType.STRING)
@@ -34,12 +36,12 @@ public class User
 	/**
 	 * Deprecated.  Constructs a user without a username
 	 *
+	 * @param type      The type of user.
 	 * @param firstName The user's first name
 	 * @param lastName  The user's last name
-	 * @param type      The type of user.
 	 */
 	@Deprecated
-	public User(String firstName, String lastName, UserType type)
+	public User(UserType type, String firstName, String lastName)
 	{
 		this();
 		this.firstName = firstName;
@@ -47,7 +49,7 @@ public class User
 		this.type = type;
 	}
 
-	public User(String firstName, String lastName, UserType type, String userName)
+	private User(UserType type, String firstName, String lastName, String userName)
 	{
 		this();
 		this.firstName = firstName;
@@ -56,11 +58,12 @@ public class User
 		this.userName = userName;
 	}
 
-	public User(String firstName, String lastName, UserType type, String userName, String password)
+	public User(UserType type, String firstName, String lastName, String userName, String password, String salt)
 	{
-		this(firstName, lastName, type, userName);
-		// this is stored in plaintext, but we should use the getters and setters to obfuscate it
+		this(type, firstName, lastName, userName);
+
 		this.password = password;
+		this.salt = salt;
 	}
 
 	public User(User other)
@@ -72,6 +75,7 @@ public class User
 		this.isDeleted = other.isDeleted;
 		this.userName = other.userName;
 		this.password = other.password;
+		this.salt = other.salt;
 	}
 
 	public UUID getId()
@@ -139,6 +143,16 @@ public class User
 		this.password = password;
 	}
 
+	public String getSalt()
+	{
+		return salt;
+	}
+
+	public void setSalt(String salt)
+	{
+		this.salt = salt;
+	}
+
 	public boolean equals(Object other)
 	{
 		if (other.getClass() == this.getClass())
@@ -150,7 +164,8 @@ public class User
 					this.isDeleted == otherUser.isDeleted &&
 					this.type == otherUser.type &&
 					this.userName.equals(otherUser.userName) &&
-					this.password.equals(otherUser.password);
+					this.password.equals(otherUser.password) &&
+					this.salt.equals(otherUser.salt);
 		}
 		return false;
 	}
@@ -173,6 +188,6 @@ public class User
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash(id, isDeleted, firstName, lastName, type, userName, password);
+		return Objects.hash(id, isDeleted, firstName, lastName, type, userName, password, salt);
 	}
 }

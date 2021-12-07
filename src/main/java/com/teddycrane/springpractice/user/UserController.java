@@ -2,6 +2,7 @@ package com.teddycrane.springpractice.user;
 
 import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.models.BaseController;
 import com.teddycrane.springpractice.user.model.IUserController;
@@ -56,10 +57,20 @@ public class UserController extends BaseController implements IUserController
 	{
 		logger.trace("createUser called");
 
-		return this.userService.createUser(request.getFirstName(),
-				request.getLastName(),
-				request.getUserName(),
-				request.getPassword(),
-				request.getType());
+		try
+		{
+
+			return this.userService.createUser(request.getFirstName(),
+					request.getLastName(),
+					request.getUserName(),
+					request.getPassword(),
+					request.getType());
+		} catch (DuplicateItemException e)
+		{
+			throw new DuplicateItemException(e.getMessage());
+		} catch (InternalServerError e)
+		{
+			throw new InternalServerError(e.getMessage());
+		}
 	}
 }

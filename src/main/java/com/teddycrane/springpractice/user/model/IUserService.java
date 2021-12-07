@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.user.model;
 
+import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.user.User;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.DuplicateItemException;
@@ -17,5 +18,5 @@ public interface IUserService
 
 	User getUser(UUID id) throws UserNotFoundError;
 
-	User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type) throws DuplicateItemException;
+	User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type) throws DuplicateItemException, InternalServerError;
 }
