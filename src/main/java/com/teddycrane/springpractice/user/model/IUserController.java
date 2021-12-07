@@ -1,9 +1,9 @@
 package com.teddycrane.springpractice.user.model;
 
 import com.teddycrane.springpractice.user.User;
-import com.teddycrane.springpractice.exceptions.BadRequestException;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.UserNotFoundError;
+import com.teddycrane.springpractice.error.BadRequestException;
+import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
 import org.springframework.web.bind.annotation.*;
 

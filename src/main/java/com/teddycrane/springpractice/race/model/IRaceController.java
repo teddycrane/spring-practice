@@ -1,7 +1,7 @@
 package com.teddycrane.springpractice.race.model;
 
 import com.teddycrane.springpractice.event.request.SetResultRequest;
-import com.teddycrane.springpractice.exceptions.*;
+import com.teddycrane.springpractice.error.*;
 import com.teddycrane.springpractice.race.request.CreateRaceRequest;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.race.request.UpdateRaceRequest;

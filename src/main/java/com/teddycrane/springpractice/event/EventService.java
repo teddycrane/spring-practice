@@ -4,8 +4,8 @@ import com.teddycrane.springpractice.event.model.EventRepository;
 import com.teddycrane.springpractice.event.model.IEventService;
 import com.teddycrane.springpractice.models.BaseService;
 import com.teddycrane.springpractice.race.Race;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.EventNotFoundException;
+import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.EventNotFoundException;
 import com.teddycrane.springpractice.race.model.RaceRepository;
 import org.springframework.stereotype.Service;
 

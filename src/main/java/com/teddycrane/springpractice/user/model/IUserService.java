@@ -2,8 +2,8 @@ package com.teddycrane.springpractice.user.model;
 
 import com.teddycrane.springpractice.user.User;
 import com.teddycrane.springpractice.enums.UserType;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.UserNotFoundError;
+import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.UserNotFoundError;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;

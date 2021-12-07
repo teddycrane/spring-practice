@@ -3,7 +3,7 @@ package com.teddycrane.springpractice.race.model;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.RaceFilterType;
-import com.teddycrane.springpractice.exceptions.*;
+import com.teddycrane.springpractice.error.*;
 import com.teddycrane.springpractice.models.Either;
 import org.springframework.stereotype.Service;
 

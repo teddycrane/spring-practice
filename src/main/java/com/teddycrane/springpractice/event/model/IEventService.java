@@ -1,8 +1,8 @@
 package com.teddycrane.springpractice.event.model;
 
 import com.teddycrane.springpractice.event.Event;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.EventNotFoundException;
+import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.EventNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

@@ -5,7 +5,7 @@ import com.teddycrane.springpractice.models.BaseController;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.exceptions.BadRequestException;
+import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.generate.model.IGenerateService;
 import org.springframework.lang.Nullable;

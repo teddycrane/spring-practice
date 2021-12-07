@@ -1,8 +1,8 @@
 package com.teddycrane.springpractice.user;
 
-import com.teddycrane.springpractice.exceptions.BadRequestException;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.UserNotFoundError;
+import com.teddycrane.springpractice.error.BadRequestException;
+import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.models.BaseController;
 import com.teddycrane.springpractice.user.model.IUserController;
 import com.teddycrane.springpractice.user.model.IUserService;

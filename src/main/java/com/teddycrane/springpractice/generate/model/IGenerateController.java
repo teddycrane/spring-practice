@@ -2,7 +2,7 @@ package com.teddycrane.springpractice.generate.model;
 
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
-import com.teddycrane.springpractice.exceptions.BadRequestException;
+import com.teddycrane.springpractice.error.BadRequestException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

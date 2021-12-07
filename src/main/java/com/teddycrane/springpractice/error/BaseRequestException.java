@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.exceptions;
+package com.teddycrane.springpractice.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;

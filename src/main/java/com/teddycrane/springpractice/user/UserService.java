@@ -1,8 +1,8 @@
 package com.teddycrane.springpractice.user;
 
 import com.teddycrane.springpractice.enums.UserType;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.UserNotFoundError;
+import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.models.BaseService;
 import com.teddycrane.springpractice.user.model.UserRepository;
 import com.teddycrane.springpractice.user.model.IUserService;
