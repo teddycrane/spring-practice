@@ -9,7 +9,7 @@ import java.util.Optional;
 public class CreateUserRequest
 {
 	@NotNull
-	private String userName;
+	private String username;
 
 	@NotNull
 	private String password;
@@ -34,9 +34,9 @@ public class CreateUserRequest
 		return lastName;
 	}
 
-	public String getUserName()
+	public String getUsername()
 	{
-		return userName;
+		return username;
 	}
 
 	public String getPassword()

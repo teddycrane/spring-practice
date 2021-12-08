@@ -18,11 +18,10 @@ public class User
 	private final UUID id;
 	@NotNull
 	@Column(unique = true)
-	private String userName;
+	private String username;
+	/** This is the user's hashed password. DO NOT STORE THE USER'S PASSWORD HERE IN PLAINTEXT*/
 	@NotNull
 	private String password;
-	@NotNull
-	private String salt;
 	private boolean isDeleted = false;
 	private String firstName, lastName;
 	@Enumerated(EnumType.STRING)
@@ -49,21 +48,19 @@ public class User
 		this.type = type;
 	}
 
-	private User(UserType type, String firstName, String lastName, String userName)
+	private User(UserType type, String firstName, String lastName, String username)
 	{
 		this();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.type = type;
-		this.userName = userName;
+		this.username = username;
 	}
 
-	public User(UserType type, String firstName, String lastName, String userName, String password, String salt)
+	public User(UserType type, String firstName, String lastName, String username, String password)
 	{
-		this(type, firstName, lastName, userName);
-
+		this(type, firstName, lastName, username);
 		this.password = password;
-		this.salt = salt;
 	}
 
 	public User(User other)
@@ -73,9 +70,8 @@ public class User
 		this.lastName = other.lastName;
 		this.type = other.type;
 		this.isDeleted = other.isDeleted;
-		this.userName = other.userName;
+		this.username = other.username;
 		this.password = other.password;
-		this.salt = other.salt;
 	}
 
 	public UUID getId()
@@ -123,14 +119,14 @@ public class User
 		this.type = type;
 	}
 
-	public String getUserName()
+	public String getUsername()
 	{
-		return userName;
+		return username;
 	}
 
-	public void setUserName(String userName)
+	public void setUsername(String username)
 	{
-		this.userName = userName;
+		this.username = username;
 	}
 
 	public String getPassword()
@@ -143,16 +139,6 @@ public class User
 		this.password = password;
 	}
 
-	public String getSalt()
-	{
-		return salt;
-	}
-
-	public void setSalt(String salt)
-	{
-		this.salt = salt;
-	}
-
 	public boolean equals(Object other)
 	{
 		if (other.getClass() == this.getClass())
@@ -163,9 +149,8 @@ public class User
 					this.lastName.equals(otherUser.lastName) &&
 					this.isDeleted == otherUser.isDeleted &&
 					this.type == otherUser.type &&
-					this.userName.equals(otherUser.userName) &&
-					this.password.equals(otherUser.password) &&
-					this.salt.equals(otherUser.salt);
+					this.username.equals(otherUser.username) &&
+					this.password.equals(otherUser.password);
 		}
 		return false;
 	}
@@ -175,7 +160,7 @@ public class User
 	{
 		StringBuilder builder = new StringBuilder();
 		builder.append("{\n");
-		builder.append(String.format("    \"userName\" : \"%s\",\n", userName));
+		builder.append(String.format("    \"userName\" : \"%s\",\n", username));
 		builder.append(String.format("    \"id\" : \"%s\",\n", id));
 		builder.append(String.format("    \"firstName\" : \"%s\",\n", firstName));
 		builder.append(String.format("    \"lastName\" : \"%s\",\n", lastName));
@@ -188,6 +173,6 @@ public class User
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash(id, isDeleted, firstName, lastName, type, userName, password, salt);
+		return Objects.hash(id, isDeleted, firstName, lastName, type, username, password);
 	}
 }

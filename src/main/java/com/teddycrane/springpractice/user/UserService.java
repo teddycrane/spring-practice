@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -58,40 +57,47 @@ public class UserService extends BaseService implements IUserService
 		}
 	}
 
+	private String getSecurePassword(String rawPassword)
+	{
+		String result = null;
+		try
+		{
+			MessageDigest md = MessageDigest.getInstance("SHA-512");
+			byte[] bytes = md.digest(rawPassword.getBytes());
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < bytes.length; i++)
+			{
+				builder.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+			}
+			result = builder.toString();
+
+		} catch (NoSuchAlgorithmException e)
+		{
+			logger.error("No such algorithm!");
+		}
+
+		return result;
+	}
+
 	@Override
 	public User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type) throws DuplicateItemException, InternalServerError
 	{
 		logger.trace("createUser called");
-		Collection<User> existing = this.userRepository.findByUserName(userName);
+		Collection<User> existing = this.userRepository.findByUsername(userName);
 
 		if (existing.size() > 0)
 		{
 			logger.error("Unable to create a user with a duplicate username!");
 			throw new DuplicateItemException("Unable to create a user with a duplicate username!");
 		}
-		try
-		{
-			// salt and hash password
-			SecureRandom random = new SecureRandom();
-			byte[] salt = new byte[16];
-			random.nextBytes(salt);
 
-			MessageDigest md = MessageDigest.getInstance("SHA-512");
-			md.update(salt);
+		// hash password
+		String hashedPassword = getSecurePassword(password);
+		logger.info("Hashed password {}", hashedPassword);
 
-			byte[] hashedPasswordBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
-			String hashedPassword = new String(hashedPasswordBytes, StandardCharsets.UTF_8);
-
-			return this.userRepository.save(new User(type.orElse(UserType.USER), firstName,
-					lastName,
-					userName,
-					hashedPassword,
-					new String(salt, StandardCharsets.UTF_8)));
-		} catch (NoSuchAlgorithmException e)
-		{
-			// code should not reach this
-			logger.error("Invalid hashing algorithm specified.  This is a fatal source code error. ");
-			throw new InternalServerError();
-		}
+		return this.userRepository.save(new User(type.orElse(UserType.USER), firstName,
+				lastName,
+				userName,
+				hashedPassword));
 	}
 }

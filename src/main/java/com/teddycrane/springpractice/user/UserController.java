@@ -62,7 +62,7 @@ public class UserController extends BaseController implements IUserController
 
 			return this.userService.createUser(request.getFirstName(),
 					request.getLastName(),
-					request.getUserName(),
+					request.getUsername(),
 					request.getPassword(),
 					request.getType());
 		} catch (DuplicateItemException e)
