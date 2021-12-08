@@ -1,13 +1,12 @@
 package com.teddycrane.springpractice.user;
 
-import com.teddycrane.springpractice.error.BadRequestException;
-import com.teddycrane.springpractice.error.DuplicateItemException;
-import com.teddycrane.springpractice.error.InternalServerError;
-import com.teddycrane.springpractice.error.UserNotFoundError;
+import com.teddycrane.springpractice.error.*;
 import com.teddycrane.springpractice.models.BaseController;
 import com.teddycrane.springpractice.user.model.IUserController;
 import com.teddycrane.springpractice.user.model.IUserService;
+import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
+import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,10 +55,8 @@ public class UserController extends BaseController implements IUserController
 	public User createUser(CreateUserRequest request) throws BadRequestException, DuplicateItemException
 	{
 		logger.trace("createUser called");
-
 		try
 		{
-
 			return this.userService.createUser(request.getFirstName(),
 					request.getLastName(),
 					request.getUsername(),
@@ -72,5 +69,13 @@ public class UserController extends BaseController implements IUserController
 		{
 			throw new InternalServerError(e.getMessage());
 		}
+	}
+
+	@Override
+	public AuthenticationResponse login(AuthenticationRequest request) throws NotAuthenticatedException, UserNotFoundError
+	{
+		logger.trace("login requested");
+
+		return this.userService.login(request.getUsername(), request.getPassword());
 	}
 }

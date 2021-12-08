@@ -3,10 +3,13 @@ package com.teddycrane.springpractice.user;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
+import com.teddycrane.springpractice.error.NotAuthenticatedException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.models.BaseService;
 import com.teddycrane.springpractice.user.model.UserRepository;
 import com.teddycrane.springpractice.user.model.IUserService;
+import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import org.springframework.data.jpa.domain.AbstractPersistable_;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -83,9 +86,9 @@ public class UserService extends BaseService implements IUserService
 	public User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type) throws DuplicateItemException, InternalServerError
 	{
 		logger.trace("createUser called");
-		Collection<User> existing = this.userRepository.findByUsername(userName);
+		Optional<User> existing = this.userRepository.findByUsername(userName);
 
-		if (existing.size() > 0)
+		if (existing.isPresent())
 		{
 			logger.error("Unable to create a user with a duplicate username!");
 			throw new DuplicateItemException("Unable to create a user with a duplicate username!");
@@ -99,5 +102,35 @@ public class UserService extends BaseService implements IUserService
 				lastName,
 				userName,
 				hashedPassword));
+	}
+
+	@Override
+	public AuthenticationResponse login(String username, String password) throws NotAuthenticatedException, UserNotFoundError
+	{
+		logger.trace("login called");
+		Optional<User> user = this.userRepository.findByUsername(username);
+
+		if (user.isPresent())
+		{
+			User u = user.get();
+			logger.info("login requested for user {}", u.getId());
+
+			// this is the user provided password that should be compared to the one in the db
+			String hashedProvidedPassword = getSecurePassword(password);
+
+			if (hashedProvidedPassword.equals(u.getPassword()))
+			{
+				return new AuthenticationResponse();
+			} else
+			{
+				logger.info("The username and password combo provided are not valid");
+				throw new NotAuthenticatedException("An invalid username/password combination was provided.");
+			}
+		} else
+		{
+			logger.error("Unable to find the user {}", username);
+			throw new UserNotFoundError("No user exists with the provided id!");
+		}
+
 	}
 }
