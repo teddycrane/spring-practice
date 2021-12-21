@@ -11,10 +11,13 @@ import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Jwts;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -108,6 +111,7 @@ public class UserService extends BaseService implements IUserService
 		logger.trace("login called");
 		Optional<User> user = this.userRepository.findByUsername(username);
 
+		// if the user exists in the DB
 		if (user.isPresent())
 		{
 			User u = user.get();
@@ -118,7 +122,15 @@ public class UserService extends BaseService implements IUserService
 
 			if (hashedProvidedPassword.equals(u.getPassword()))
 			{
-				return new AuthenticationResponse();
+				Date date = new Date();
+				String token = Jwts.builder()
+					.setIssuer("com.teddycrane.springpractice")
+					.setSubject(u.getUsername())
+					.claim("name", u.getFirstName() + " " + u.getLastName())
+					.setIssuedAt(date)
+					.setExpiration(new Date(date.getTime() + 1000000))
+					.compact();
+				return new AuthenticationResponse(true, token);
 			} else
 			{
 				logger.info("The username and password combo provided are not valid");
