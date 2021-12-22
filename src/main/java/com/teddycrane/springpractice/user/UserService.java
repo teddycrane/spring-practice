@@ -5,8 +5,6 @@ import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.error.NotAuthenticatedException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
-import com.teddycrane.springpractice.helper.IJwtValidator;
-import com.teddycrane.springpractice.helper.JwtValidator;
 import com.teddycrane.springpractice.models.BaseService;
 import com.teddycrane.springpractice.user.model.UserRepository;
 import com.teddycrane.springpractice.user.model.IUserService;
@@ -29,13 +27,10 @@ public class UserService extends BaseService implements IUserService
 
 	private final UserRepository userRepository;
 
-	private final JwtValidator validator;
-
-	public UserService(UserRepository userRepository, JwtValidator validator)
+	public UserService(UserRepository userRepository)
 	{
 		super();
 		this.userRepository = userRepository;
-		this.validator = validator;
 	}
 
 	@Override
@@ -127,7 +122,14 @@ public class UserService extends BaseService implements IUserService
 
 			if (hashedProvidedPassword.equals(u.getPassword()))
 			{
-				String token = validator.generateToken(u);
+				Date date = new Date();
+				String token = Jwts.builder()
+					.setIssuer("com.teddycrane.springpractice")
+					.setSubject(u.getUsername())
+					.claim("name", u.getFirstName() + " " + u.getLastName())
+					.setIssuedAt(date)
+					.setExpiration(new Date(date.getTime() + 1000000))
+					.compact();
 				return new AuthenticationResponse(true, token);
 			} else
 			{

@@ -21,7 +21,7 @@ public interface IUserController
 	Collection<User> getAllUsers();
 
 	@GetMapping
-	User getUser(@RequestHeader("authorization") String token, @RequestParam String id) throws BadRequestException, UserNotFoundError;
+	User getUser(@RequestParam String id) throws BadRequestException, UserNotFoundError;
 
 	@PostMapping
 	User createUser(@RequestBody @Valid CreateUserRequest request) throws BadRequestException, DuplicateItemException;

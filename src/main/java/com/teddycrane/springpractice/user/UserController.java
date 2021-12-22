@@ -10,8 +10,6 @@ import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.jsonwebtoken.JwtException;
-
 import java.util.Collection;
 import java.util.UUID;
 
@@ -38,19 +36,9 @@ public class UserController extends BaseController implements IUserController
 	}
 
 	@Override
-	public User getUser(String token, String id) throws BadRequestException, NotAuthenticatedException, UserNotFoundError
+	public User getUser(String id) throws BadRequestException, UserNotFoundError
 	{
 		logger.trace("getUser called");
-
-		// authorization
-		// try
-		// {
-		// 	Jwts.parserBuilder().setSigningKey()
-		// } catch (JwtException e) 
-		// {
-		// 	logger.error("JWT Parsing failed! The user is not authorized to utilize this resource.");
-		// 	throw new NotAuthenticatedException("Not authenticated");
-		// }
 
 		try
 		{
