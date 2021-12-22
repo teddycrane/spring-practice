@@ -74,7 +74,7 @@ public class UserController extends BaseController implements IUserController
 	@Override
 	public AuthenticationResponse login(AuthenticationRequest request) throws NotAuthenticatedException, UserNotFoundError
 	{
-		logger.trace("login requested!");
+		logger.trace("login requested");
 
 		return this.userService.login(request.getUsername(), request.getPassword());
 	}
