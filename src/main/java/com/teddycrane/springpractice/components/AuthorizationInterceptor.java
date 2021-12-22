@@ -45,9 +45,11 @@ public class AuthorizationInterceptor implements HandlerInterceptor
     {
         logger.trace("preHandle called");
 
-        try{
+        // always pass requests if we're hitting the authentication endpoint
+        if (request.getRequestURI().equals("/users/login")) return true;
+
+        try {
             String requesterId = this.getRequesterId(request);
-            logger.info("Requester id {}", requesterId);
             return true;
         } catch(HeaderNotFoundException e)
         {
