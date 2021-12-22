@@ -5,7 +5,9 @@ import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.error.NotAuthenticatedException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
+import com.teddycrane.springpractice.helper.JwtHelper;
 import com.teddycrane.springpractice.models.BaseService;
+import com.teddycrane.springpractice.models.UserData;
 import com.teddycrane.springpractice.user.model.UserRepository;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
@@ -23,11 +25,13 @@ public class UserService extends BaseService implements IUserService
 {
 
 	private final UserRepository userRepository;
+	private final JwtHelper tokenHelper;
 
-	public UserService(UserRepository userRepository)
+	public UserService(UserRepository userRepository, JwtHelper tokenHelper)
 	{
 		super();
 		this.userRepository = userRepository;
+		this.tokenHelper = tokenHelper;
 	}
 
 	@Override
@@ -118,7 +122,9 @@ public class UserService extends BaseService implements IUserService
 
 			if (hashedProvidedPassword.equals(u.getPassword()))
 			{
-				return new AuthenticationResponse();
+				UserData userDataObject = new UserData(u.getUsername(), u.getId().toString(), u.getFirstName() + " " + u.getLastName());
+				String token = this.tokenHelper.generateToken(userDataObject);
+				return new AuthenticationResponse(true, token);
 			} else
 			{
 				logger.info("The username and password combo provided are not valid");
