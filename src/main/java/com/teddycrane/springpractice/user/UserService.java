@@ -9,8 +9,10 @@ import com.teddycrane.springpractice.models.BaseService;
 import com.teddycrane.springpractice.user.model.UserRepository;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import org.springframework.data.jpa.domain.AbstractPersistable_;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
