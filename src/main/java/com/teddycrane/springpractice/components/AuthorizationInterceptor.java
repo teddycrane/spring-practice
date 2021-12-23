@@ -118,10 +118,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         String requestMethod = request.getMethod();
         logger.info("{} request made to {}", requestMethod, requestUri);
 
-        // always pass requests if we're hitting the authentication endpoint
-        if (requestUri.equals("/users/login") && requestMethod.equalsIgnoreCase("POST"))
-            return true;
-
         try {
             // get required headers
             Map<RequestHeaderName, String> headers = this.validateRequiredHeaders(request);
