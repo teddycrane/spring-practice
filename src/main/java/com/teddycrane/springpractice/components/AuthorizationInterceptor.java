@@ -1,18 +1,14 @@
 package com.teddycrane.springpractice.components;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.teddycrane.springpractice.error.HeaderFormatError;
 import com.teddycrane.springpractice.error.HeaderNotFoundException;
+import com.teddycrane.springpractice.helper.JwtHelper;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,37 +16,108 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+enum RequestHeaderName
+{
+    AUTHORIZATION("Authorization"), ID("X-id");
+
+    private final String text;
+
+    RequestHeaderName(final String text)
+    {
+        this.text = text;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.text;
+    }
+}
+
 @Component
 public class AuthorizationInterceptor implements HandlerInterceptor
 {
     private static final Logger logger = LogManager.getLogger(AuthorizationInterceptor.class);
+    
+    private final JwtHelper validator = new JwtHelper();
+    
+
+    private String getHeader(HttpServletRequest request, RequestHeaderName headerName) throws HeaderNotFoundException
+    {
+        logger.trace("Finding header {}", headerName);
+
+        String result = request.getHeader(headerName.toString());
+
+        if (result == null) throw new HeaderNotFoundException("No header found for the specified header name");
+
+        return result;
+    }
 
     private String getRequesterId(HttpServletRequest request) throws HeaderNotFoundException
     {
-        logger.trace("Pulling requester id from request");
-        String result = request.getHeader("X-id");
+        return getHeader(request, RequestHeaderName.ID);
+    }
 
-        if (result == null) 
+    private String getAuthorizationToken(HttpServletRequest request) throws HeaderNotFoundException, HeaderFormatError
+    {
+        String[] result = this.getHeader(request, RequestHeaderName.AUTHORIZATION).split(" ");
+        
+        if(result.length == 2 && result[0].equals("Bearer"))
         {
-            logger.error("No user id provided");
-            throw new HeaderNotFoundException("No user id provided");
+            return result[1];
         } else
         {
-            return result;
+            logger.error("Auth token provided in invalid format");
+            throw new HeaderFormatError("Invalid authorization token provided");
         }
+    }
+
+    /**
+     * Returns a Map<RequestHeaderName, String> of headers mapped to their values, or throws an exception if one header is not found
+     * @param request The HttpServletRequest object representing the request
+     * @return The map of headers to their values
+     * @throws HeaderNotFoundException throws if one or more of the required headers is missing or null
+     */
+    private Map<RequestHeaderName, String> validateRequiredHeaders(HttpServletRequest request) throws HeaderNotFoundException
+    {
+        Map<RequestHeaderName, String> result = new HashMap<>();
+        try 
+        {
+            result.put(RequestHeaderName.AUTHORIZATION, this.getAuthorizationToken(request));
+            result.put(RequestHeaderName.ID, this.getRequesterId(request));
+            return result;
+        } catch(HeaderNotFoundException | HeaderFormatError e)
+        {
+            logger.error(e.getMessage());
+            throw new HeaderNotFoundException(e.getMessage());
+        }
+    }
+
+    private boolean validateAuthToken(String token)
+    {
+        logger.trace("Validating auth token");
+        return this.validator.ensureTokenIsValid(token);
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
     {
-        logger.trace("preHandle called");
+        String requestUri = request.getRequestURI();
+        String requestMethod = request.getMethod();
+        logger.info("{} request made to {}", requestMethod, requestUri);
 
         // always pass requests if we're hitting the authentication endpoint
-        if (request.getRequestURI().equals("/users/login")) return true;
+        if (requestUri.equals("/users/login") && requestMethod.equalsIgnoreCase("POST")) return true;
 
-        try {
-            String requesterId = this.getRequesterId(request);
-            return true;
+        try 
+        {
+            // get required headers
+            Map<RequestHeaderName, String> headers = this.validateRequiredHeaders(request);
+            logger.info("Request made by user {}", headers.get(RequestHeaderName.ID));
+            
+            // validate auth token
+            return this.validateAuthToken(headers.get(RequestHeaderName.AUTHORIZATION));
+            // return true;
         } catch(HeaderNotFoundException e)
         {
             logger.trace("Throwing custom bad request error");
