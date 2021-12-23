@@ -4,9 +4,9 @@ import com.teddycrane.springpractice.event.model.IEventController;
 import com.teddycrane.springpractice.event.model.IEventService;
 import com.teddycrane.springpractice.event.request.CreateEventRequest;
 import com.teddycrane.springpractice.event.request.UpdateEventRequest;
-import com.teddycrane.springpractice.exceptions.BadRequestException;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.EventNotFoundException;
+import com.teddycrane.springpractice.error.BadRequestException;
+import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.EventNotFoundException;
 import com.teddycrane.springpractice.models.BaseController;
 import org.springframework.web.bind.annotation.*;
 

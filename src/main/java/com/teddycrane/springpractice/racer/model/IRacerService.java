@@ -3,8 +3,8 @@ package com.teddycrane.springpractice.racer.model;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.RacerFilterType;
-import com.teddycrane.springpractice.exceptions.BadRequestException;
-import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
+import com.teddycrane.springpractice.error.BadRequestException;
+import com.teddycrane.springpractice.error.RacerNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

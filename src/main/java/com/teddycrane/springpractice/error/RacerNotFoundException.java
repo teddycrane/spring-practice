@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.exceptions;
+package com.teddycrane.springpractice.error;
 
 public class RacerNotFoundException extends BaseNotFoundException {
 

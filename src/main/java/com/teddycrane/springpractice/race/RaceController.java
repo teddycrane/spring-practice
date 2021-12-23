@@ -4,7 +4,7 @@ import com.teddycrane.springpractice.event.request.SetResultRequest;
 import com.teddycrane.springpractice.models.BaseController;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.RaceFilterType;
-import com.teddycrane.springpractice.exceptions.*;
+import com.teddycrane.springpractice.error.*;
 import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.models.*;
 import com.teddycrane.springpractice.race.model.IRaceController;

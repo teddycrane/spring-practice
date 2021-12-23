@@ -3,9 +3,8 @@ package com.teddycrane.springpractice.tests.servicetests;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.exceptions.DuplicateItemException;
-import com.teddycrane.springpractice.exceptions.RaceNotFoundException;
-import com.teddycrane.springpractice.exceptions.UpdateException;
+import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.RaceNotFoundException;
 import com.teddycrane.springpractice.race.model.RaceRepository;
 import com.teddycrane.springpractice.racer.model.RacerRepository;
 import com.teddycrane.springpractice.race.model.IRaceService;
@@ -19,7 +18,6 @@ import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;

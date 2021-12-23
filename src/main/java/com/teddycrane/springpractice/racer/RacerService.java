@@ -2,8 +2,8 @@ package com.teddycrane.springpractice.racer;
 
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.enums.RacerFilterType;
-import com.teddycrane.springpractice.exceptions.BadRequestException;
-import com.teddycrane.springpractice.exceptions.RacerNotFoundException;
+import com.teddycrane.springpractice.error.BadRequestException;
+import com.teddycrane.springpractice.error.RacerNotFoundException;
 import com.teddycrane.springpractice.racer.model.IRacerService;
 import com.teddycrane.springpractice.racer.model.RacerRepository;
 import com.teddycrane.springpractice.models.BaseService;
