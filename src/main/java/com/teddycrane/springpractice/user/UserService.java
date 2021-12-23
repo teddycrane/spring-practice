@@ -98,8 +98,6 @@ public class UserService extends BaseService implements IUserService
 
 		// hash password
 		String hashedPassword = getSecurePassword(password);
-		logger.info("Hashed password {}", hashedPassword);
-
 		return this.userRepository.save(new User(type.orElse(UserType.USER), firstName,
 				lastName,
 				userName,

@@ -1,4 +1,4 @@
-package com.teddycrane.springpractice.components;
+package com.teddycrane.springpractice.auth;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -7,13 +7,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.HeaderFormatError;
 import com.teddycrane.springpractice.error.HeaderNotFoundException;
+import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.helper.IJwtHelper;
 import com.teddycrane.springpractice.helper.JwtHelper;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,7 +42,13 @@ enum RequestHeaderName {
 public class AuthorizationInterceptor implements HandlerInterceptor {
     private static final Logger logger = LogManager.getLogger(AuthorizationInterceptor.class);
 
+    private static final String REQUEST_START = "--------- REQUEST START ---------";
+    private static final String REQUEST_END = "--------- REQUEST END ---------";
+
     private final IJwtHelper validator = new JwtHelper();
+
+    @Autowired
+    private IAuthService authService;
 
     private String getHeader(HttpServletRequest request, RequestHeaderName headerName) throws HeaderNotFoundException {
         logger.trace("Finding header {}", headerName);
@@ -81,7 +90,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         Map<RequestHeaderName, String> result = new HashMap<>();
         try {
             result.put(RequestHeaderName.AUTHORIZATION, this.getAuthorizationToken(request));
-            result.put(RequestHeaderName.ID, this.getRequesterId(request));
+            // setting X-id Header as optional
+            // result.put(RequestHeaderName.ID, this.getRequesterId(request));
             return result;
         } catch (HeaderNotFoundException | HeaderFormatError e) {
             logger.error(e.getMessage());
@@ -113,7 +123,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        logger.trace("--------- REQUEST START ---------");
+        logger.trace(REQUEST_START);
         String requestUri = request.getRequestURI();
         String requestMethod = request.getMethod();
         logger.info("{} request made to {}", requestMethod, requestUri);
@@ -121,23 +131,37 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         try {
             // get required headers
             Map<RequestHeaderName, String> headers = this.validateRequiredHeaders(request);
-            logger.info("Request made by user {}", headers.get(RequestHeaderName.ID));
+            // logger.info("Request made by user {}", headers.get(RequestHeaderName.ID));
 
             // validate auth token
-            boolean result = this.validateAuthToken(headers.get(RequestHeaderName.AUTHORIZATION));
+            boolean authResult = this.validateAuthToken(headers.get(RequestHeaderName.AUTHORIZATION));
 
-            if (!result) {
+            if (!authResult) {
                 response = generateResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
                         "The provided token is not valid");
-                logger.trace("--------- REQUEST END ---------");
+                logger.trace(REQUEST_END);
                 return false;
             }
 
-            return result;
+            // check resource permissions
+            String userId = this.validator.getIdFromToken(headers.get(RequestHeaderName.AUTHORIZATION));
+            boolean allowed = this.authService.isResourceAllowedForUser(userId, requestUri, requestMethod);
+
+            if (!allowed)
+            {
+                response = generateResponse(response, HttpServletResponse.SC_FORBIDDEN, "Insufficient permissions.");
+                logger.trace(REQUEST_END);
+                return false;
+            }
+            return true;
         } catch (HeaderNotFoundException e) {
             logger.trace("Throwing custom bad request error");
             response = generateResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
                     "One or more of the required headers was not provided");
+            return false;
+        } catch (UserNotFoundError | BadRequestException e) {
+            response = generateResponse(response, HttpServletResponse.SC_BAD_REQUEST,
+                    "Unable to process request headers.");
             return false;
         }
     }
@@ -152,7 +176,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        logger.trace("--------- REQUEST END ---------");
+        logger.trace(REQUEST_END);
     }
 
 }
