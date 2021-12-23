@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import com.teddycrane.springpractice.models.UserData;
@@ -19,11 +20,44 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class JwtHelper {
+public class JwtHelper implements IJwtHelper
+{
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     private static final long expirationTime = 60 * 60 * 1000;
     private static final String issuer = "com.teddycrane.springpractice";
     private final Logger logger = LogManager.getLogger(JwtHelper.class);
+
+   
+    private Claims getAllClaimsFromToken(String token) 
+    {
+		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    /**
+     * Generic utility function that gets a claim from a token.  
+     * @param <T> The object type that represents the claim
+     * @param token The token to get the claim from
+     * @param claimsResolver A java.util.function that resolves the claim to the required type
+     * @return The type <T> claim
+     */
+    private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver)
+    {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private <T> T getClaimFromToken(String token, String claim) throws NoSuchElementException 
+    {
+        final Claims claims = getAllClaimsFromToken(token);
+        if (claims.containsKey(claim))
+        {
+            return (T) claims.get(claim);
+        } else
+        {
+            logger.error("invalid claim provided");
+            throw new NoSuchElementException(String.format("No claim with the name %s", claim));
+        }
+    }
 
     public boolean ensureTokenIsValid(String token)
     {
@@ -44,33 +78,35 @@ public class JwtHelper {
         }
     }
 
-    private Claims getAllClaimsFromToken(String token) 
-    {
-		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-    }
-
-    /**
-     * Generic utility function that gets a claim from a token.  
-     * @param <T> The object type that represents the claim
-     * @param token The token to get the claim from
-     * @param claimsResolver A java.util.function that resolves the claim to the required type
-     * @return The type <T> claim
-     */
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver)
-    {
-        final Claims claims = getAllClaimsFromToken(token);
-        return claimsResolver.apply(claims);
-    }
-
     public Date getExpiryDateFromToken(String token) 
     {
         return this.getClaimFromToken(token, Claims::getExpiration);
+    }
+    
+    public String getIdFromToken(String token)
+    {
+        return this.getClaimFromToken(token, Claims::getId);
+    }
+
+    public String getNameFromToken(String token)
+    {
+        return this.getClaimFromToken(token, "name");
+    }
+
+    public String getIssuerFromToken(String token)
+    {
+        return this.getClaimFromToken(token, Claims::getIssuer);
     }
 
     public boolean isTokenExpired(String token)
     {
         Date expiryDate = this.getExpiryDateFromToken(token);
         return expiryDate.before(new Date(System.currentTimeMillis()));
+    }
+
+    public String getSubjectFromToken(String token)
+    {
+        return this.getClaimFromToken(token, Claims::getSubject);
     }
 
     public String generateToken(UserData data)
