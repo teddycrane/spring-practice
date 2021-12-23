@@ -113,7 +113,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        logger.trace("--------- REQUEST START ---------\n");
+        logger.trace("--------- REQUEST START ---------");
         String requestUri = request.getRequestURI();
         String requestMethod = request.getMethod();
         logger.info("{} request made to {}", requestMethod, requestUri);
@@ -129,7 +129,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             if (!result) {
                 response = generateResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
                         "The provided token is not valid");
-                logger.trace("--------- REQUEST END ---------\n");
+                logger.trace("--------- REQUEST END ---------");
                 return false;
             }
 
@@ -152,7 +152,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        logger.trace("--------- REQUEST END ---------\n");
+        logger.trace("--------- REQUEST END ---------");
     }
 
 }
