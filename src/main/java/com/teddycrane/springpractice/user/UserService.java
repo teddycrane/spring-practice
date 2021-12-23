@@ -137,4 +137,33 @@ public class UserService extends BaseService implements IUserService
 		}
 
 	}
+
+	@Override
+	public User updateUser(UUID id,
+							Optional<String> username,
+							Optional<String> password,
+							Optional<String> firstName,
+			Optional<String> lastName, Optional<UserType> userType) throws UserNotFoundError 
+	{
+		logger.trace("updateUser called");
+
+		Optional<User> existing = this.userRepository.findById(id);
+
+		if(existing.isEmpty())
+		{
+			logger.error("No user found for id {}", id);
+			throw new UserNotFoundError("No user found for the provided id");
+		}
+
+		User user = existing.get();
+		
+		if (username.isPresent()) user.setUsername(username.get());
+		if (password.isPresent()) user.setPassword(password.get());
+		if (firstName.isPresent()) user.setFirstName(firstName.get());
+		if (lastName.isPresent()) user.setLastName(lastName.get());
+		// todo set up enum validation
+		if (userType.isPresent()) user.setType(userType.get());
+
+		return this.userRepository.save(user);
+	}
 }

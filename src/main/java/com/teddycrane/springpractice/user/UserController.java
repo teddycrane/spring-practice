@@ -4,6 +4,7 @@ import com.teddycrane.springpractice.error.*;
 import com.teddycrane.springpractice.models.BaseController;
 import com.teddycrane.springpractice.user.model.IUserController;
 import com.teddycrane.springpractice.user.model.IUserService;
+import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
@@ -77,5 +78,26 @@ public class UserController extends BaseController implements IUserController
 		logger.trace("login requested");
 
 		return this.userService.login(request.getUsername(), request.getPassword());
+	}
+
+	@Override
+	public User updateUser(UpdateUserRequest request) throws BadRequestException, UserNotFoundError 
+	{
+		logger.trace("updateUser called");
+
+		try
+		{
+			UUID id = UUID.fromString(request.getUserId());
+			return this.userService.updateUser(id, 
+												request.getUsername(),
+												request.getPassword(), 
+												request.getFirstName(),
+												request.getLastName(),
+												request.getUserType());
+		} catch (IllegalArgumentException e)
+		{
+			logger.error("Unable to parse the provided uuid {}", request.getUserId());
+			throw new BadRequestException("Unable to parse the provided user id");
+		}
 	}
 }

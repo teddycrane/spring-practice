@@ -7,6 +7,7 @@ import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
+import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,4 +29,7 @@ public interface IUserController
 
 	@PostMapping(path = "/login")
 	AuthenticationResponse login(@RequestBody @Valid AuthenticationRequest request) throws NotAuthenticatedException, UserNotFoundError;
+
+	@PatchMapping
+	User updateUser(@RequestBody @Valid UpdateUserRequest request) throws BadRequestException, UserNotFoundError;
 }

@@ -116,8 +116,15 @@ public class AuthorizationInterceptor implements HandlerInterceptor
             logger.info("Request made by user {}", headers.get(RequestHeaderName.ID));
             
             // validate auth token
-            return this.validateAuthToken(headers.get(RequestHeaderName.AUTHORIZATION));
-            // return true;
+            boolean result = this.validateAuthToken(headers.get(RequestHeaderName.AUTHORIZATION));
+
+            if (!result)
+            {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                return false;
+            }
+
+            return result;
         } catch(HeaderNotFoundException e)
         {
             logger.trace("Throwing custom bad request error");
