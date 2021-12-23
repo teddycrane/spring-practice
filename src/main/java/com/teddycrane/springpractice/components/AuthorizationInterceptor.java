@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.components;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,12 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.teddycrane.springpractice.error.HeaderFormatError;
 import com.teddycrane.springpractice.error.HeaderNotFoundException;
 import com.teddycrane.springpractice.helper.JwtHelper;
+import com.teddycrane.springpractice.user.model.UserRepository;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.io.IOException;
 
 enum RequestHeaderName
 {
@@ -39,6 +44,9 @@ public class AuthorizationInterceptor implements HandlerInterceptor
 {
     private static final Logger logger = LogManager.getLogger(AuthorizationInterceptor.class);
     
+    @Autowired
+    private UserRepository userRepository;
+
     private final JwtHelper validator = new JwtHelper();
     
 
@@ -99,6 +107,25 @@ public class AuthorizationInterceptor implements HandlerInterceptor
         return this.validator.ensureTokenIsValid(token);
     }
 
+    private HttpServletResponse generateResponse(HttpServletResponse response, int status, String body)
+    {
+        response.setStatus(status);
+
+        try
+        {
+            // set body message
+            PrintWriter bodyWriter = response.getWriter();
+            bodyWriter.println(body);
+            // commit the response
+            bodyWriter.flush();
+        } catch (IOException e)
+        {
+            logger.error("Fatal error. Unable to write to response body");
+        }
+
+        return response;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
     {
@@ -120,7 +147,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor
 
             if (!result)
             {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response = generateResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "The provided token is not valid");
                 return false;
             }
 
@@ -128,7 +156,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor
         } catch(HeaderNotFoundException e)
         {
             logger.trace("Throwing custom bad request error");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unable to authenticate with the provided access token and id");
+            // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response = generateResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "One or more of the required headers was not provided");
             return false;
         }
     }

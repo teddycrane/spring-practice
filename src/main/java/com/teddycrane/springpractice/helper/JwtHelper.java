@@ -40,7 +40,7 @@ public class JwtHelper {
             return true;
         } catch(Exception e) 
         {
-            logger.error("an exception occurred");
+            logger.error("The token provided is not an acceptable token");
             return false;
         }
     }
