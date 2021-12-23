@@ -36,7 +36,6 @@ public class JwtHelper {
                         .setSigningKey(key)
                         .build()
                         .parseClaimsJws(token);
-            logger.info("successfully parsed token {}", jws);
             return true;
         } catch(Exception e) 
         {
