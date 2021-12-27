@@ -137,7 +137,9 @@ public class UserService extends BaseService implements IUserService {
 			Optional<String> username,
 			Optional<String> password,
 			Optional<String> firstName,
-			Optional<String> lastName, Optional<UserType> userType) throws UserNotFoundError {
+			Optional<String> lastName, 
+			Optional<String> email, 
+			Optional<UserType> userType) throws UserNotFoundError {
 		logger.trace("updateUser called");
 
 		Optional<User> existing = this.userRepository.findById(id);
@@ -160,6 +162,8 @@ public class UserService extends BaseService implements IUserService {
 		// todo set up enum validation
 		if (userType.isPresent())
 			user.setType(userType.get());
+		if (email.isPresent())
+			user.setEmail(email.get());
 
 		return this.userRepository.save(user);
 	}

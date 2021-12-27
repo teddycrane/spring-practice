@@ -26,5 +26,5 @@ public interface IUserService
 
 	AuthenticationResponse login(@Nullable String username, @Nullable String email, String password) throws NotAuthenticatedException, UserNotFoundError;
 
-	User updateUser(UUID id, Optional<String> username, Optional<String> password, Optional<String> firstName, Optional<String> lastName, Optional<UserType> userType) throws UserNotFoundError;
+	User updateUser(UUID id, Optional<String> username, Optional<String> password, Optional<String> firstName, Optional<String> lastName, Optional<String> email, Optional<UserType> userType) throws UserNotFoundError;
 }

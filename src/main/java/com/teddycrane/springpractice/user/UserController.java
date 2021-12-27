@@ -96,6 +96,7 @@ public class UserController extends BaseController implements IUserController {
 					request.getPassword(),
 					request.getFirstName(),
 					request.getLastName(),
+					request.getEmail(),
 					request.getUserType());
 		} catch (IllegalArgumentException e) {
 			logger.error("Unable to parse the provided uuid {}", request.getUserId());
