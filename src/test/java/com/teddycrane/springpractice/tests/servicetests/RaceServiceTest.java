@@ -10,27 +10,25 @@ import com.teddycrane.springpractice.racer.model.RacerRepository;
 import com.teddycrane.springpractice.race.model.IRaceService;
 import com.teddycrane.springpractice.race.RaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
+
+import org.junit.jupiter.api.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class RaceServiceTest
 {
 
 	private final UUID requestUUID = UUID.randomUUID();
 	private final UUID badRequestUUID = UUID.randomUUID();
 	private final String requestString = requestUUID.toString();
+
 	@Mock
 	private RaceRepository raceRepository;
+
 	@Mock
 	private RacerRepository racerRepository;
 	private IRaceService raceService;
@@ -40,7 +38,7 @@ public class RaceServiceTest
 	@Captor
 	private ArgumentCaptor<Race> argument;
 
-	@Before
+	@BeforeEach
 	public void init()
 	{
 		MockitoAnnotations.openMocks(this);
@@ -57,8 +55,8 @@ public class RaceServiceTest
 	public void shouldGetAllRaces()
 	{
 		List<Race> result = this.raceService.getAllRaces();
-		Assert.assertEquals(10, result.size());
-		Assert.assertEquals(raceList, result);
+		Assertions.assertEquals(10, result.size());
+		Assertions.assertEquals(raceList, result);
 	}
 
 	@Test
@@ -68,7 +66,7 @@ public class RaceServiceTest
 
 		// test
 		Race result = this.raceService.getRace(requestUUID);
-		Assert.assertTrue(result.equals(raceList.get(0)));
+		Assertions.assertTrue(result.equals(raceList.get(0)));
 	}
 
 	@Test
@@ -77,7 +75,7 @@ public class RaceServiceTest
 		when(raceRepository.findById(badRequestUUID)).thenReturn(Optional.empty());
 
 		// test
-		Assert.assertThrows(RaceNotFoundException.class, () -> this.raceService.getRace(badRequestUUID));
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.getRace(badRequestUUID));
 	}
 
 	@Test
@@ -89,8 +87,8 @@ public class RaceServiceTest
 		this.raceService.createRace("name", Category.CAT5);
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
-		Assert.assertEquals("name", result.getName());
-		Assert.assertEquals(Category.CAT5, result.getCategory());
+		Assertions.assertEquals("name", result.getName());
+		Assertions.assertEquals(Category.CAT5, result.getCategory());
 	}
 
 	@Test
@@ -102,7 +100,7 @@ public class RaceServiceTest
 		when(raceRepository.findByName("name")).thenReturn(Optional.of(test));
 
 		// test
-		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5));
+		Assertions.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5));
 	}
 
 	@Test
@@ -115,9 +113,9 @@ public class RaceServiceTest
 		this.raceService.createRace("name", Category.CAT5, startTime);
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
-		Assert.assertEquals("name", result.getName());
-		Assert.assertEquals(Category.CAT5, result.getCategory());
-		Assert.assertEquals(startTime, result.getStartTime());
+		Assertions.assertEquals("name", result.getName());
+		Assertions.assertEquals(Category.CAT5, result.getCategory());
+		Assertions.assertEquals(startTime, result.getStartTime());
 	}
 
 	@Test
@@ -137,10 +135,10 @@ public class RaceServiceTest
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
 
-		Assert.assertEquals(expected.getName(), result.getName());
-		Assert.assertEquals(expected.getCategory(), result.getCategory());
-		Assert.assertEquals(expected.getStartTime(), result.getStartTime());
-		Assert.assertEquals(expected.getEndTime(), result.getEndTime());
+		Assertions.assertEquals(expected.getName(), result.getName());
+		Assertions.assertEquals(expected.getCategory(), result.getCategory());
+		Assertions.assertEquals(expected.getStartTime(), result.getStartTime());
+		Assertions.assertEquals(expected.getEndTime(), result.getEndTime());
 	}
 
 	@Test
@@ -154,7 +152,7 @@ public class RaceServiceTest
 		when(raceRepository.findByName("name")).thenReturn(Optional.of(test));
 
 		// test
-		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5, startTime));
+		Assertions.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5, startTime));
 	}
 
 	@Test
@@ -170,7 +168,7 @@ public class RaceServiceTest
 		when(raceRepository.findByName("name")).thenReturn(Optional.of(test));
 
 		// test
-		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5, startTime, endTime));
+		Assertions.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5, startTime, endTime));
 	}
 
 	@Test
@@ -188,7 +186,7 @@ public class RaceServiceTest
 		this.raceService.updateRace(test.getId(), "New Name", Category.CAT4);
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race argument = this.argument.getValue();
-		Assert.assertTrue(argument.equals(expected));
+		Assertions.assertTrue(argument.equals(expected));
 	}
 
 	@Test
@@ -199,7 +197,7 @@ public class RaceServiceTest
 		when(raceRepository.findByName("New Name")).thenReturn(Optional.of(existing));
 
 		// test
-		Assert.assertThrows(DuplicateItemException.class, () -> this.raceService.updateRace(requestUUID, "New Name", Category.CAT5));
+		Assertions.assertThrows(DuplicateItemException.class, () -> this.raceService.updateRace(requestUUID, "New Name", Category.CAT5));
 	}
 
 	@Test
@@ -208,7 +206,7 @@ public class RaceServiceTest
 		when(raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
 		// test
-		Assert.assertThrows(RaceNotFoundException.class, () -> this.raceService.updateRace(requestUUID, "test", null));
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.updateRace(requestUUID, "test", null));
 	}
 
 	@Test
@@ -227,8 +225,8 @@ public class RaceServiceTest
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
 
-		Assert.assertNotNull(result);
-		Assert.assertEquals(5, result.getRacers().size());
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(5, result.getRacers().size());
 	}
 
 	@Test
@@ -241,9 +239,9 @@ public class RaceServiceTest
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
 
-		Assert.assertNotNull(result);
-		Assert.assertNotNull(result.getStartTime());
-		Assert.assertNull(result.getEndTime());
+		Assertions.assertNotNull(result);
+		Assertions.assertNotNull(result.getStartTime());
+		Assertions.assertNull(result.getEndTime());
 	}
 
 	@Test
@@ -259,8 +257,8 @@ public class RaceServiceTest
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
 
-		Assert.assertNotNull(result);
-		Assert.assertNotNull(result.getEndTime());
+		Assertions.assertNotNull(result);
+		Assertions.assertNotNull(result.getEndTime());
 	}
 
 	@Test
@@ -287,9 +285,9 @@ public class RaceServiceTest
 		Mockito.verify(raceRepository).save(argument.capture());
 		Race result = argument.getValue();
 
-		Assert.assertNotNull(result);
-		Assert.assertEquals(2, result.getFinishOrder().size());
-		Assert.assertTrue(result.getFinishOrder().containsKey(racerList.get(0)));
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(2, result.getFinishOrder().size());
+		Assertions.assertTrue(result.getFinishOrder().containsKey(racerList.get(0)));
 	}
 
 
@@ -303,7 +301,7 @@ public class RaceServiceTest
 //		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(existing));
 //
 //		// test
-//		Assert.assertThrows(UpdateException.class, () -> this.raceService.addRacer(requestUUID, racerList));
+//		Assertions.assertThrows(UpdateException.class, () -> this.raceService.addRacer(requestUUID, racerList));
 //	}
 
 	@Test
@@ -313,6 +311,6 @@ public class RaceServiceTest
 		when(raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
 		// test
-		Assert.assertThrows(RaceNotFoundException.class, () -> this.raceService.addRacer(requestUUID, racerList));
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.addRacer(requestUUID, racerList));
 	}
 }

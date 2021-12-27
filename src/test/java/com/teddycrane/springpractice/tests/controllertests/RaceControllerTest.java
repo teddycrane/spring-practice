@@ -14,10 +14,7 @@ import com.teddycrane.springpractice.error.RaceNotFoundException;
 import com.teddycrane.springpractice.error.UpdateException;
 import com.teddycrane.springpractice.race.model.IRaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -30,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class RaceControllerTest
 {
 
@@ -59,7 +55,7 @@ public class RaceControllerTest
 		when(raceService.placeRacersInFinishOrder(eq(requestUUID), any(ArrayList.class))).thenReturn(race);
 	}
 
-	@Before
+	@BeforeEach
 	public void init()
 	{
 		MockitoAnnotations.openMocks(this);
@@ -87,11 +83,11 @@ public class RaceControllerTest
 
 		// test
 		List<Race> result = this.raceController.getAllRaces();
-		Assert.assertEquals(5, result.size());
+		Assertions.assertEquals(5, result.size());
 
 		for (int i = 0; i < result.size(); i++)
 		{
-			Assert.assertTrue(result.get(i).equals(raceList.get(i)));
+			Assertions.assertTrue(result.get(i).equals(raceList.get(i)));
 		}
 	}
 
@@ -107,8 +103,8 @@ public class RaceControllerTest
 		verify(raceService).getRace(idCaptor.capture());
 		UUID request = idCaptor.getValue();
 
-		Assert.assertTrue(result.equals(race));
-		Assert.assertEquals(requestUUID, request);
+		Assertions.assertTrue(result.equals(race));
+		Assertions.assertEquals(requestUUID, request);
 	}
 
 	@Test
@@ -117,8 +113,8 @@ public class RaceControllerTest
 		when(raceService.getRace(requestUUID)).thenThrow(RaceNotFoundException.class);
 
 		// test
-		Assert.assertThrows(RaceNotFoundException.class, () -> this.raceController.getRace(requestString));
-		Assert.assertThrows(BadRequestException.class, () -> this.raceController.getRace("test bad uuid"));
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceController.getRace(requestString));
+		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.getRace("test bad uuid"));
 	}
 
 	// Create race
@@ -134,9 +130,9 @@ public class RaceControllerTest
 		Race result = this.raceController.createRace(new CreateRaceRequest("test name", Category.CAT5));
 		verify(raceService).createRace(name.capture(), category.capture());
 
-		Assert.assertEquals("test name", name.getValue());
-		Assert.assertEquals(Category.CAT5, category.getValue());
-		Assert.assertTrue(result.equals(race));
+		Assertions.assertEquals("test name", name.getValue());
+		Assertions.assertEquals(Category.CAT5, category.getValue());
+		Assertions.assertTrue(result.equals(race));
 	}
 
 	@Test
@@ -144,9 +140,9 @@ public class RaceControllerTest
 	{
 		when(raceService.createRace("test name", Category.CAT5)).thenThrow(DuplicateItemException.class);
 
-		Assert.assertThrows(BadRequestException.class, () -> this.raceController.createRace(null));
+		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.createRace(null));
 
-		Assert.assertThrows(DuplicateItemException.class,
+		Assertions.assertThrows(DuplicateItemException.class,
 				() -> this.raceController.createRace(new CreateRaceRequest("test name", Category.CAT5)));
 	}
 
@@ -164,28 +160,28 @@ public class RaceControllerTest
 		verify(raceService).updateRace(idCaptor.capture(), newName.capture(), newCategory.capture());
 
 		// should use the correct parameters
-		Assert.assertEquals(requestUUID, idCaptor.getValue());
-		Assert.assertEquals("test name", newName.getValue());
-		Assert.assertEquals(Category.CAT4, newCategory.getValue());
-		Assert.assertTrue(result.equals(race));
+		Assertions.assertEquals(requestUUID, idCaptor.getValue());
+		Assertions.assertEquals("test name", newName.getValue());
+		Assertions.assertEquals(Category.CAT4, newCategory.getValue());
+		Assertions.assertTrue(result.equals(race));
 	}
 
 	@Test
 	public void shouldHandleUpdateErrors()
 	{
 		// both  params invalid
-		Assert.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest(null, null), UUID.randomUUID().toString()));
+		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest(null, null), UUID.randomUUID().toString()));
 
 		// bad UUID
-		Assert.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), "bad value"));
+		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), "bad value"));
 
 		// generic update exception
 		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenThrow(UpdateException.class);
 
-		Assert.assertThrows(UpdateException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT4), requestString));
+		Assertions.assertThrows(UpdateException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT4), requestString));
 
 		when(raceService.updateRace(any(UUID.class), any(String.class), any(Category.class))).thenThrow(RaceNotFoundException.class);
-		Assert.assertThrows(RaceNotFoundException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), requestString));
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), requestString));
 	}
 
 	@Test
@@ -200,21 +196,21 @@ public class RaceControllerTest
 
 		// test
 		Race result = this.raceController.addRacer(new AddRacerRequest(ids), testUUID.toString());
-		Assert.assertTrue(result.equals(testResult));
+		Assertions.assertTrue(result.equals(testResult));
 	}
 
 	@Test
 	public void shouldStartRace()
 	{
 		Race result = this.raceController.startRace(requestString);
-		Assert.assertTrue(result.equals(race));
+		Assertions.assertTrue(result.equals(race));
 	}
 
 	@Test
 	public void shouldEndRace()
 	{
 		Race result = this.raceController.endRace(requestString);
-		Assert.assertTrue(result.equals(race));
+		Assertions.assertTrue(result.equals(race));
 	}
 
 	@Test
@@ -224,6 +220,6 @@ public class RaceControllerTest
 		ids[0] = racerList.get(0).getId().toString();
 		SetResultRequest request = new SetResultRequest(ids);
 		Race result = this.raceController.setRacerResult(requestString, request);
-		Assert.assertTrue(result.equals(race));
+		Assertions.assertTrue(result.equals(race));
 	}
 }

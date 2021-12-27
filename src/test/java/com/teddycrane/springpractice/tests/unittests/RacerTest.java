@@ -2,20 +2,16 @@ package com.teddycrane.springpractice.tests.unittests;
 
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.junit.Assert;
+
+import org.junit.jupiter.api.*;
 
 
-@RunWith(MockitoJUnitRunner.class)
 public class RacerTest
 {
 
 	private Racer racer;
 
-	@Before
+	@BeforeEach
 	public void init()
 	{
 		racer = new Racer();
@@ -27,18 +23,18 @@ public class RacerTest
 	public void constructorShouldCreateValidRacers()
 	{
 		// test that the default constructor constructs properly and that the constructors are all working
-		Assert.assertNotNull(racer);
-		Assert.assertTrue(racer.equals(new Racer(racer)));
-		Assert.assertEquals(racer.getId(), new Racer(racer).getId());
+		Assertions.assertNotNull(racer);
+		Assertions.assertTrue(racer.equals(new Racer(racer)));
+		Assertions.assertEquals(racer.getId(), new Racer(racer).getId());
 
 		// test that the full constructor creates valid racers
 		Racer fullConstructorTestRacer = new Racer("fname", "lname");
 
-		Assert.assertNotNull(fullConstructorTestRacer);
-		Assert.assertEquals(fullConstructorTestRacer.getFirstName(), "fname");
-		Assert.assertEquals(fullConstructorTestRacer.getLastName(), "lname");
-		Assert.assertFalse(fullConstructorTestRacer.getIsDeleted());
-		Assert.assertEquals(fullConstructorTestRacer.getCategory(), Category.CAT5);
+		Assertions.assertNotNull(fullConstructorTestRacer);
+		Assertions.assertEquals(fullConstructorTestRacer.getFirstName(), "fname");
+		Assertions.assertEquals(fullConstructorTestRacer.getLastName(), "lname");
+		Assertions.assertFalse(fullConstructorTestRacer.getIsDeleted());
+		Assertions.assertEquals(fullConstructorTestRacer.getCategory(), Category.CAT5);
 	}
 
 	@Test
@@ -46,19 +42,19 @@ public class RacerTest
 	{
 		// test first name setter
 		racer.setFirstName("set first name");
-		Assert.assertEquals("set first name", racer.getFirstName());
+		Assertions.assertEquals("set first name", racer.getFirstName());
 
 		// test last name setter
 		racer.setLastName("set last name");
-		Assert.assertEquals(racer.getLastName(), "set last name");
+		Assertions.assertEquals(racer.getLastName(), "set last name");
 
 		// test category setter
 		racer.setCategory(Category.CAT1);
-		Assert.assertEquals(racer.getCategory(), Category.CAT1);
+		Assertions.assertEquals(racer.getCategory(), Category.CAT1);
 
 		// test deletion setter
 		racer.setIsDeleted(true);
-		Assert.assertTrue(racer.getIsDeleted());
+		Assertions.assertTrue(racer.getIsDeleted());
 	}
 
 	@Test
@@ -66,13 +62,13 @@ public class RacerTest
 	{
 		String[] test = racer.toString().split("\n");
 
-		Assert.assertEquals(test[0], "{");
-		Assert.assertEquals(test[1], String.format("    \"id\": \"%s\",", racer.getId()));
-		Assert.assertEquals(test[2], "    \"firstName\": \"test\",");
-		Assert.assertEquals(test[3], "    \"lastName\": \"user\",");
-		Assert.assertEquals(test[4], "    \"category\": \"Category 5\",");
-		Assert.assertEquals(test[5], "    \"isDeleted\": \"false\"");
-		Assert.assertEquals(test[6], "}");
+		Assertions.assertEquals(test[0], "{");
+		Assertions.assertEquals(test[1], String.format("    \"id\": \"%s\",", racer.getId()));
+		Assertions.assertEquals(test[2], "    \"firstName\": \"test\",");
+		Assertions.assertEquals(test[3], "    \"lastName\": \"user\",");
+		Assertions.assertEquals(test[4], "    \"category\": \"Category 5\",");
+		Assertions.assertEquals(test[5], "    \"isDeleted\": \"false\"");
+		Assertions.assertEquals(test[6], "}");
 	}
 
 	@Test
@@ -82,7 +78,7 @@ public class RacerTest
 		int hash2 = new Racer(racer).hashCode();
 		int hash3 = new Racer().hashCode();
 
-		Assert.assertEquals(hash1, hash2);
-		Assert.assertNotEquals(hash1, hash3);
+		Assertions.assertEquals(hash1, hash2);
+		Assertions.assertNotEquals(hash1, hash3);
 	}
 }

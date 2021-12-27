@@ -10,10 +10,7 @@ import com.teddycrane.springpractice.racer.request.CreateRacerRequest;
 import com.teddycrane.springpractice.racer.request.UpdateRacerRequest;
 import com.teddycrane.springpractice.racer.model.IRacerService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -23,7 +20,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class RacerControllerTest
 {
 
@@ -42,7 +38,7 @@ public class RacerControllerTest
 	@Captor
 	private ArgumentCaptor<String> valueArg;
 
-	@Before
+	@BeforeEach
 	public void init()
 	{
 		MockitoAnnotations.openMocks(this);
@@ -62,11 +58,11 @@ public class RacerControllerTest
 
 		// test
 		List<Racer> result = this.racerController.getAllRacers(false);
-		Assert.assertEquals(5, result.size());
+		Assertions.assertEquals(5, result.size());
 
 		for (int i = 0; i < result.size(); i++)
 		{
-			Assert.assertTrue(result.get(i).equals(racerList.get(i)));
+			Assertions.assertTrue(result.get(i).equals(racerList.get(i)));
 		}
 	}
 
@@ -77,11 +73,11 @@ public class RacerControllerTest
 
 		// test
 		List<Racer> result = this.racerController.getAllRacers(true);
-		Assert.assertEquals(5, result.size());
+		Assertions.assertEquals(5, result.size());
 
 		for (int i = 0; i < result.size(); i++)
 		{
-			Assert.assertTrue(result.get(i).equals(racerList.get(i)));
+			Assertions.assertTrue(result.get(i).equals(racerList.get(i)));
 		}
 	}
 
@@ -92,7 +88,7 @@ public class RacerControllerTest
 
 		// test
 		Racer result = this.racerController.getRacer(UUID.randomUUID().toString());
-		Assert.assertTrue(result.equals(racer));
+		Assertions.assertTrue(result.equals(racer));
 	}
 
 	@Test
@@ -101,7 +97,7 @@ public class RacerControllerTest
 		when(racerService.getRacerById(any(UUID.class))).thenThrow(RacerNotFoundException.class);
 
 		// test
-		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.getRacer(UUID.randomUUID().toString()));
+		Assertions.assertThrows(RacerNotFoundException.class, () -> this.racerController.getRacer(UUID.randomUUID().toString()));
 	}
 
 	@Test
@@ -111,7 +107,7 @@ public class RacerControllerTest
 
 		// test
 		Racer result = this.racerController.addRacer(new CreateRacerRequest("Firstname", "Lastname"));
-		Assert.assertTrue(result.equals(racer));
+		Assertions.assertTrue(result.equals(racer));
 	}
 
 	@Test
@@ -120,7 +116,7 @@ public class RacerControllerTest
 		when(racerService.addRacer(any(String.class), any(String.class))).thenThrow(IllegalArgumentException.class);
 
 		// test
-		Assert.assertThrows(BadRequestException.class, () -> this.racerController.addRacer(new CreateRacerRequest("firstname", "lastname")));
+		Assertions.assertThrows(BadRequestException.class, () -> this.racerController.addRacer(new CreateRacerRequest("firstname", "lastname")));
 	}
 
 	@Test
@@ -130,7 +126,7 @@ public class RacerControllerTest
 
 		// test
 		Racer result = this.racerController.updateRacer(new UpdateRacerRequest("firstName", "lastName", Category.CAT5), UUID.randomUUID().toString());
-		Assert.assertTrue(result.equals(racer));
+		Assertions.assertTrue(result.equals(racer));
 	}
 
 	@Test
@@ -140,7 +136,7 @@ public class RacerControllerTest
 
 		// test
 		UpdateRacerRequest request = new UpdateRacerRequest(null, null, null);
-		Assert.assertThrows(BadRequestException.class, () -> this.racerController.updateRacer(request, UUID.randomUUID().toString()));
+		Assertions.assertThrows(BadRequestException.class, () -> this.racerController.updateRacer(request, UUID.randomUUID().toString()));
 	}
 
 	@Test
@@ -150,7 +146,7 @@ public class RacerControllerTest
 
 		// test
 		UpdateRacerRequest request = new UpdateRacerRequest("Firstname", "lastname", null);
-		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.updateRacer(request, UUID.randomUUID().toString()));
+		Assertions.assertThrows(RacerNotFoundException.class, () -> this.racerController.updateRacer(request, UUID.randomUUID().toString()));
 	}
 
 	@Test
@@ -158,7 +154,7 @@ public class RacerControllerTest
 	{
 		// test
 		UpdateRacerRequest request = new UpdateRacerRequest("Firstname", "LastName", Category.CAT5);
-		Assert.assertThrows(BadRequestException.class, () -> this.racerController.updateRacer(request, "z!"));
+		Assertions.assertThrows(BadRequestException.class, () -> this.racerController.updateRacer(request, "z!"));
 	}
 
 	@Test
@@ -168,7 +164,7 @@ public class RacerControllerTest
 
 		// test
 		Racer response = this.racerController.deleteRacer(UUID.randomUUID().toString());
-		Assert.assertTrue(response.equals(racer));
+		Assertions.assertTrue(response.equals(racer));
 	}
 
 	@Test
@@ -177,7 +173,7 @@ public class RacerControllerTest
 		when(racerService.deleteRacer(any(UUID.class))).thenThrow(NoSuchElementException.class);
 
 		// test
-		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.deleteRacer(UUID.randomUUID().toString()));
+		Assertions.assertThrows(RacerNotFoundException.class, () -> this.racerController.deleteRacer(UUID.randomUUID().toString()));
 	}
 
 	@Test
@@ -187,7 +183,7 @@ public class RacerControllerTest
 
 		// test
 		Racer response = this.racerController.restoreRacer(UUID.randomUUID().toString());
-		Assert.assertTrue(response.equals(racer));
+		Assertions.assertTrue(response.equals(racer));
 	}
 
 	@Test
@@ -196,7 +192,7 @@ public class RacerControllerTest
 		when(racerService.restoreRacer(any(UUID.class))).thenThrow(RacerNotFoundException.class);
 
 		// test
-		Assert.assertThrows(RacerNotFoundException.class, () -> this.racerController.restoreRacer(UUID.randomUUID().toString()));
+		Assertions.assertThrows(RacerNotFoundException.class, () -> this.racerController.restoreRacer(UUID.randomUUID().toString()));
 	}
 
 	@Test
@@ -210,15 +206,15 @@ public class RacerControllerTest
 		RacerFilterType filter = filterArg.getValue();
 		String value = valueArg.getValue();
 
-		Assert.assertEquals(RacerFilterType.CATEGORY, filter);
-		Assert.assertEquals("CAT1", value);
+		Assertions.assertEquals(RacerFilterType.CATEGORY, filter);
+		Assertions.assertEquals("CAT1", value);
 	}
 
 	@Test
 	public void shouldHandleBadFilterTypes()
 	{
-		Assert.assertThrows(BadRequestException.class, () -> this.racerController.getRacersByType("bad value", "bad value"));
+		Assertions.assertThrows(BadRequestException.class, () -> this.racerController.getRacersByType("bad value", "bad value"));
 
-		Assert.assertThrows(BadRequestException.class, () -> this.racerController.getRacersByType("category", "bad value"));
+		Assertions.assertThrows(BadRequestException.class, () -> this.racerController.getRacersByType("category", "bad value"));
 	}
 }
