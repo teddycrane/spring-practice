@@ -6,8 +6,7 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-public class CreateUserRequest
-{
+public class CreateUserRequest {
 	@NotNull
 	private String username;
 
@@ -20,32 +19,34 @@ public class CreateUserRequest
 	@NotNull
 	private String lastName;
 
+	@NotNull
+	private String email;
+
 	// Can be null, defaults to basic user type (least-privileged)
 	@Nullable
 	private UserType type;
 
-	public String getFirstName()
-	{
+	public String getFirstName() {
 		return firstName;
 	}
 
-	public String getLastName()
-	{
+	public String getLastName() {
 		return lastName;
 	}
 
-	public String getUsername()
-	{
+	public String getUsername() {
 		return username;
 	}
 
-	public String getPassword()
-	{
+	public String getPassword() {
 		return password;
 	}
 
-	public Optional<UserType> getType()
-	{
+	public String getEmail() {
+		return email;
+	}
+
+	public Optional<UserType> getType() {
 		return Optional.ofNullable(type);
 	}
 }

@@ -1,25 +1,29 @@
 package com.teddycrane.springpractice.user.request;
 
+import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
-public class AuthenticationRequest
-{
+import org.springframework.lang.Nullable;
+
+public class AuthenticationRequest {
 
 	@NotNull
 	private String password;
 
-	@NotNull
-	private String username;
+	// we can login by either the username or the email
+	@Nullable
+	private String username, email;
 
-
-	public String getPassword()
-	{
+	public String getPassword() {
 		return password;
 	}
 
-	public String getUsername()
-	{
-		return username;
+	public Optional<String> getUsername() {
+		return Optional.ofNullable(username);
+	}
+
+	public Optional<String> getEmail() {
+		return Optional.ofNullable(email);
 	}
 }

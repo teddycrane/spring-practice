@@ -28,7 +28,7 @@ public interface IUserController
 	User createUser(@RequestBody @Valid CreateUserRequest request) throws BadRequestException, DuplicateItemException;
 
 	@PostMapping(path = "/login")
-	AuthenticationResponse login(@RequestBody @Valid AuthenticationRequest request) throws NotAuthenticatedException, UserNotFoundError;
+	AuthenticationResponse login(@RequestBody @Valid AuthenticationRequest request) throws BadRequestException, NotAuthenticatedException, UserNotFoundError;
 
 	@PatchMapping
 	User updateUser(@RequestBody @Valid UpdateUserRequest request) throws BadRequestException, UserNotFoundError;

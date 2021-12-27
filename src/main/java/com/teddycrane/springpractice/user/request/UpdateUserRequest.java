@@ -13,38 +13,36 @@ public class UpdateUserRequest {
     private String userId;
 
     @Nullable
-    private String firstName, lastName, password, username;
+    private String firstName, lastName, password, username, email;
 
     @Nullable
     private UserType userType;
 
-    public String getUserId()
-    {
+    public String getUserId() {
         return userId;
     }
 
-    public Optional<String> getFirstName()
-    {
+    public Optional<String> getFirstName() {
         return Optional.ofNullable(firstName);
     }
 
-    public Optional<String> getLastName()
-    {
+    public Optional<String> getLastName() {
         return Optional.ofNullable(lastName);
     }
 
-    public Optional<String> getPassword()
-    {
+    public Optional<String> getPassword() {
         return Optional.ofNullable(password);
     }
 
-    public Optional<String> getUsername()
-    {
+    public Optional<String> getUsername() {
         return Optional.ofNullable(username);
     }
 
-    public Optional<UserType> getUserType()
-    {
+    public Optional<String> getEmail() {
+        return Optional.ofNullable(email);
+    }
+
+    public Optional<UserType> getUserType() {
         return Optional.ofNullable(userType);
     }
 

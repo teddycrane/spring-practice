@@ -8,6 +8,7 @@ import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -23,7 +24,7 @@ public interface IUserService
 
 	User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type) throws DuplicateItemException, InternalServerError;
 
-	AuthenticationResponse login(String username, String password) throws NotAuthenticatedException, UserNotFoundError;
+	AuthenticationResponse login(@Nullable String username, @Nullable String email, String password) throws NotAuthenticatedException, UserNotFoundError;
 
 	User updateUser(UUID id, Optional<String> username, Optional<String> password, Optional<String> firstName, Optional<String> lastName, Optional<UserType> userType) throws UserNotFoundError;
 }
