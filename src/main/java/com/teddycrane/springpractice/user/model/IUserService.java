@@ -7,6 +7,7 @@ import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -27,4 +28,6 @@ public interface IUserService
 	AuthenticationResponse login(@Nullable String username, @Nullable String email, String password) throws NotAuthenticatedException, UserNotFoundError;
 
 	User updateUser(UUID id, Optional<String> username, Optional<String> password, Optional<String> firstName, Optional<String> lastName, Optional<String> email, Optional<UserType> userType) throws UserNotFoundError;
+
+	PasswordResetResponse resetPassword(UUID id) throws UserNotFoundError;
 }

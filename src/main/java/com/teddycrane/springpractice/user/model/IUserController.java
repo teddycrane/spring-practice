@@ -9,14 +9,15 @@ import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
 import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordResetResponse;
+
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collection;
 
 @RequestMapping(path = "/users")
-public interface IUserController
-{
+public interface IUserController {
 
 	@GetMapping(path = "/all")
 	Collection<User> getAllUsers();
@@ -28,8 +29,12 @@ public interface IUserController
 	User createUser(@RequestBody @Valid CreateUserRequest request) throws BadRequestException, DuplicateItemException;
 
 	@PostMapping(path = "/login")
-	AuthenticationResponse login(@RequestBody @Valid AuthenticationRequest request) throws BadRequestException, NotAuthenticatedException, UserNotFoundError;
+	AuthenticationResponse login(@RequestBody @Valid AuthenticationRequest request)
+			throws BadRequestException, NotAuthenticatedException, UserNotFoundError;
 
 	@PatchMapping
 	User updateUser(@RequestBody @Valid UpdateUserRequest request) throws BadRequestException, UserNotFoundError;
+
+	@PostMapping(path = "/reset-password")
+	PasswordResetResponse resetPassword(@RequestParam String userId) throws BadRequestException, UserNotFoundError;
 }

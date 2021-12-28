@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.user;
 
+import com.github.javafaker.Faker;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
@@ -11,6 +12,8 @@ import com.teddycrane.springpractice.models.UserData;
 import com.teddycrane.springpractice.user.model.UserRepository;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordResetResponse;
+
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -18,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -172,5 +176,27 @@ public class UserService extends BaseService implements IUserService {
 			user.setEmail(email.get());
 
 		return this.userRepository.save(user);
+	}
+
+	private String generateRandomPassword() {
+		Faker faker = new Faker(new Random());
+		return faker.letterify("??????????????????????????");
+	}
+
+	@Override
+	public PasswordResetResponse resetPassword(UUID id) throws UserNotFoundError {
+		logger.trace("resetPassword called");
+		Optional<User> user = this.userRepository.findById(id);
+
+		if (user.isPresent()) {
+			User u = user.get();
+			String newPassword = this.generateRandomPassword();
+			u.setPassword(this.getSecurePassword(newPassword));
+			this.userRepository.save(u);
+			return new PasswordResetResponse(true, newPassword);
+		} else {
+			logger.error("No user found for the id {}", id);
+			throw new UserNotFoundError("No user found!");
+		}
 	}
 }

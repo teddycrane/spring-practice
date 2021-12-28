@@ -8,6 +8,8 @@ import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordResetResponse;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -104,4 +106,20 @@ public class UserController extends BaseController implements IUserController {
 			throw new BadRequestException("Unable to parse the provided user id");
 		}
 	}
+
+	@Override
+	public PasswordResetResponse resetPassword(String userId) throws BadRequestException, UserNotFoundError {
+		logger.trace("reset password called for user {}", userId);
+
+		try {
+			UUID id = UUID.fromString(userId);
+
+			return this.userService.resetPassword(id);
+		} catch (IllegalArgumentException e) {
+			logger.error("Invalid UUID format {}", userId);
+
+			throw new BadRequestException("Invalid user ID provided");
+		}
+	}
+
 }
