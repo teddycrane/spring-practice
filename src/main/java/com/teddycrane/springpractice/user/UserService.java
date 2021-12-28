@@ -261,17 +261,34 @@ public class UserService extends BaseService implements IUserService {
 	}
 
 	@Override
-	public PasswordChangeResponse changePassword(UUID userId, String oldPassword, String newPassword)
+	public PasswordChangeResponse changePassword(
+			UUID userId,
+			UUID requesterId,
+			String oldPassword,
+			String newPassword)
 			throws UserNotFoundError {
-		logger.trace("changePassword called");
+		logger.trace("changePassword called by requester {} for user {}", requesterId, userId);
 		Optional<User> user = this.userRepository.findById(userId);
+		// use this to determine if someone else is trying to reset a password
+		Optional<User> _requester = this.userRepository.findById(requesterId);
 
 		if (user.isEmpty()) {
 			logger.error("No user found for the id {}", userId);
 			throw new UserNotFoundError("No user found for the provided id");
 		}
 
+		if (_requester.isEmpty()) {
+			logger.error("No user found for the requester id {}", requesterId);
+			throw new UserNotFoundError("No valid requester found");
+		}
+
+		User requester = _requester.get();
 		User u = user.get();
+
+		// restrict non-own password editing to root users
+		if (requester.getType() == UserType.ROOT) {
+			logger.info("Root user {} updating password for user {}", requesterId, userId);
+		}
 
 		// if the old password and the new password match, then update the password
 		if (u.getPassword().equals(this.getSecurePassword(oldPassword))) {

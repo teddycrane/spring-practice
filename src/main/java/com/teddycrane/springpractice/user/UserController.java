@@ -172,15 +172,16 @@ public class UserController extends BaseController implements IUserController {
 	}
 
 	@Override
-	public PasswordChangeResponse changePassword(@Valid PasswordChangeRequest request) {
-		logger.trace("changePassword called");
+	public PasswordChangeResponse changePassword(@Valid PasswordChangeRequest request, String requesterId) {
+		logger.trace("changePassword called by requester {}", requesterId);
 
 		try {
+			UUID requester = UUID.fromString(requesterId);
 			UUID id = UUID.fromString(request.getUserId());
 
-			return this.userService.changePassword(id, request.getOldPassword(), request.getNewPassword());
+			return this.userService.changePassword(id, requester, request.getOldPassword(), request.getNewPassword());
 		} catch (IllegalArgumentException e) {
-			logger.error("Invalid UUID format {}", request.getUserId());
+			logger.error("Invalid UUID format");
 			throw new BadRequestException("The user id provided was not in a valid format");
 		}
 	}

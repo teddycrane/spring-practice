@@ -44,5 +44,6 @@ public interface IUserService {
 
 	Collection<User> searchUsersByPrimitiveValue(UserSearchType type, String value) throws BadRequestException;
 
-	PasswordChangeResponse changePassword(UUID userId, String oldPassword, String newPassword) throws UserNotFoundError;
+	PasswordChangeResponse changePassword(UUID userId, UUID requesterId, String oldPassword, String newPassword)
+			throws UserNotFoundError;
 }

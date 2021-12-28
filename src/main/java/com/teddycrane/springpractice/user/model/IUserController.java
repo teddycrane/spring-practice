@@ -44,5 +44,5 @@ public interface IUserController {
 	Collection<User> searchUsers(@RequestParam String searchType, @RequestParam String searchValue) throws BadRequestException;
 
 	@PostMapping(path = "/change-password")
-	PasswordChangeResponse changePassword(@RequestBody @Valid PasswordChangeRequest request) throws BadRequestException, UserNotFoundError;
+	PasswordChangeResponse changePassword(@RequestBody @Valid PasswordChangeRequest request, @RequestHeader("requester-id") String requesterId) throws BadRequestException, UserNotFoundError;
 }
