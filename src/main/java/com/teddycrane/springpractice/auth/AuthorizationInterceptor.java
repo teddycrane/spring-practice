@@ -61,10 +61,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         return result;
     }
 
-    private String getRequesterId(HttpServletRequest request) throws HeaderNotFoundException {
-        return getHeader(request, RequestHeaderName.ID);
-    }
-
     private String getAuthorizationToken(HttpServletRequest request) throws HeaderNotFoundException, HeaderFormatError {
         String[] result = this.getHeader(request, RequestHeaderName.AUTHORIZATION).split(" ");
 

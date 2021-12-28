@@ -15,7 +15,9 @@ public class ProjectConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authorizationInterceptor).addPathPatterns("/**").excludePathPatterns("/users/login", "/error");
+        registry.addInterceptor(authorizationInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/users/login", "/error", "/users/reset-password");
     }
 
 }
