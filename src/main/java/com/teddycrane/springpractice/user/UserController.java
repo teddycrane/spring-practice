@@ -55,6 +55,7 @@ public class UserController extends BaseController implements IUserController {
 					request.getLastName(),
 					request.getUsername(),
 					request.getPassword(),
+					request.getEmail(),
 					request.getType());
 		} catch (DuplicateItemException e) {
 			throw new DuplicateItemException(e.getMessage());

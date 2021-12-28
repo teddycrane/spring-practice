@@ -22,7 +22,7 @@ public interface IUserService
 
 	User getUser(UUID id) throws UserNotFoundError;
 
-	User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type) throws DuplicateItemException, InternalServerError;
+	User createUser(String firstName, String lastName, String userName, String email, String password, Optional<UserType> type) throws DuplicateItemException, InternalServerError;
 
 	AuthenticationResponse login(@Nullable String username, @Nullable String email, String password) throws NotAuthenticatedException, UserNotFoundError;
 

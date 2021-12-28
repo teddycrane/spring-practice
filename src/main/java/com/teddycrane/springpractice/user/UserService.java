@@ -75,8 +75,14 @@ public class UserService extends BaseService implements IUserService {
 	}
 
 	@Override
-	public User createUser(String firstName, String lastName, String userName, String password, Optional<UserType> type)
-			throws DuplicateItemException, InternalServerError {
+	public User createUser(String firstName,
+			String lastName,
+			String userName,
+			String email,
+			String password,
+			Optional<UserType> type)
+			throws DuplicateItemException,
+			InternalServerError {
 		logger.trace("createUser called");
 		Optional<User> existing = this.userRepository.findByUsername(userName);
 
@@ -137,8 +143,8 @@ public class UserService extends BaseService implements IUserService {
 			Optional<String> username,
 			Optional<String> password,
 			Optional<String> firstName,
-			Optional<String> lastName, 
-			Optional<String> email, 
+			Optional<String> lastName,
+			Optional<String> email,
 			Optional<UserType> userType) throws UserNotFoundError {
 		logger.trace("updateUser called");
 
