@@ -19,7 +19,7 @@ services:
     depends_on:
       - docker-mysql
     build: 
-      context: ./containers
+      context: .
       dockerfile: spring-practice.dockerfile
     restart: on-failure
     ports:
