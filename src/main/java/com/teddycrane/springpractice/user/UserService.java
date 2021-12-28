@@ -1,6 +1,7 @@
 package com.teddycrane.springpractice.user;
 
 import com.github.javafaker.Faker;
+import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
@@ -100,7 +101,8 @@ public class UserService extends BaseService implements IUserService {
 		return this.userRepository.save(new User(type.orElse(UserType.USER), firstName,
 				lastName,
 				userName,
-				hashedPassword));
+				hashedPassword,
+				UserStatus.ACTIVE));
 	}
 
 	@Override
@@ -149,7 +151,7 @@ public class UserService extends BaseService implements IUserService {
 			Optional<String> firstName,
 			Optional<String> lastName,
 			Optional<String> email,
-			Optional<UserType> userType) throws UserNotFoundError {
+			Optional<UserType> userType) throws IllegalAccessException, UserNotFoundError {
 		logger.trace("updateUser called");
 
 		Optional<User> existing = this.userRepository.findById(id);
@@ -160,6 +162,13 @@ public class UserService extends BaseService implements IUserService {
 		}
 
 		User user = existing.get();
+
+		// keep this if for now, since we're not actually supporting disabled users yet
+		if (user.getStatus() != UserStatus.ACTIVE) {
+			throw new IllegalAccessException("The specified user is not an active user");
+		}
+
+		// todo set up logic for requiring a password reset before changing the status
 
 		if (username.isPresent())
 			user.setUsername(username.get());
@@ -192,6 +201,7 @@ public class UserService extends BaseService implements IUserService {
 			User u = user.get();
 			String newPassword = this.generateRandomPassword();
 			u.setPassword(this.getSecurePassword(newPassword));
+			u.setStatus(UserStatus.PASSWORDCHANGEREQUIRED);
 			this.userRepository.save(u);
 			return new PasswordResetResponse(true, newPassword);
 		} else {

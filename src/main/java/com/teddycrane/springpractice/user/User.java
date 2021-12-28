@@ -144,6 +144,14 @@ public class User {
 		}
 	}
 
+	public UserStatus getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(UserStatus status) {
+		this.status = status;
+	}
+
 	public boolean equals(Object other) {
 		if (other.getClass() == this.getClass()) {
 			User otherUser = new User((User) other);

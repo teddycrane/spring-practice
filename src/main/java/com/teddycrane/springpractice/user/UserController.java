@@ -104,6 +104,9 @@ public class UserController extends BaseController implements IUserController {
 		} catch (IllegalArgumentException e) {
 			logger.error("Unable to parse the provided uuid {}", request.getUserId());
 			throw new BadRequestException("Unable to parse the provided user id");
+		} catch (IllegalAccessException e) {
+			logger.error("The user {} is disabled", request.getUserId());
+			throw new BadRequestException("Unable to update a disabled user");
 		}
 	}
 
