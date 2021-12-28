@@ -3,22 +3,18 @@ package com.teddycrane.springpractice.tests.unittests;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(MockitoJUnitRunner.class)
+import org.junit.jupiter.api.*;
+
 public class RaceTest
 {
 
 	private Race race;
 
-	@Before
+	@BeforeEach
 	public void init()
 	{
 		race = new Race();
@@ -28,17 +24,17 @@ public class RaceTest
 	public void constructorShouldCreateValidRaces()
 	{
 		// test that a valid race comes from the default constructor
-		Assert.assertNotNull(race);
+		Assertions.assertNotNull(race);
 
 		// test copy constructor
-		Assert.assertTrue(race.equals(new Race(race)));
+		Assertions.assertTrue(race.equals(new Race(race)));
 
 		// Test name constructor
 		Race namedRace = new Race("name", Category.CAT4);
-		Assert.assertEquals("name", namedRace.getName());
-		Assert.assertEquals(Category.CAT4, namedRace.getCategory());
-		Assert.assertNotNull(namedRace.getId());
-		Assert.assertNotNull(namedRace.getRacers());
+		Assertions.assertEquals("name", namedRace.getName());
+		Assertions.assertEquals(Category.CAT4, namedRace.getCategory());
+		Assertions.assertNotNull(namedRace.getId());
+		Assertions.assertNotNull(namedRace.getRacers());
 	}
 
 	@Test
@@ -61,7 +57,7 @@ public class RaceTest
 			}
 		}
 
-		Assert.assertTrue(areEqual);
+		Assertions.assertTrue(areEqual);
 	}
 
 	@Test
@@ -69,15 +65,15 @@ public class RaceTest
 	{
 		// name setter
 		race.setName("test");
-		Assert.assertEquals("test", race.getName());
+		Assertions.assertEquals("test", race.getName());
 
 		// category setter
 		race.setCategory(Category.CAT1);
-		Assert.assertEquals(Category.CAT1, race.getCategory());
+		Assertions.assertEquals(Category.CAT1, race.getCategory());
 
 		// adding racer
 		race.addRacer(new Racer());
-		Assert.assertEquals(1, race.getRacers().size());
+		Assertions.assertEquals(1, race.getRacers().size());
 	}
 
 	@Test
@@ -89,7 +85,7 @@ public class RaceTest
 		list.add(new Racer());
 		race2.setRacers(list);
 
-		Assert.assertFalse(race1.equals(race2));
+		Assertions.assertFalse(race1.equals(race2));
 	}
 
 }

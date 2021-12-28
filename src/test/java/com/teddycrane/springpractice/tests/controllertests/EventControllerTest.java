@@ -6,10 +6,7 @@ import com.teddycrane.springpractice.event.Event;
 import com.teddycrane.springpractice.event.request.CreateEventRequest;
 import com.teddycrane.springpractice.event.model.IEventService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -21,7 +18,6 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class EventControllerTest
 {
 	private IEventController eventController;
@@ -32,7 +28,7 @@ public class EventControllerTest
 	private Event event;
 	private List<Event> eventList;
 
-	@Before
+	@BeforeEach
 	public void init()
 	{
 		MockitoAnnotations.openMocks(this);
@@ -48,7 +44,7 @@ public class EventControllerTest
 
 		// test
 		Event result = this.eventController.getEvent(UUID.randomUUID().toString());
-		Assert.assertTrue(event.equals(result));
+		Assertions.assertTrue(event.equals(result));
 	}
 
 	@Test
@@ -58,10 +54,10 @@ public class EventControllerTest
 
 		// test
 		List<Event> result = this.eventController.getAllEvents();
-		Assert.assertEquals(10, result.size());
+		Assertions.assertEquals(10, result.size());
 		for (int i = 0; i < result.size(); i++)
 		{
-			Assert.assertTrue(result.get(i).equals(eventList.get(i)));
+			Assertions.assertTrue(result.get(i).equals(eventList.get(i)));
 		}
 	}
 
@@ -72,7 +68,7 @@ public class EventControllerTest
 
 		// test
 		Event result = this.eventController.createEvent(new CreateEventRequest("name", new Date(), new Date()));
-		Assert.assertTrue(result.equals(event));
+		Assertions.assertTrue(result.equals(event));
 	}
 
 	@Test
@@ -82,7 +78,7 @@ public class EventControllerTest
 
 		// test
 		Event result = this.eventController.deleteEvent(UUID.randomUUID().toString());
-		Assert.assertTrue(result.equals(event));
+		Assertions.assertTrue(result.equals(event));
 	}
 }
 

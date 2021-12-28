@@ -15,4 +15,6 @@ public interface UserRepository extends CrudRepository<User, UUID>
 	Collection<User> findByFirstNameAndLastName(String firstName, String lastName);
 
 	Optional<User> findByUsername(String username);
+
+	Optional<User> findByEmail(String email);
 }
