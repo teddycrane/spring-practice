@@ -153,6 +153,7 @@ public class UserController extends BaseController implements IUserController {
 				case USERNAME:
 				case FULLNAME: {
 					logger.info("Finding users by primitive values");
+					return this.userService.searchUsersByPrimitiveValue(parsedSearchType, searchValue);
 				}
 				default: {
 					// default behavior is to get all users

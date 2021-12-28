@@ -232,8 +232,24 @@ public class UserService extends BaseService implements IUserService {
 	}
 
 	@Override
-	public Collection<User> searchUsersByPrimitiveValue(UserSearchType type, String value) throws BadRequestException {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<User> searchUsersByPrimitiveValue(UserSearchType type, String value)
+			throws BadRequestException, UserNotFoundError {
+		logger.trace("searchUsersByPrimitiveValue called");
+		ArrayList<User> response = new ArrayList<>();
+
+		if (type == UserSearchType.USERNAME) {
+			Optional<User> result = this.userRepository.findByUsername(value);
+			if (result.isPresent()) {
+				response.add(result.get());
+			} else {
+				logger.error("No users found for the provided id");
+				throw new UserNotFoundError("No user found for the provided value");
+			}
+		} else {
+			// for now, searching by full name is not supported and should be ignored
+			Iterable<User> dbRes = this.userRepository.findAll();
+			dbRes.forEach(response::add);
+		}
+		return response;
 	}
 }
