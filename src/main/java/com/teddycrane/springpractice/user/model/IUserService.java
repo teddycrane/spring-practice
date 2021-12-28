@@ -11,6 +11,7 @@ import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordChangeResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.springframework.lang.Nullable;
@@ -42,4 +43,6 @@ public interface IUserService {
 			throws BadRequestException;
 
 	Collection<User> searchUsersByPrimitiveValue(UserSearchType type, String value) throws BadRequestException;
+
+	PasswordChangeResponse changePassword(UUID userId, String oldPassword, String newPassword) throws UserNotFoundError;
 }

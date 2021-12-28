@@ -16,6 +16,7 @@ import com.teddycrane.springpractice.models.UserData;
 import com.teddycrane.springpractice.user.model.UserRepository;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordChangeResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.springframework.stereotype.Service;
@@ -126,6 +127,12 @@ public class UserService extends BaseService implements IUserService {
 		if (user.isPresent()) {
 			User u = user.get();
 			logger.info("login requested for user {}", u.getId());
+
+			if (u.getStatus() != UserStatus.ACTIVE) {
+				logger.error("Cannot authenticate an inactive user");
+				throw new NotAuthenticatedException(
+						"The specified user is not active.  Please contact an administrator");
+			}
 
 			// this is the user provided password that should be compared to the one in the
 			// db
@@ -251,5 +258,31 @@ public class UserService extends BaseService implements IUserService {
 			dbRes.forEach(response::add);
 		}
 		return response;
+	}
+
+	@Override
+	public PasswordChangeResponse changePassword(UUID userId, String oldPassword, String newPassword)
+			throws UserNotFoundError {
+		logger.trace("changePassword called");
+		Optional<User> user = this.userRepository.findById(userId);
+
+		if (user.isEmpty()) {
+			logger.error("No user found for the id {}", userId);
+			throw new UserNotFoundError("No user found for the provided id");
+		}
+
+		User u = user.get();
+
+		// if the old password and the new password match, then update the password
+		if (u.getPassword().equals(this.getSecurePassword(oldPassword))) {
+			// hash new password and set
+			u.setPassword(this.getSecurePassword(newPassword));
+			// update status only if a password change is required, otherwise keep status
+			// the same
+			if (u.getStatus() == UserStatus.PASSWORDCHANGEREQUIRED)
+				u.setStatus(UserStatus.ACTIVE);
+		}
+		User result = this.userRepository.save(u);
+		return new PasswordChangeResponse(true, result.getUsername());
 	}
 }

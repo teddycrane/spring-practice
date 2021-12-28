@@ -11,7 +11,9 @@ import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
+import com.teddycrane.springpractice.user.request.PasswordChangeRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordChangeResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.validation.Valid;
 
 @RequestMapping(path = "/users")
 @RestController
@@ -164,6 +168,20 @@ public class UserController extends BaseController implements IUserController {
 			// handles enum valueOf errors
 			logger.error("The provided search value of {} is not an enum value of {}", searchValue, searchType);
 			throw new BadRequestException("The search value and search type provided are not compatible");
+		}
+	}
+
+	@Override
+	public PasswordChangeResponse changePassword(@Valid PasswordChangeRequest request) {
+		logger.trace("changePassword called");
+
+		try {
+			UUID id = UUID.fromString(request.getUserId());
+
+			return this.userService.changePassword(id, request.getOldPassword(), request.getNewPassword());
+		} catch (IllegalArgumentException e) {
+			logger.error("Invalid UUID format {}", request.getUserId());
+			throw new BadRequestException("The user id provided was not in a valid format");
 		}
 	}
 
