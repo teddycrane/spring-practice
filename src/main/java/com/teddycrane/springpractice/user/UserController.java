@@ -1,7 +1,11 @@
 package com.teddycrane.springpractice.user;
 
+import com.teddycrane.springpractice.enums.UserSearchType;
+import com.teddycrane.springpractice.enums.UserStatus;
+import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.*;
 import com.teddycrane.springpractice.models.BaseController;
+import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.user.model.IUserController;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.request.UpdateUserRequest;
@@ -122,6 +126,43 @@ public class UserController extends BaseController implements IUserController {
 			logger.error("Invalid UUID format {}", userId);
 
 			throw new BadRequestException("Invalid user ID provided");
+		}
+	}
+
+	@Override
+	public Collection<User> searchUsers(String searchType, String searchValue) throws BadRequestException {
+		logger.trace("searchUsers called");
+
+		try {
+			// validate search type and search terms
+			UserSearchType parsedSearchType = UserSearchType.valueOf(searchType.toUpperCase());
+
+			switch (parsedSearchType) {
+				// todo consolidate TYPE and ROLE blocks
+				case TYPE: {
+					logger.info("Finding users by UserType");
+					// validate search value
+					UserType type = UserType.valueOf(searchValue.toUpperCase());
+					return this.userService.searchUsersByTypeOrRole(parsedSearchType, Either.right(type));
+				}
+				case STATUS: {
+					logger.info("Finding users by user status");
+					UserStatus role = UserStatus.valueOf(searchValue.toUpperCase());
+					return this.userService.searchUsersByTypeOrRole(parsedSearchType, Either.left(role));
+				}
+				case USERNAME:
+				case FULLNAME: {
+					logger.info("Finding users by primitive values");
+				}
+				default: {
+					// default behavior is to get all users
+					return this.getAllUsers();
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			// handles enum valueOf errors
+			logger.error("The provided search value of {} is not an enum value of {}", searchValue, searchType);
+			throw new BadRequestException("The search value and search type provided are not compatible");
 		}
 	}
 

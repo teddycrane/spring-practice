@@ -37,4 +37,7 @@ public interface IUserController {
 
 	@PostMapping(path = "/reset-password")
 	PasswordResetResponse resetPassword(@RequestParam String userId) throws BadRequestException, UserNotFoundError;
+
+	@GetMapping(path = "/search-users")
+	Collection<User> searchUsers(@RequestParam String searchType, @RequestParam String searchValue) throws BadRequestException;
 }
