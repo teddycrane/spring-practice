@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.user;
 
+import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
 import org.hibernate.annotations.Type;
 
@@ -18,10 +19,6 @@ public class User {
 	@NotNull
 	@Column(unique = true)
 	private String username;
-	/**
-	 * This is the user's hashed password. DO NOT STORE THE USER'S PASSWORD HERE IN
-	 * PLAINTEXT
-	 */
 	@NotNull
 	private String password;
 	@NotNull
@@ -30,9 +27,12 @@ public class User {
 	private String firstName, lastName;
 	@Enumerated(EnumType.STRING)
 	private UserType type;
+	@Enumerated(EnumType.STRING)
+	private UserStatus status;
 
 	public User() {
 		this.id = UUID.randomUUID();
+		this.status = UserStatus.ACTIVE;
 	}
 
 	/**
@@ -61,6 +61,11 @@ public class User {
 	public User(UserType type, String firstName, String lastName, String username, String password) {
 		this(type, firstName, lastName, username);
 		this.password = password;
+	}
+
+	public User(UserType type, String firstName, String lastName, String username, String password, UserStatus status) {
+		this(type, firstName, lastName, username, password);
+		this.status = status;
 	}
 
 	public User(User other) {
