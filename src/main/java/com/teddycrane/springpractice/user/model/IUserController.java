@@ -41,8 +41,14 @@ public interface IUserController {
 	PasswordResetResponse resetPassword(@RequestParam String userId) throws BadRequestException, UserNotFoundError;
 
 	@GetMapping(path = "/search-users")
-	Collection<User> searchUsers(@RequestParam String searchType, @RequestParam String searchValue) throws BadRequestException;
+	Collection<User> searchUsers(@RequestParam String searchType, @RequestParam String searchValue)
+			throws BadRequestException;
 
 	@PostMapping(path = "/change-password")
-	PasswordChangeResponse changePassword(@RequestBody @Valid PasswordChangeRequest request, @RequestHeader("requester-id") String requesterId) throws BadRequestException, UserNotFoundError;
+	PasswordChangeResponse changePassword(@RequestBody @Valid PasswordChangeRequest request,
+			@RequestHeader("requester-id") String requesterId) throws BadRequestException, UserNotFoundError;
+
+	@PostMapping(path = "/create-new")
+	User createUserNoAuth(@RequestBody @Valid CreateUserRequest request)
+			throws BadRequestException, DuplicateItemException;
 }

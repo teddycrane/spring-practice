@@ -9,7 +9,6 @@ import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Date;
 import java.util.List;
