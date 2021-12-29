@@ -1,13 +1,19 @@
 package com.teddycrane.springpractice.user;
 
+import com.teddycrane.springpractice.enums.UserSearchType;
+import com.teddycrane.springpractice.enums.UserStatus;
+import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.*;
 import com.teddycrane.springpractice.models.BaseController;
+import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.user.model.IUserController;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
+import com.teddycrane.springpractice.user.request.PasswordChangeRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordChangeResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.validation.Valid;
 
 @RequestMapping(path = "/users")
 @RestController
@@ -122,6 +130,59 @@ public class UserController extends BaseController implements IUserController {
 			logger.error("Invalid UUID format {}", userId);
 
 			throw new BadRequestException("Invalid user ID provided");
+		}
+	}
+
+	@Override
+	public Collection<User> searchUsers(String searchType, String searchValue) throws BadRequestException {
+		logger.trace("searchUsers called");
+
+		try {
+			// validate search type and search terms
+			UserSearchType parsedSearchType = UserSearchType.valueOf(searchType.toUpperCase());
+
+			switch (parsedSearchType) {
+				// todo consolidate TYPE and ROLE blocks
+				case TYPE: {
+					logger.info("Finding users by UserType");
+					// validate search value
+					UserType type = UserType.valueOf(searchValue.toUpperCase());
+					return this.userService.searchUsersByTypeOrRole(parsedSearchType, Either.right(type));
+				}
+				case STATUS: {
+					logger.info("Finding users by user status");
+					UserStatus role = UserStatus.valueOf(searchValue.toUpperCase());
+					return this.userService.searchUsersByTypeOrRole(parsedSearchType, Either.left(role));
+				}
+				case USERNAME:
+				case FULLNAME: {
+					logger.info("Finding users by primitive values");
+					return this.userService.searchUsersByPrimitiveValue(parsedSearchType, searchValue);
+				}
+				default: {
+					// default behavior is to get all users
+					return this.getAllUsers();
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			// handles enum valueOf errors
+			logger.error("The provided search value of {} is not an enum value of {}", searchValue, searchType);
+			throw new BadRequestException("The search value and search type provided are not compatible");
+		}
+	}
+
+	@Override
+	public PasswordChangeResponse changePassword(@Valid PasswordChangeRequest request, String requesterId) {
+		logger.trace("changePassword called by requester {}", requesterId);
+
+		try {
+			UUID requester = UUID.fromString(requesterId);
+			UUID id = UUID.fromString(request.getUserId());
+
+			return this.userService.changePassword(id, requester, request.getOldPassword(), request.getNewPassword());
+		} catch (IllegalArgumentException e) {
+			logger.error("Invalid UUID format");
+			throw new BadRequestException("The user id provided was not in a valid format");
 		}
 	}
 

@@ -1,18 +1,22 @@
 package com.teddycrane.springpractice.user;
 
 import com.github.javafaker.Faker;
+import com.teddycrane.springpractice.enums.UserSearchType;
 import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
+import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.error.NotAuthenticatedException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.helper.JwtHelper;
 import com.teddycrane.springpractice.models.BaseService;
+import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.models.UserData;
 import com.teddycrane.springpractice.user.model.UserRepository;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordChangeResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.springframework.stereotype.Service;
@@ -124,6 +128,12 @@ public class UserService extends BaseService implements IUserService {
 			User u = user.get();
 			logger.info("login requested for user {}", u.getId());
 
+			if (u.getStatus() != UserStatus.ACTIVE) {
+				logger.error("Cannot authenticate an inactive user");
+				throw new NotAuthenticatedException(
+						"The specified user is not active.  Please contact an administrator");
+			}
+
 			// this is the user provided password that should be compared to the one in the
 			// db
 			String hashedProvidedPassword = getSecurePassword(password);
@@ -208,5 +218,88 @@ public class UserService extends BaseService implements IUserService {
 			logger.error("No user found for the id {}", id);
 			throw new UserNotFoundError("No user found!");
 		}
+	}
+
+	@Override
+	public Collection<User> searchUsersByTypeOrRole(UserSearchType type, Either<UserStatus, UserType> searchValue)
+			throws BadRequestException {
+		logger.trace("searchUsersByTypeOrRole called");
+
+		Optional<UserStatus> statusValue = searchValue.fromLeft();
+		Optional<UserType> typeValue = searchValue.fromRight();
+
+		if (type == UserSearchType.TYPE && typeValue.isPresent()) {
+			return this.userRepository.findByType(typeValue.get());
+		} else if (type == UserSearchType.STATUS && statusValue.isPresent()) {
+			return this.userRepository.findByStatus(statusValue.get());
+		} else {
+			logger.error("Search type and value are mismatched");
+			throw new BadRequestException("Search type and search value are incompatible.");
+		}
+	}
+
+	@Override
+	public Collection<User> searchUsersByPrimitiveValue(UserSearchType type, String value)
+			throws BadRequestException, UserNotFoundError {
+		logger.trace("searchUsersByPrimitiveValue called");
+		ArrayList<User> response = new ArrayList<>();
+
+		if (type == UserSearchType.USERNAME) {
+			Optional<User> result = this.userRepository.findByUsername(value);
+			if (result.isPresent()) {
+				response.add(result.get());
+			} else {
+				logger.error("No users found for the provided id");
+				throw new UserNotFoundError("No user found for the provided value");
+			}
+		} else {
+			// for now, searching by full name is not supported and should be ignored
+			Iterable<User> dbRes = this.userRepository.findAll();
+			dbRes.forEach(response::add);
+		}
+		return response;
+	}
+
+	@Override
+	public PasswordChangeResponse changePassword(
+			UUID userId,
+			UUID requesterId,
+			String oldPassword,
+			String newPassword)
+			throws UserNotFoundError {
+		logger.trace("changePassword called by requester {} for user {}", requesterId, userId);
+		Optional<User> user = this.userRepository.findById(userId);
+		// use this to determine if someone else is trying to reset a password
+		Optional<User> _requester = this.userRepository.findById(requesterId);
+
+		if (user.isEmpty()) {
+			logger.error("No user found for the id {}", userId);
+			throw new UserNotFoundError("No user found for the provided id");
+		}
+
+		if (_requester.isEmpty()) {
+			logger.error("No user found for the requester id {}", requesterId);
+			throw new UserNotFoundError("No valid requester found");
+		}
+
+		User requester = _requester.get();
+		User u = user.get();
+
+		// restrict non-own password editing to root users
+		if (requester.getType() == UserType.ROOT) {
+			logger.info("Root user {} updating password for user {}", requesterId, userId);
+		}
+
+		// if the old password and the new password match, then update the password
+		if (u.getPassword().equals(this.getSecurePassword(oldPassword))) {
+			// hash new password and set
+			u.setPassword(this.getSecurePassword(newPassword));
+			// update status only if a password change is required, otherwise keep status
+			// the same
+			if (u.getStatus() == UserStatus.PASSWORDCHANGEREQUIRED)
+				u.setStatus(UserStatus.ACTIVE);
+		}
+		User result = this.userRepository.save(u);
+		return new PasswordChangeResponse(true, result.getUsername());
 	}
 }

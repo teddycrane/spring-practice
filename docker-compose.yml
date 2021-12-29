@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  docker-mysql:
+    # image: mysql:8.0.20
+    restart: unless-stopped
+    build:
+      context: ./containers
+      dockerfile: spring-database.dockerfile
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=SPRING
+    ports:
+      - 3307:3306
+    volumes:
+      - db:/var/lib/mysql
+
+  spring-practice:
+    depends_on:
+      - docker-mysql
+    build: 
+      context: .
+      dockerfile: spring-practice.dockerfile
+    restart: on-failure
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://docker-mysql:3306/SPRING
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+volumes:
+  db: 

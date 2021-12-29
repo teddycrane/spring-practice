@@ -3,6 +3,7 @@ package com.teddycrane.springpractice.auth;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
@@ -24,7 +25,7 @@ public class AuthService extends BaseService implements IAuthService {
 
     private boolean isResourceAllowedForUser(String resourcePath, String method) {
         logger.trace("Checking permissions for {} {}", method, resourcePath);
-        
+
         // explicit disallow for PATCH /users
         if (resourcePath.contains("/users") && method.equalsIgnoreCase("PATCH")) {
             return false;
@@ -33,6 +34,48 @@ public class AuthService extends BaseService implements IAuthService {
         }
     }
 
+    /**
+     * Checks if a resource is available based on role and status
+     * 
+     * @param role         The user role to check
+     * @param status       The user Status to check
+     * @param resourcePath The resource path to check
+     * @param method       the HTTP method to check
+     * @return True if allowed, otherwise false.
+     */
+    private boolean isResourceAllowedForRoleAndStatus(
+            UserType role,
+            UserStatus status,
+            String resourcePath,
+            String method) {
+        logger.info("Checking permissions for role {} and status {}", role, status);
+
+        switch (status) {
+            case ACTIVE:
+                return isResourceAllowedForRole(role, resourcePath, method);
+            case DISABLED:
+                return false;
+            case PASSWORDCHANGEREQUIRED: {
+                // for future, allow change password endpoint here
+                if (resourcePath.equals("/users/change-password") && method.equalsIgnoreCase("POST")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Checks if a resource is allowed for a given role
+     * 
+     * @param role         The role to check access for
+     * @param resourcePath The URI for the resource to check
+     * @param method       The HTTP method in question
+     * @return Returns true if the role is allowed access, otherwise, returns false
+     */
     private boolean isResourceAllowedForRole(UserType role, String resourcePath, String method) {
         logger.info("Checking permissions for user type {}", role);
 
@@ -50,7 +93,7 @@ public class AuthService extends BaseService implements IAuthService {
     @Override
     public boolean isResourceAllowedForUser(String userId, String resourcePath, String method)
             throws UserNotFoundError, BadRequestException {
-                logger.trace("Checking resource permissions");
+        logger.trace("Checking resource permissions");
 
         try {
             UUID id = UUID.fromString(userId);
@@ -64,8 +107,9 @@ public class AuthService extends BaseService implements IAuthService {
             User u = _user.get();
             logger.info("Checking permissions for user {}", u.getId());
             UserType role = u.getType();
+            UserStatus status = u.getStatus();
 
-            return this.isResourceAllowedForRole(role, resourcePath, method);
+            return this.isResourceAllowedForRoleAndStatus(role, status, resourcePath, method);
         } catch (IllegalArgumentException e) {
             logger.error("Bad user id provided");
             throw new BadRequestException(e.getMessage());

@@ -7,8 +7,10 @@ import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
+import com.teddycrane.springpractice.user.request.PasswordChangeRequest;
 import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordChangeResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.springframework.web.bind.annotation.*;
@@ -37,4 +39,10 @@ public interface IUserController {
 
 	@PostMapping(path = "/reset-password")
 	PasswordResetResponse resetPassword(@RequestParam String userId) throws BadRequestException, UserNotFoundError;
+
+	@GetMapping(path = "/search-users")
+	Collection<User> searchUsers(@RequestParam String searchType, @RequestParam String searchValue) throws BadRequestException;
+
+	@PostMapping(path = "/change-password")
+	PasswordChangeResponse changePassword(@RequestBody @Valid PasswordChangeRequest request, @RequestHeader("requester-id") String requesterId) throws BadRequestException, UserNotFoundError;
 }
