@@ -12,32 +12,30 @@ executors:
           MYSQL_PASSWORD: ThePassword
     working_directory: ~/tmp
 
- jobs:
-    build:
-      executor: my-executor
-      environment:
-        MAVEN_OPTS: -Xmx3200m
-
-      steps:
-        - checkout
-        - run:
-            # Our primary container isn't MYSQL so run a sleep command until it's ready.
-            name: Waiting for MySQL to be ready
-            command: |
-              sleep 5
-        - run: mvn dependency:go-offline
-    release:
+jobs:
+  build:
+   executor: my-executor
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - run:
+        # Our primary container isn't MYSQL so run a sleep command until it's ready.
+        name: Waiting for MySQL to be ready
+        command: sleep 5
+      - run: mvn dependency:go-offline
+  release:
       executor: my-executor
       steps:
         - checkout
         - run:
             name: Run Tests!
             command: mvn clean test
-  workflows:
-    version: 2
-    test_and_release:
-      jobs:
-        - build
-        - release:
-            requires:
-              - build
+workflows:
+  version: 2
+  test_and_release:
+    jobs:
+      - build
+      - release:
+          requires:
+            - build
