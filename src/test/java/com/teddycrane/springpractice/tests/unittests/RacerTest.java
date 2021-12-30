@@ -1,28 +1,28 @@
 package com.teddycrane.springpractice.tests.unittests;
 
 import com.teddycrane.springpractice.racer.Racer;
+
+import java.util.Date;
+
 import com.teddycrane.springpractice.enums.Category;
 
 import org.junit.jupiter.api.*;
 
-
-public class RacerTest
-{
+public class RacerTest {
 
 	private Racer racer;
 
 	@BeforeEach
-	public void init()
-	{
+	public void init() {
 		racer = new Racer();
 		racer.setFirstName("test");
 		racer.setLastName("user");
 	}
 
 	@Test
-	public void constructorShouldCreateValidRacers()
-	{
-		// test that the default constructor constructs properly and that the constructors are all working
+	public void constructorShouldCreateValidRacers() {
+		// test that the default constructor constructs properly and that the
+		// constructors are all working
 		Assertions.assertNotNull(racer);
 		Assertions.assertTrue(racer.equals(new Racer(racer)));
 		Assertions.assertEquals(racer.getId(), new Racer(racer).getId());
@@ -38,8 +38,7 @@ public class RacerTest
 	}
 
 	@Test
-	public void testGetterAndSetter()
-	{
+	public void testGetterAndSetter() {
 		// test first name setter
 		racer.setFirstName("set first name");
 		Assertions.assertEquals("set first name", racer.getFirstName());
@@ -58,8 +57,7 @@ public class RacerTest
 	}
 
 	@Test
-	public void testToStringOverride()
-	{
+	public void testToStringOverride() {
 		String[] test = racer.toString().split("\n");
 
 		Assertions.assertEquals(test[0], "{");
@@ -69,16 +67,37 @@ public class RacerTest
 		Assertions.assertEquals(test[4], "    \"category\": \"Category 5\",");
 		Assertions.assertEquals(test[5], "    \"isDeleted\": \"false\"");
 		Assertions.assertEquals(test[6], "}");
+
+		racer.setBirthDate(new Date());
+		Assertions.assertNotNull(racer.toString());
 	}
 
 	@Test
-	public void testHashCode()
-	{
+	public void testHashCode() {
 		int hash1 = racer.hashCode();
 		int hash2 = new Racer(racer).hashCode();
 		int hash3 = new Racer().hashCode();
 
 		Assertions.assertEquals(hash1, hash2);
 		Assertions.assertNotEquals(hash1, hash3);
+
+		racer.setBirthDate(new Date());
+		Assertions.assertNotNull(racer.hashCode());
+		racer.setIsDeleted(true);
+		Assertions.assertNotNull(racer.hashCode());
+	}
+
+	@Test
+	public void testEquality() {
+		Assertions.assertNotEquals(racer, "");
+		Racer copy = new Racer(racer);
+
+		Assertions.assertEquals(racer, copy);
+
+		Date date = new Date();
+		racer = new Racer("firstname", "lastname", date);
+		copy = new Racer(racer);
+
+		Assertions.assertEquals(racer, copy);
 	}
 }
