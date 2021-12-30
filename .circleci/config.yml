@@ -1,43 +1,62 @@
-version: 2.1
-
-executors:
-  my-executor:
+version: 2
+orbs: 
+  maven: circleci/maven@1.2.0
+jobs:
+  build-test:
+    docker: 
+      - image: cimg/openjdk:16.0.2-node
+    steps:
+      - checkout
+      - run:
+          name: Build and verifiy
+          command: mvn clean verify
+      - run:
+          name: Package application
+          command: mvn package
+      - run:
+          name: Clean up generated results
+          command: |
+            rm -rf target/classes
+            rm -rf target/failsafe-reports
+            rm -rf target/generated-sources 
+            rm -rf target/generated-test-sources
+            rm -rf target/maven-archiver
+            rm -rf target/maven-status
+            rm target/surefire-reports/*.dumpstream
+            rm -rf target/test-classes
+      - run:
+          name: Zip test coverage
+          command: zip -r coverage.zip target/site/jacoco-ut
+      - store-artifacts:
+          path: coverage.zip
+          name: coverage.zip
+      - store-test-results:
+          path: target/surefire-reports
+      - store-artifacts:
+          path: target/spring-practice-0.0.1.jar
+  
+  compose:
     docker:
-      - image: maven:3.8.4-eclipse-temurin-16 
-      - image: circleci/mysql:5.7-ram
-        environment:
-          MYSQL_ROOT_PASSWORD: 123456
-          MYSQL_DATABASE: treadstone
-          MYSQL_USER: springuser
-          MYSQL_PASSWORD: ThePassword
-    working_directory: ~/tmp
-
- jobs:
-    build:
-      executor: my-executor
-      environment:
-        MAVEN_OPTS: -Xmx3200m
-
-      steps:
-        - checkout
-        - run:
-            # Our primary container isn't MYSQL so run a sleep command until it's ready.
-            name: Waiting for MySQL to be ready
-            command: |
-              sleep 5
-        - run: mvn dependency:go-offline
-    release:
-      executor: my-executor
-      steps:
-        - checkout
-        - run:
-            name: Run Tests!
-            command: mvn clean test
-  workflows:
-    version: 2
-    test_and_release:
-      jobs:
-        - build
-        - release:
-            requires:
-              - build
+      - image: circleci/openjdk:16-jdk-buster-node
+    steps:
+      - checkout
+      - run:
+          name: Install docker and docker-compose
+          environment:
+            COMPOSE_VERSION: '1.29.2'
+          command: |
+            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      - run:
+          name: build containerized application
+          command: docker-compose build
+      
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-test
+      # - compose:
+      #     requires:
+      #       - build-test
