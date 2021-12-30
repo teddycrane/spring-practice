@@ -1,7 +1,6 @@
 version: 2
 orbs:
   maven: circleci/maven@1.2.0
-  docker: circleci/docker@2.0.1
 
 jobs:
   build-test:
@@ -41,8 +40,6 @@ jobs:
     machine: true
     steps:
       - checkout
-      - docker/install-docker
-      - docker/install-docker-compose
       - run:
           name: build containerized application
           command: docker-compose build
