@@ -25,12 +25,12 @@ jobs:
             rm -rf target/maven-status
             rm target/surefire-reports/*.dumpstream
             rm -rf target/test-classes
-      - run:
-          name: Zip test coverage
-          command: zip -r coverage.zip target/site/jacoco-ut
-      - store-artifacts:
-          path: coverage.zip
-          name: coverage.zip
+      # - run:
+      #     name: Zip test coverage
+      #     command: zip -r coverage.zip target/site/jacoco-ut
+      # - store-artifacts:
+      #     path: coverage.zip
+      #     name: coverage.zip
       - store-artifacts:
           path: target/site/jacoco-ut
       - store-test-results:
@@ -38,6 +38,9 @@ jobs:
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
           name: app.jar
+      - run:
+          name: Upload coverage statistics to Codecov
+          command: bash <(curl -s https://codecov.io/bash)
 
   compose:
     machine: true
