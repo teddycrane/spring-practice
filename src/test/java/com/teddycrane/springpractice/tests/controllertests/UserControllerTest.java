@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.tests.controllertests;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,6 +21,7 @@ import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
 import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
+import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
@@ -206,5 +208,22 @@ public class UserControllerTest {
                 "password", "username", "email@email.com", UserType.USER);
 
         Assertions.assertThrows(BadRequestException.class, () -> this.userController.updateUser(request));
+    }
+
+    @Test
+    public void shouldResetPassword() {
+        UUID id = UUID.randomUUID();
+        when(this.userService.resetPassword(id)).thenReturn(new PasswordResetResponse());
+
+        PasswordResetResponse response = this.userController.resetPassword(id.toString());
+        verify(this.userService).resetPassword(uuidCaptor.capture());
+
+        Assertions.assertEquals(id, uuidCaptor.getValue());
+
+        Assertions.assertEquals(true, response.getSuccess());
+        Assertions.assertEquals("", response.getNewPassword());
+
+        // test uuid error
+        Assertions.assertThrows(BadRequestException.class, () -> this.userController.resetPassword("test"));
     }
 }
