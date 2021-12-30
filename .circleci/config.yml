@@ -19,7 +19,7 @@ jobs:
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
   
-  docker-build:
+  compose:
     docker:
       - image: circleci/openjdk:16-jdk-buster-node
     steps:
@@ -38,6 +38,6 @@ workflows:
   build:
     jobs:
       - build-test
-      - docker-build:
-        requires:
-          - build-test
+      - compose:
+          requires:
+            - build-test
