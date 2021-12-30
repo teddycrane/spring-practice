@@ -15,6 +15,8 @@ jobs:
           command: mvn package
       - store-artifacts:
           path: target/site/jacoco-ut
+      - store-test-results:
+          path: target/surefire-reports/*.xml
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
   
