@@ -57,6 +57,6 @@ workflows:
   build:
     jobs:
       - build-test
-      # - compose:
-      #     requires:
-      #       - build-test
+      - compose:
+          requires:
+            - build-test
