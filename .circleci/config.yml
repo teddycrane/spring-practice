@@ -36,8 +36,7 @@ jobs:
           path: target/spring-practice-0.0.1.jar
   
   compose:
-    docker:
-      - image: cimg/openjdk:16.0.2-node
+    machine: true
     steps:
       - checkout
       - run:
