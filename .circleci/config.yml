@@ -1,9 +1,11 @@
-version: 2
-orbs: 
+version: 2.1
+orbs:
   maven: circleci/maven@1.2.0
+  docker: circleci/docker@2.0.1
+
 jobs:
   build-test:
-    docker: 
+    docker:
       - image: cimg/openjdk:16.0.2-node
     steps:
       - checkout
@@ -34,7 +36,7 @@ jobs:
           path: target/surefire-reports
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
-  
+
   compose:
     machine: true
     steps:
@@ -42,7 +44,7 @@ jobs:
       - run:
           name: build containerized application
           command: docker compose build
-      
+
 workflows:
   version: 2
   build:
