@@ -37,6 +37,7 @@ jobs:
           path: target/surefire-reports
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
+          name: app.jar
 
   compose:
     machine: true
