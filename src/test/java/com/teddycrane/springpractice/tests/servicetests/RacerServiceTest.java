@@ -8,7 +8,6 @@ import com.teddycrane.springpractice.racer.model.RacerRepository;
 import com.teddycrane.springpractice.racer.model.IRacerService;
 import com.teddycrane.springpractice.racer.RacerService;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
