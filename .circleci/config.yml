@@ -1,9 +1,10 @@
 version: 2
-orbs: 
+orbs:
   maven: circleci/maven@1.2.0
+
 jobs:
   build-test:
-    docker: 
+    docker:
       - image: cimg/openjdk:16.0.2-node
     steps:
       - checkout
@@ -34,29 +35,18 @@ jobs:
           path: target/surefire-reports
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
-  
+
   compose:
-    docker:
-      - image: circleci/openjdk:16-jdk-buster-node
+    machine: true
     steps:
       - checkout
       - run:
-          name: Install docker and docker-compose
-          environment:
-            COMPOSE_VERSION: '1.29.2'
-          command: |
-            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - run:
           name: build containerized application
           command: docker-compose build
-      
+
 workflows:
   version: 2
   build:
     jobs:
       - build-test
-      # - compose:
-      #     requires:
-      #       - build-test
+      - compose
