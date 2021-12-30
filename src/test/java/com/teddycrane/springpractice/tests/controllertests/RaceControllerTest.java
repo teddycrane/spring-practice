@@ -16,7 +16,6 @@ import com.teddycrane.springpractice.race.model.IRaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;

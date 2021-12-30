@@ -64,8 +64,8 @@ public class UserController extends BaseController implements IUserController {
 			return this.userService.createUser(request.getFirstName(),
 					request.getLastName(),
 					request.getUsername(),
-					request.getPassword(),
 					request.getEmail(),
+					request.getPassword(),
 					request.getType());
 		} catch (DuplicateItemException e) {
 			throw new DuplicateItemException(e.getMessage());
@@ -183,6 +183,30 @@ public class UserController extends BaseController implements IUserController {
 		} catch (IllegalArgumentException e) {
 			logger.error("Invalid UUID format");
 			throw new BadRequestException("The user id provided was not in a valid format");
+		}
+	}
+
+	@Override
+	public User createUserNoAuth(@Valid CreateUserRequest request) throws BadRequestException, DuplicateItemException {
+		logger.trace("createUserNoAuth called");
+		logger.warn("This POST is called without authentication");
+
+		// check if a type is requested so we can throw an illegal action
+		if (request.getType().isPresent()) {
+			logger.error("Attempted to set user type without authentication.  This action requires elevated access");
+		}
+		try {
+			// set type to UserType.USER
+			return this.userService.createUser(request.getFirstName(),
+					request.getLastName(),
+					request.getUsername(),
+					request.getPassword(),
+					request.getEmail(),
+					Optional.of(UserType.USER));
+		} catch (DuplicateItemException e) {
+			throw new DuplicateItemException(e.getMessage());
+		} catch (InternalServerError e) {
+			throw new BadRequestException(e.getMessage());
 		}
 	}
 

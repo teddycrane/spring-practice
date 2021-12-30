@@ -1,0 +1,43 @@
+version: 2.1
+
+executors:
+  my-executor:
+    docker:
+      - image: maven:3.8.4-eclipse-temurin-16 
+      - image: circleci/mysql:5.7-ram
+        environment:
+          MYSQL_ROOT_PASSWORD: 123456
+          MYSQL_DATABASE: treadstone
+          MYSQL_USER: springuser
+          MYSQL_PASSWORD: ThePassword
+    working_directory: ~/tmp
+
+ jobs:
+    build:
+      executor: my-executor
+      environment:
+        MAVEN_OPTS: -Xmx3200m
+
+      steps:
+        - checkout
+        - run:
+            # Our primary container isn't MYSQL so run a sleep command until it's ready.
+            name: Waiting for MySQL to be ready
+            command: |
+              sleep 5
+        - run: mvn dependency:go-offline
+    release:
+      executor: my-executor
+      steps:
+        - checkout
+        - run:
+            name: Run Tests!
+            command: mvn clean test
+  workflows:
+    version: 2
+    test_and_release:
+      jobs:
+        - build
+        - release:
+            requires:
+              - build

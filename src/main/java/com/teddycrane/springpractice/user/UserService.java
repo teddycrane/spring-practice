@@ -106,6 +106,7 @@ public class UserService extends BaseService implements IUserService {
 				lastName,
 				userName,
 				hashedPassword,
+				email,
 				UserStatus.ACTIVE));
 	}
 

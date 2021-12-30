@@ -15,6 +15,12 @@ public class AuthenticationRequest {
 	@Nullable
 	private String username, email;
 
+	public AuthenticationRequest(@Nullable String username, @Nullable String email, String password) {
+		this.email = email;
+		this.password = password;
+		this.username = username;
+	}
+
 	public String getPassword() {
 		return password;
 	}
