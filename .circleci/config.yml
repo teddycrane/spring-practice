@@ -5,7 +5,6 @@ jobs:
   build-test:
     docker: 
       - image: circleci/openjdk:16-jdk-buster-node
-    working_directory: /tmp
     steps:
       - checkout
       - run:
