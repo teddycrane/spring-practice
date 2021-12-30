@@ -1,41 +1,35 @@
-version: 2.1
-
-executors:
-  my-executor:
-    docker:
-      - image: maven:3.8.4-eclipse-temurin-16 
-      - image: circleci/mysql:5.7-ram
-        environment:
-          MYSQL_ROOT_PASSWORD: 123456
-          MYSQL_DATABASE: treadstone
-          MYSQL_USER: springuser
-          MYSQL_PASSWORD: ThePassword
-    working_directory: ~/tmp
-
+version: 2
+orbs: 
+  maven: circleci/maven@1.2.0
 jobs:
-  build:
-   executor: my-executor
-    environment:
-      MAVEN_OPTS: -Xmx3200m
+  build-test:
+    docker: 
+      - image: circleci/openjdk:16-jdk-buster-node
+    working_directory: /tmp
     steps:
       - checkout
       - run:
-        # Our primary container isn't MYSQL so run a sleep command until it's ready.
-        name: Waiting for MySQL to be ready
-        command: sleep 5
-      - run: mvn dependency:go-offline
-  release:
-      executor: my-executor
-      steps:
-        - checkout
-        - run:
-            name: Run Tests!
-            command: mvn clean test
-workflows:
-  version: 2
-  test_and_release:
-    jobs:
-      - build
-      - release:
-          requires:
-            - build
+          name: Build and verifiy
+          command: mvn clean verify
+      - run:
+          name: Package application
+          command: mvn package
+      - store-artifacts:
+          path: target/site/jacoco-ut
+      - store-artifacts:
+          path: target/spring-practice-0.0.1.jar
+  
+  docker-build:
+    docker:
+      - image: circleci/openjdk:16-jdk-buster-node
+    steps:
+      - checkout
+      - run:
+          name: Install docker and docker-compose
+          environment:
+            COMPOSE_VERSION: '1.29.2'
+          command: |
+            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      
