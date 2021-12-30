@@ -33,3 +33,11 @@ jobs:
             chmod +x ~/docker-compose
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
       
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build-test
+      - docker-build
+        requires:
+          - build-test
