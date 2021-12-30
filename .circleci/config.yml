@@ -42,7 +42,7 @@ jobs:
       - checkout
       - run:
           name: build containerized application
-          command: docker-compose build
+          command: docker compose build
       
 workflows:
   version: 2
