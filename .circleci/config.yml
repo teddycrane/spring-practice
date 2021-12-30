@@ -4,7 +4,7 @@ orbs:
 jobs:
   build-test:
     docker: 
-      - image: circleci/openjdk:16-jdk-buster-node
+      - image: cimg/openjdk:16.0.2-node
     steps:
       - checkout
       - run:
@@ -13,10 +13,25 @@ jobs:
       - run:
           name: Package application
           command: mvn package
+      - run:
+          name: Clean up generated results
+          command: |
+            rm -rf target/classes
+            rm -rf target/failsafe-reports
+            rm -rf target/generated-sources 
+            rm -rf target/generated-test-sources
+            rm -rf target/maven-archiver
+            rm -rf target/maven-status
+            rm target/surefire-reports/*.dumpstream
+            rm -rf target/test-classes
+      - run:
+          name: Zip test coverage
+          command: zip -r coverage.zip target/site/jacoco-ut
       - store-artifacts:
-          path: target/site/jacoco-ut
+          path: coverage.zip
+          name: coverage.zip
       - store-test-results:
-          path: target/surefire-reports/*.xml
+          path: target/surefire-reports
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
   
