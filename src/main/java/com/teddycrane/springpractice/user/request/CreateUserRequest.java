@@ -26,6 +26,21 @@ public class CreateUserRequest {
 	@Nullable
 	private UserType type;
 
+	public CreateUserRequest(
+			String username,
+			String password,
+			String firstName,
+			String lastName,
+			String email,
+			UserType type) {
+		this.username = username;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.type = type;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
