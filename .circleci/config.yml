@@ -31,6 +31,8 @@ jobs:
       - store-artifacts:
           path: coverage.zip
           name: coverage.zip
+      - store-artifacts:
+          path: target/site/jacoco-ut
       - store-test-results:
           path: target/surefire-reports
       - store-artifacts:
