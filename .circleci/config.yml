@@ -40,7 +40,10 @@ jobs:
   compose:
     machine: true
     steps:
+      - setup_remote_docker
       - checkout
+      - install-docker
+      - install-docker-compose
       - run:
           name: build containerized application
           command: docker-compose build
