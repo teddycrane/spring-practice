@@ -134,8 +134,6 @@ public class RaceService extends BaseService implements IRaceService
 			}
 
 			Optional<Race> other = this.raceRepository.findByName(name);
-			System.out.println(race);
-			System.out.println(other.isPresent());
 
 			// name collision validation
 			if (other.isPresent())
