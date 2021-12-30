@@ -11,8 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
-public class Race
-{
+public class Race {
 
 	@Id
 	@Type(type = "uuid-char")
@@ -33,8 +32,7 @@ public class Race
 
 	private Date startTime, endTime;
 
-	public Race()
-	{
+	public Race() {
 		this.id = UUID.randomUUID();
 		this.racers = new ArrayList<>();
 		this.startTime = null;
@@ -42,8 +40,7 @@ public class Race
 		this.finishOrder = new HashMap<>();
 	}
 
-	public Race(@NotNull Race other)
-	{
+	public Race(@NotNull Race other) {
 		this.id = other.id;
 		this.name = other.name;
 		this.category = other.category;
@@ -53,99 +50,81 @@ public class Race
 		this.finishOrder = new HashMap<>(other.finishOrder);
 	}
 
-	public Race(String name)
-	{
+	public Race(String name) {
 		this();
 		this.name = name;
 	}
 
-	public Race(String name, Category category)
-	{
+	public Race(String name, Category category) {
 		this();
 		this.name = name;
 		this.category = category;
 	}
 
-	public Race(String name, Category category, Date startTime)
-	{
+	public Race(String name, Category category, Date startTime) {
 		this(name, category);
 		this.startTime = new Date(startTime.getTime());
 	}
 
-	public Race(String name, Category category, Date startTime, Date endTime)
-	{
+	public Race(String name, Category category, Date startTime, Date endTime) {
 		this(name, category, startTime);
 		this.endTime = new Date(endTime.getTime());
 	}
 
-	public List<Racer> getRacers()
-	{
+	public List<Racer> getRacers() {
 		return racers;
 	}
 
-	public void setRacers(List<Racer> racers)
-	{
+	public void setRacers(List<Racer> racers) {
 		this.racers = new ArrayList<>(racers);
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public Category getCategory()
-	{
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category)
-	{
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 
-	public Date getStartTime()
-	{
+	public Date getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Date startTime)
-	{
+	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
-	public Date getEndTime()
-	{
+	public Date getEndTime() {
 		return endTime;
 	}
 
-	public boolean isStarted()
-	{
+	public boolean isStarted() {
 		return this.startTime != null && this.startTime.before(new Date());
 	}
 
-	public void setEndTime(Date endTime)
-	{
+	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
 
-	public Map<Racer, Date> getFinishOrder()
-	{
+	public Map<Racer, Date> getFinishOrder() {
 		return new HashMap<>(this.finishOrder);
 	}
 
 	// we may not want to expose the setter fully todo TC
-	public void setFinishOrder(Map<Racer, Date> finishOrder)
-	{
+	public void setFinishOrder(Map<Racer, Date> finishOrder) {
 		this.finishOrder = new HashMap<>(finishOrder);
 	}
 
-	public int getFinishPlace(UUID racerId)
-	{
+	public int getFinishPlace(UUID racerId) {
 		// todo update this later to handle same finish time collisions
 		List<UUID> sortedEntryList = finishOrder.entrySet()
 				.stream()
@@ -157,24 +136,31 @@ public class Race
 		return sortedEntryList.indexOf(racerId) + 1;
 	}
 
-	public UUID getId()
-	{
+	public UUID getId() {
 		return this.id;
 	}
 
-	public Racer addRacer(Racer r)
-	{
+	public Racer addRacer(Racer r) {
 		this.racers.add(new Racer(r));
 		return r;
 	}
 
-	public boolean equals(@NotNull Race other)
-	{
-		boolean primitiveCompare = this.id == other.id && this.name.equals(other.name) && this.category == other.category;
+	@Override
+	public boolean equals(Object other) {
+		if (other.getClass().equals(this.getClass())) {
+			Race otherRace = (Race) other;
+			return this.equals(otherRace);
+		}
+		return false;
+	}
 
-		// skip expensive list comparison if the other race does not have the same ID as this one.
-		if (primitiveCompare && this.racers.size() == other.racers.size())
-		{
+	private boolean equals(@NotNull Race other) {
+		boolean primitiveCompare = this.id == other.id && this.name.equals(other.name)
+				&& this.category == other.category;
+
+		// skip expensive list comparison if the other race does not have the same ID as
+		// this one.
+		if (primitiveCompare && this.racers.size() == other.racers.size()) {
 			// todo update this to actually compare the order as well
 			return this.racers.containsAll(other.racers) && this.finishOrder.equals(other.finishOrder);
 		}
@@ -183,20 +169,18 @@ public class Race
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{\n");
 		builder.append(String.format("    \"name\": \"%s\",\n", this.name));
 		builder.append(String.format("    \"id\": \"%s\",\n", this.id.toString()));
 		builder.append(String.format("    \"category\": \"%s\",\n", EnumHelpers.getCategoryMapping(this.category)));
 		builder.append("    \"riders\": [\n");
-		if (racers.size() > 0)
-		{
-			for (int i = 0; i < this.racers.size(); i++)
-			{
+		if (racers.size() > 0) {
+			for (int i = 0; i < this.racers.size(); i++) {
 				builder.append(String.format("        %s", this.racers.get(i).toString()));
-				if (i != this.racers.size()) builder.append(",");
+				if (i != this.racers.size())
+					builder.append(",");
 				builder.append("\n");
 			}
 		}
@@ -206,8 +190,7 @@ public class Race
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		int hash = 7;
 		hash = 31 * hash + this.id.hashCode();
 		hash = 31 * hash + this.name.hashCode();
@@ -219,20 +202,15 @@ public class Race
 	}
 }
 
-class FinishOrderComparator implements Comparator<Map.Entry<Racer, Date>>
-{
+class FinishOrderComparator implements Comparator<Map.Entry<Racer, Date>> {
 
 	@Override
-	public int compare(Map.Entry<Racer, Date> o1, Map.Entry<Racer, Date> o2)
-	{
-		if (o1.getValue().before(o2.getValue()))
-		{
+	public int compare(Map.Entry<Racer, Date> o1, Map.Entry<Racer, Date> o2) {
+		if (o1.getValue().before(o2.getValue())) {
 			return 1;
-		} else if (o2.getValue().before(o1.getValue()))
-		{
+		} else if (o2.getValue().before(o1.getValue())) {
 			return -1;
-		} else
-		{
+		} else {
 			return 0;
 		}
 	}
