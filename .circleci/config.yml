@@ -38,6 +38,6 @@ workflows:
   build_and_test:
     jobs:
       - build-test
-      - docker-build
+      - docker-build:
         requires:
           - build-test
