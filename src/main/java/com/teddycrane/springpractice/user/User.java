@@ -22,7 +22,7 @@ public class User {
 	@NotNull
 	private String password;
 	@NotNull
-	private String email;
+	private String email = "";
 	private boolean isDeleted = false;
 	private String firstName, lastName;
 	@Enumerated(EnumType.STRING)
@@ -63,8 +63,19 @@ public class User {
 		this.password = password;
 	}
 
-	public User(UserType type, String firstName, String lastName, String username, String password, UserStatus status) {
+	public User(UserType type, String firstName, String lastName, String username, String password, String email) {
 		this(type, firstName, lastName, username, password);
+
+		if (this.isValidEmail(email)) {
+			this.email = email;
+		} else {
+			this.email = "";
+		}
+	}
+
+	public User(UserType type, String firstName, String lastName, String username, String password, String email,
+			UserStatus status) {
+		this(type, firstName, lastName, username, password, email);
 		this.status = status;
 	}
 
@@ -76,6 +87,12 @@ public class User {
 		this.isDeleted = other.isDeleted;
 		this.username = other.username;
 		this.password = other.password;
+		this.email = other.email;
+		this.status = other.status;
+	}
+
+	private boolean isValidEmail(String email) {
+		return email.matches("^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
 	}
 
 	public UUID getId() {
@@ -136,7 +153,7 @@ public class User {
 
 	public void setEmail(String email) throws IllegalArgumentException {
 		// pattern matching
-		if (email.matches("^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")) {
+		if (this.isValidEmail(email)) {
 			this.email = email;
 		} else {
 			// should not get here as we should be validating emails earlier
@@ -161,7 +178,8 @@ public class User {
 					this.isDeleted == otherUser.isDeleted &&
 					this.type == otherUser.type &&
 					this.username.equals(otherUser.username) &&
-					this.password.equals(otherUser.password);
+					this.password.equals(otherUser.password) &&
+					this.email.equals(otherUser.email);
 		}
 		return false;
 	}
@@ -171,10 +189,12 @@ public class User {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{\n");
 		builder.append(String.format("    \"userName\" : \"%s\",\n", username));
+		builder.append(String.format("    \"email\" : \"%s\",\n", email));
 		builder.append(String.format("    \"id\" : \"%s\",\n", id));
 		builder.append(String.format("    \"firstName\" : \"%s\",\n", firstName));
 		builder.append(String.format("    \"lastName\" : \"%s\",\n", lastName));
 		builder.append(String.format("    \"type\" : \"%s\",\n", type));
+		builder.append(String.format("    \"status\" : \"%s\",\n", status));
 		builder.append(String.format("    \"isDeleted\" : \"%s\"\n", isDeleted));
 		builder.append("}");
 		return builder.toString();
@@ -182,6 +202,6 @@ public class User {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, isDeleted, firstName, lastName, type, username, password);
+		return Objects.hash(id, isDeleted, firstName, lastName, type, username, password, email, status);
 	}
 }
