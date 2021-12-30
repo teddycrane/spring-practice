@@ -1,6 +1,5 @@
 package com.teddycrane.springpractice.tests.controllertests;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -9,14 +8,17 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.BadRequestException;
+import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.user.User;
 import com.teddycrane.springpractice.user.UserController;
 import com.teddycrane.springpractice.user.model.IUserController;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
+import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 
 import org.junit.jupiter.api.*;
@@ -41,6 +43,13 @@ public class UserControllerTest {
 
     @Captor
     private ArgumentCaptor<Optional<UserType>> typeCaptor;
+
+    @Captor
+    ArgumentCaptor<Optional<String>> usernameOptional, passwordOptional, firstNameOptional, lastNameOptional,
+            emailOptional;
+
+    @Captor
+    ArgumentCaptor<Optional<UserType>> userTypeOptional;
 
     @BeforeEach
     public void init() {
@@ -139,5 +148,63 @@ public class UserControllerTest {
         Assertions.assertEquals(UserType.ADMIN, typeCaptor.getValue().get());
 
         Assertions.assertTrue(u.equals(result));
+    }
+
+    @Test
+    public void shouldHandleUserCreationErrors() {
+        CreateUserRequest request = new CreateUserRequest("username", "password", "firstName", "lastName",
+                "email@email.com", UserType.ADMIN);
+
+        when(this.userService.createUser("firstName", "lastName", "username", "email@email.com", "password",
+                Optional.of(UserType.ADMIN))).thenThrow(DuplicateItemException.class);
+
+        Assertions.assertThrows(DuplicateItemException.class, () -> this.userController.createUser(request));
+    }
+
+    @Test
+    public void shouldUpdateUserWithAllValues() {
+        UUID id = UUID.randomUUID();
+        UpdateUserRequest request = new UpdateUserRequest(id.toString(), "firstName", "lastName",
+                "password", "username", "email@email.com", UserType.USER);
+
+        User expected = new User(id, UserType.USER, "firstName", "lastName", "username", "password", "email@email.com",
+                UserStatus.ACTIVE);
+
+        try {
+            when(this.userService.updateUser(id, Optional.of("username"), Optional.of("password"),
+                    Optional.of("firstName"),
+                    Optional.of("lastName"), Optional.of("email@email.com"), Optional.of(UserType.USER)))
+                            .thenReturn(expected);
+
+            User result = this.userController.updateUser(request);
+            verify(this.userService).updateUser(
+                    uuidCaptor.capture(),
+                    usernameOptional.capture(),
+                    passwordOptional.capture(),
+                    firstNameOptional.capture(),
+                    lastNameOptional.capture(),
+                    emailOptional.capture(),
+                    userTypeOptional.capture());
+
+            Assertions.assertEquals(id, uuidCaptor.getValue());
+            Assertions.assertEquals("username", usernameOptional.getValue().get());
+            Assertions.assertEquals("password", passwordOptional.getValue().get());
+            Assertions.assertEquals("firstName", firstNameOptional.getValue().get());
+            Assertions.assertEquals("lastName", lastNameOptional.getValue().get());
+
+            Assertions.assertTrue(expected.equals(result));
+
+        } catch (IllegalAccessException e) {
+            // fail test because for some reason we have to have a try/catch here wtf
+            Assertions.assertTrue(false);
+        }
+    }
+
+    @Test
+    public void shouldHandleInvalidUUIDForUpdatingUsers() {
+        UpdateUserRequest request = new UpdateUserRequest("bad-uuid", "firstName", "lastName",
+                "password", "username", "email@email.com", UserType.USER);
+
+        Assertions.assertThrows(BadRequestException.class, () -> this.userController.updateUser(request));
     }
 }

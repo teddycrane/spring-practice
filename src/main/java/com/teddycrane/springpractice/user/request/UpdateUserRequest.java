@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.validation.constraints.NotNull;
 
 import com.teddycrane.springpractice.enums.UserType;
+import com.teddycrane.springpractice.helper.FieldFormatValidator;
 
 import org.springframework.lang.Nullable;
 
@@ -17,6 +18,17 @@ public class UpdateUserRequest {
 
     @Nullable
     private UserType userType;
+
+    public UpdateUserRequest(String userId, String firstName, String lastName, String password, String username,
+            String email, UserType userType) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.username = username;
+        this.email = FieldFormatValidator.isValidEmail(email) ? email : "";
+        this.userType = userType;
+    }
 
     public String getUserId() {
         return userId;
@@ -44,6 +56,24 @@ public class UpdateUserRequest {
 
     public Optional<UserType> getUserType() {
         return Optional.ofNullable(userType);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other.getClass().equals(this.getClass())) {
+            UpdateUserRequest otherRequest = (UpdateUserRequest) other;
+            return this.equal(otherRequest);
+        }
+        return false;
+    }
+
+    private boolean equal(UpdateUserRequest other) {
+        return this.userId.equals(other.userId) &&
+                this.firstName.equals(other.firstName) &&
+                this.lastName.equals(other.lastName) &&
+                this.username.equals(other.username) &&
+                this.password.equals(other.password) &&
+                this.userType.equals(other.userType);
     }
 
 }

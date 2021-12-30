@@ -2,6 +2,8 @@ package com.teddycrane.springpractice.user;
 
 import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
+import com.teddycrane.springpractice.helper.FieldFormatValidator;
+
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -33,6 +35,24 @@ public class User {
 	public User() {
 		this.id = UUID.randomUUID();
 		this.status = UserStatus.ACTIVE;
+	}
+
+	private User(UUID id, UserType type, String firstName, String lastName, String username, String password,
+			String email, UserStatus status, boolean isDeleted) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.type = type;
+		this.isDeleted = isDeleted;
+		this.username = username;
+		this.password = password;
+		this.email = isValidEmail(email) ? email : "";
+		this.status = status;
+	}
+
+	public User(UUID id, UserType type, String firstName, String lastName, String username, String password,
+			String email, UserStatus status) {
+		this(id, type, firstName, lastName, username, password, email, status, false);
 	}
 
 	/**
@@ -80,19 +100,12 @@ public class User {
 	}
 
 	public User(User other) {
-		this.id = other.id;
-		this.firstName = other.firstName;
-		this.lastName = other.lastName;
-		this.type = other.type;
-		this.isDeleted = other.isDeleted;
-		this.username = other.username;
-		this.password = other.password;
-		this.email = other.email;
-		this.status = other.status;
+		this(other.id, other.type, other.firstName, other.lastName, other.username, other.password, other.email,
+				other.status, other.isDeleted);
 	}
 
 	private boolean isValidEmail(String email) {
-		return email.matches("^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
+		return FieldFormatValidator.isValidEmail(email);
 	}
 
 	public UUID getId() {
