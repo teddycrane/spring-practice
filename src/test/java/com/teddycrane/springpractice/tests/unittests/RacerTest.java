@@ -94,10 +94,28 @@ public class RacerTest {
 
 		Assertions.assertEquals(racer, copy);
 
-		Date date = new Date();
+		Date date = new Date(System.currentTimeMillis());
 		racer = new Racer("firstname", "lastname", date);
 		copy = new Racer(racer);
 
 		Assertions.assertEquals(racer, copy);
+
+		copy.setBirthDate(new Date(System.currentTimeMillis() - 10000));
+		Assertions.assertNotEquals(racer, copy);
+
+		copy.setIsDeleted(true);
+		Assertions.assertNotEquals(racer, copy);
+
+		copy.setLastName("different");
+		Assertions.assertNotEquals(racer, copy);
+
+		copy.setFirstName("different");
+		Assertions.assertNotEquals(racer, copy);
+
+		copy.setCategory(Category.CAT2);
+		Assertions.assertNotEquals(racer, copy);
+
+		Racer other = new Racer();
+		Assertions.assertNotEquals(racer, other);
 	}
 }

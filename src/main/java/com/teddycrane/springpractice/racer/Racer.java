@@ -108,8 +108,10 @@ public class Racer {
 	private boolean equals(@NotNull Racer other) {
 		boolean result = this.id == other.id &&
 				this.category == other.category &&
-				this.firstName.equals(other.firstName) && this.lastName.equals(other.lastName) &&
+				this.firstName.equals(other.firstName) &&
+				this.lastName.equals(other.lastName) &&
 				this.isDeleted == other.isDeleted;
+
 		if (this.birthDate != null && other.birthDate != null)
 			result = result && this.birthDate.equals(other.birthDate);
 		return result;
