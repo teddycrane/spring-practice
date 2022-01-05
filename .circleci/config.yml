@@ -68,6 +68,7 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install openjdk-11-jdk-headless
+            echo $JAVA_HOME
       - run:
           name: Create Database Storage
           command: mkdir ~/mysql-data
@@ -90,12 +91,12 @@ workflows:
   version: 2
   build:
     jobs:
-      - build-application
-      - test
+      # - build-application
+      # - test
       - automation-local:
-          requires:
-            - build-application
-            - test
+          # requires:
+          # - build-application
+          # - test
       - compose:
           requires:
             - build-application
