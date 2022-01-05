@@ -17,8 +17,7 @@ public class ProjectConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/users/login", "/error", "/users/reset-password", "/health", "/users/create-new",
-                        "/v3/api-docs", "/v3/api-docs/*");
+                .excludePathPatterns("/users/login", "/error", "/users/reset-password", "/health", "/users/create-new", "/swagger-ui.html", "/swagger-ui/**", "/v3/**");
     }
 
 }
