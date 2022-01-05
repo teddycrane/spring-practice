@@ -3,17 +3,29 @@ orbs:
   maven: circleci/maven@1.2.0
 
 jobs:
-  build-test:
+  build:
     docker:
       - image: cimg/openjdk:16.0.2-node
     steps:
       - checkout
       - run:
-          name: Build and Test
-          command: mvn clean test
+          - name: Build Application
+          - command: mvn clean install -DskipTests
       - run:
-          name: Package application
-          command: mvn package
+          - name: Package Application
+          - command: mvn package -DskipTests
+      - store-artifacts:
+          path: target/spring-practice-0.0.1.jar
+          name: app.jar
+
+  test:
+    docker:
+      - image: cimg/openjdk:16.0.2-node
+    steps:
+      - checkout
+      - run:
+          name: Test Application
+          command: mvn test
       - run:
           name: Clean up generated results
           command: |
@@ -35,9 +47,6 @@ jobs:
           path: target/site/jacoco-ut
       - store-test-results:
           path: target/surefire-reports
-      - store-artifacts:
-          path: target/spring-practice-0.0.1.jar
-          name: app.jar
       - run:
           name: Upload coverage statistics to Codecov
           command: bash <(curl -s https://codecov.io/bash)
