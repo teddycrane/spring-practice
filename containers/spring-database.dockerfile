@@ -6,4 +6,3 @@ ENV MYSQL_DATABASE=SPRING \
 # ADD spring.sql /docker-entrypoint-initdb.d
 
 EXPOSE 3306
-
