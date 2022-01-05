@@ -1,7 +1,7 @@
 version: 2
 orbs:
   maven: circleci/maven@1.2.0
-  openjdk-install: cloudesire/openjdk-install@1.2.3
+  java: cloudesire/openjdk-install@1.2.3
 
 jobs:
   build-test:
@@ -52,11 +52,11 @@ jobs:
           command: docker-compose build
 
   automation:
-    machine: 
+    machine:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - openjdk-install/openjdk:
+      - java/openjdk:
           version: 16
       - run:
           name: Create Database Storage
@@ -83,6 +83,9 @@ workflows:
       - build-test
       - compose
       - automation:
+          branches:
+            only:
+              - main
           requires:
             - build-test
             - compose
