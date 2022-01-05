@@ -92,17 +92,17 @@ workflows:
   version: 2
   build:
     jobs:
-      # - build-application
-      # - test
-      - automation-local
-          # requires:
-          # - build-application
-          # - test
-      # - compose:
-      #     requires:
-      #       - build-application
-      #       - test
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
+      - build-application
+      - test
+      - automation-local:
+          requires:
+            - build-application
+            - test
+      - compose:
+          requires:
+            - build-application
+            - test
+          filters:
+            branches:
+              only:
+                - main
