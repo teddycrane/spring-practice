@@ -1,7 +1,7 @@
 version: 2
 orbs:
   maven: circleci/maven@1.2.0
-  java: cloudesire/openjdk-install@1.2.3
+  openjdk-install: cloudesire/openjdk-install@1.2.3
 
 jobs:
   build-test:
@@ -82,10 +82,13 @@ workflows:
     jobs:
       - build-test
       - compose
+      - openjdk-install/openjdk:
+          version: 16
       - automation:
-          branches:
-            only:
-              - main
+          filters:
+            branches:
+              only:
+                - main
           requires:
             - build-test
             - compose
