@@ -64,6 +64,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install JDK 11
+          command: sudo apt-get install openjdk-11-jdk
+      - run:
           name: Create Database Storage
           command: mkdir ~/mysql-data
       - run:
