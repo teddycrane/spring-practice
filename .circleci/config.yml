@@ -65,7 +65,9 @@ jobs:
       - checkout
       - run:
           name: Install JDK 11
-          command: sudo apt-get install openjdk-11-jdk-headless
+          command: |
+            sudo apt-get update
+            sudo apt-get install openjdk-11-jdk-headless
       - run:
           name: Create Database Storage
           command: mkdir ~/mysql-data
