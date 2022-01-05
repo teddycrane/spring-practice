@@ -14,7 +14,7 @@ Local development requires some setup due to security keys being set as environm
 2. Generate a 512 bit signing key.
 
 ```
-openssl rand -base64 512
+openssl rand -base64 64
 ```
 
 3. Set the `SECRET_KEY` environment variable in `.env`.
