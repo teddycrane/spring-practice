@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,7 +19,6 @@ import com.teddycrane.springpractice.user.User;
 import com.teddycrane.springpractice.user.UserService;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.model.UserRepository;
-import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 
 import org.junit.jupiter.api.Assertions;
@@ -29,11 +29,15 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 public class UserServiceTest {
 
     private IUserService userService;
 
-    private JwtHelper jwtHelper = new JwtHelper();
+    private JwtHelper jwtHelper = new JwtHelper(
+            Base64.getEncoder().encodeToString(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded()));
 
     @Mock
     private UserRepository userRepository;

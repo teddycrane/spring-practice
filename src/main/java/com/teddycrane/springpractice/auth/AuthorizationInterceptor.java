@@ -45,10 +45,14 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     private static final String REQUEST_START = "--------- REQUEST START ---------";
     private static final String REQUEST_END = "--------- REQUEST END ---------";
 
-    private final IJwtHelper validator = new JwtHelper();
+    private final IJwtHelper validator;
 
     @Autowired
     private IAuthService authService;
+
+    public AuthorizationInterceptor(IJwtHelper jwtHelper) {
+        this.validator = jwtHelper;
+    }
 
     private String getHeader(HttpServletRequest request, RequestHeaderName headerName) throws HeaderNotFoundException {
         logger.trace("Finding header {}", headerName);
