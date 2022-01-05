@@ -3,17 +3,17 @@ orbs:
   maven: circleci/maven@1.2.0
 
 jobs:
-  build:
+  build-application:
     docker:
       - image: cimg/openjdk:16.0.2-node
     steps:
       - checkout
       - run:
-          - name: Build Application
-          - command: mvn clean install -DskipTests
+          name: Build Application
+          command: mvn clean install -DskipTests
       - run:
-          - name: Package Application
-          - command: mvn package -DskipTests
+          name: Package Application
+          command: mvn package -DskipTests
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
           name: app.jar
@@ -85,15 +85,15 @@ workflows:
   version: 2
   build:
     jobs:
-      - build
+      - build-application
       - test
       - automation-local:
           requires:
-            - build
+            - build-application
             - test
       - compose:
           requires:
-            - build
+            - build-application
             - test
           filters:
             branches:
