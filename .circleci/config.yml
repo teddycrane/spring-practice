@@ -9,8 +9,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build and verifiy
-          command: mvn clean verify
+          name: Build and Test
+          command: mvn clean test
       - run:
           name: Package application
           command: mvn package
@@ -59,15 +59,7 @@ jobs:
           command: mkdir ~/mysql-data
       - run:
           name: Start Test MySQL DB
-          command: docker run -d \
-            --name spring-test-db \
-            -p 3306:3306 \
-            -v mysql-data:/var/lib/mysql \
-            -e MYSQL_ROOT_PASSWORD='123456' \
-            -e MYSQL_USER='springuser' \
-            -e MYSQL_PASSWORD='ThePassword' \
-            -e MYSQL_DATABASE='SPRING' \
-            mysql
+          command: docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='123456' -e MYSQL_USER='springuser' -e MYSQL_PASSWORD='ThePassword' -e MYSQL_DATABASE='SPRING' mysql
       - run:
           name: Create Environment Config
           command: echo "SECRET_KEY=$(openssl rand -base64 64)" > .env
