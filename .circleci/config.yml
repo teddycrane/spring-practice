@@ -97,11 +97,11 @@ workflows:
           # requires:
           # - build-application
           # - test
-      - compose:
-          requires:
-            - build-application
-            - test
-          filters:
-            branches:
-              only:
-                - main
+      # - compose:
+      #     requires:
+      #       - build-application
+      #       - test
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
