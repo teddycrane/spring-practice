@@ -1,6 +1,7 @@
 version: 2
 orbs:
   maven: circleci/maven@1.2.0
+  openjdk-install: cloudesire/openjdk-install@1.2.3
 
 jobs:
   build-test:
@@ -51,9 +52,12 @@ jobs:
           command: docker-compose build
 
   automation:
-    machine: true
+    machine: 
+      image: ubuntu-2004:202010-01
     steps:
       - checkout
+      - openjdk-install/openjdk:
+          version: 16
       - run:
           name: Create Database Storage
           command: mkdir ~/mysql-data
