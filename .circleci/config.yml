@@ -86,3 +86,7 @@ workflows:
     jobs:
       - build-test
       - compose
+      - automation:
+          requires:
+            - build-test
+            - compose
