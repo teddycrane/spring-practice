@@ -21,6 +21,8 @@ services:
     build: 
       context: .
       dockerfile: spring-practice.dockerfile
+      args:
+        - SECRET_KEY=$SECRET_KEY
     restart: on-failure
     ports:
       - 8080:8080

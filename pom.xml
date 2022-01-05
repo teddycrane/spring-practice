@@ -33,7 +33,7 @@
 	</description>
 	<properties>
 		<java.version>
-			16
+			11
 		</java.version>
 	</properties>
 	<dependencies>
@@ -270,6 +270,11 @@
 				test
 			</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.5.2</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -289,6 +294,9 @@
 					<argline>
 						@{argline}
 					</argline>
+					<excludes>
+						<exclude>integration/**</exclude>
+					</excludes>
 				</configuration>
 				<version>
 					2.22.2
@@ -301,6 +309,9 @@
 				<version>
 					2.22.2
 				</version>
+				<goals>
+					<goal>integration-test</goal>
+				</goals>
 			</plugin>
 			<plugin>
 				<groupId>
@@ -327,9 +338,11 @@
 							</goal>
 						</goals>
 						<configuration>
-							<!-- <propertyName>
-								surefireArgLine
-							</propertyName> -->
+							<!--
+							<propertyName>
+							surefireArgLine
+							</propertyName>
+							-->
 						</configuration>
 					</execution>
 					<!--
