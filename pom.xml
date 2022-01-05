@@ -294,6 +294,9 @@
 					<argline>
 						@{argline}
 					</argline>
+					<excludes>
+						<exclude>integration/**</exclude>
+					</excludes>
 				</configuration>
 				<version>
 					2.22.2
@@ -306,6 +309,9 @@
 				<version>
 					2.22.2
 				</version>
+				<goals>
+					<goal>integration-test</goal>
+				</goals>
 			</plugin>
 			<plugin>
 				<groupId>
