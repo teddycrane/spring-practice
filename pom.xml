@@ -33,7 +33,7 @@
 	</description>
 	<properties>
 		<java.version>
-			16
+			11
 		</java.version>
 	</properties>
 	<dependencies>
