@@ -71,14 +71,18 @@ jobs:
             sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
             java -version
       - run:
+          name: Create Environment Config
+          command: echo "SECRET_KEY=$(openssl rand -base64 64)\nMYSQL_USER=${TEST_DB_USER}\nMYSQL_PASSWORD=${TEST_DB_PASSWORD}" > .env
+      - run:
           name: Create Database Storage
           command: mkdir ~/mysql-data
       - run:
           name: Start Test MySQL DB
-          command: docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='123456' -e MYSQL_USER='springuser' -e MYSQL_PASSWORD='ThePassword' -e MYSQL_DATABASE='SPRING' mysql
+          command: docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='${TEST_ROOT_PASSWORD}' -e MYSQL_USER='${TEST_DB_USER}' -e MYSQL_PASSWORD='${TEST_DB_PASSWORD}' -e MYSQL_DATABASE='SPRING' mysql
       - run:
-          name: Create Environment Config
-          command: echo "SECRET_KEY=$(openssl rand -base64 64)" > .env
+          name: Get Container ID and Load DB Config From File
+          command: |
+            docker exec -i "$(docker ps --format "{{.ID}}")" mysql -u root --password=$TEST_ROOT_PASSWORD SPRING < ./containers/spring.sql
       - run:
           name: Run API Tests
           command: |

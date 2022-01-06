@@ -12,7 +12,6 @@ import com.teddycrane.springpractice.error.HeaderFormatError;
 import com.teddycrane.springpractice.error.HeaderNotFoundException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.helper.IJwtHelper;
-import com.teddycrane.springpractice.helper.JwtHelper;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
