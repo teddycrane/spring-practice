@@ -58,6 +58,11 @@ jobs:
       - run:
           name: Build Containerized Application
           command: docker-compose build
+      - run:
+          name: Run Containerized Application and Run Deployed Integration Tests
+          command: |
+            docker compose up -d
+            docker exec 
 
   automation-local:
     machine: true
@@ -71,17 +76,16 @@ jobs:
             sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
             java -version
       - run:
+          name: Create Environment Config
+          command: echo "SECRET_KEY=$(openssl rand -base64 64)\nMYSQL_USER=${TEST_DB_USER}\nMYSQL_PASSWORD=${TEST_DB_PASSWORD}" > .env
+      - run:
           name: Create Database Storage
           command: mkdir ~/mysql-data
       - run:
-          name: Start Test MySQL DB
-          command: docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='123456' -e MYSQL_USER='springuser' -e MYSQL_PASSWORD='ThePassword' -e MYSQL_DATABASE='SPRING' mysql
-      - run:
-          name: Create Environment Config
-          command: echo "SECRET_KEY=$(openssl rand -base64 64)" > .env
-      - run:
-          name: Run API Tests
+          name: Start Test DB and Run Integration Tests
           command: |
+            docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='${TEST_ROOT_PASSWORD}' -e MYSQL_USER='${TEST_DB_USER}' -e MYSQL_PASSWORD='${TEST_DB_PASSWORD}' -e MYSQL_DATABASE='SPRING' mysql
+            docker container exec -i spring-test-db mysql -u root --password=$TEST_ROOT_PASSWORD SPRING < ./containers/spring.sql
             mvn clean install -DskipTests
             mvn failsafe:integration-test
       - store-test-results:
@@ -94,10 +98,10 @@ workflows:
     jobs:
       - build-application
       - test
-      - automation-local:
-          requires:
-            - build-application
-            - test
+      # - automation-local:
+      #     requires:
+      #       - build-application
+      #       - test
       - compose:
           requires:
             - build-application
