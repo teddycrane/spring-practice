@@ -82,7 +82,7 @@ jobs:
       - run:
           name: Get Container ID and Load DB Config From File
           command: |
-            docker exec -i "$(docker ps --format "{{.ID}}")" mysql -u root --password=$TEST_ROOT_PASSWORD SPRING < ./containers/spring.sql
+            docker exec -i spring-test-db mysql -u root --password=$TEST_ROOT_PASSWORD SPRING < ./containers/spring.sql
       - run:
           name: Run API Tests
           command: |
