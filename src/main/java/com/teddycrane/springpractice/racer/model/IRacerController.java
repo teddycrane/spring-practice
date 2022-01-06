@@ -44,18 +44,24 @@ public interface IRacerController {
 	Racer getRacer(@Parameter(description = "The object ID to find the racer associated with") @PathVariable String id)
 			throws RacerNotFoundException;
 
+	@Operation(summary = "Create new racer")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successfully created racer", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = Racer.class)) }),
+			@ApiResponse(responseCode = "400", description = "Unable to create racer")
+	})
 	@PostMapping(path = "/new")
 	Racer addRacer(@Valid @RequestBody CreateRacerRequest request) throws BadRequestException;
 
-	@PatchMapping(path = "/update")
-	Racer updateRacer(@RequestBody UpdateRacerRequest request, @RequestParam String id)
+	@PatchMapping(path = "/update/{id}")
+	Racer updateRacer(@RequestBody UpdateRacerRequest request, @PathVariable String id)
 			throws RacerNotFoundException, BadRequestException;
 
-	@DeleteMapping
-	Racer deleteRacer(@RequestParam String id) throws RacerNotFoundException;
+	@DeleteMapping(path = "/{id}")
+	Racer deleteRacer(@PathVariable String id) throws RacerNotFoundException;
 
-	@PatchMapping(path = "/restore")
-	Racer restoreRacer(@RequestParam String id) throws RacerNotFoundException;
+	@PatchMapping(path = "/restore/{id}")
+	Racer restoreRacer(@PathVariable String id) throws RacerNotFoundException;
 
 	@GetMapping(path = "/filter")
 	List<Racer> getRacersByType(@RequestParam String type, @RequestParam String value) throws BadRequestException;
