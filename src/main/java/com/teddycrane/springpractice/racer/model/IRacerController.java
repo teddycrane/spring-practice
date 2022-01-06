@@ -40,7 +40,7 @@ public interface IRacerController {
 					@Content()
 			})
 	})
-	@GetMapping
+	@GetMapping("/{id}")
 	Racer getRacer(@Parameter(description = "The object ID to find the racer associated with") @PathVariable String id)
 			throws RacerNotFoundException;
 
