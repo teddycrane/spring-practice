@@ -98,10 +98,10 @@ workflows:
     jobs:
       - build-application
       - test
-      - automation-local:
-          requires:
-            - build-application
-            - test
+      # - automation-local:
+      #     requires:
+      #       - build-application
+      #       - test
       - compose:
           requires:
             - build-application
