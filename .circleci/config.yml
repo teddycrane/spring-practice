@@ -78,7 +78,7 @@ jobs:
           command: mkdir ~/mysql-data
       - run:
           name: Start Test MySQL DB and Populate With Seed Data
-          command: docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='${TEST_ROOT_PASSWORD}' -e MYSQL_USER='${TEST_DB_USER}' -e MYSQL_PASSWORD='${TEST_DB_PASSWORD}' -e MYSQL_DATABASE='SPRING' mysql 
+          command: docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='${TEST_ROOT_PASSWORD}' -e MYSQL_USER='${TEST_DB_USER}' -e MYSQL_PASSWORD='${TEST_DB_PASSWORD}' -e MYSQL_DATABASE='SPRING' mysql
       - run:
           name: Get Container ID and Load DB Config From File
           command: docker exec -i "$(docker ps --format \"{{.ID}}\")" mysql -u root --password=$TEST_ROOT_PASSWORD SPRING < ./containers/spring.sql
