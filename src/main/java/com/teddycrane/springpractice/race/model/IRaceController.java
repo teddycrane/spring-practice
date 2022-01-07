@@ -18,8 +18,8 @@ import java.util.UUID;
 public interface IRaceController
 {
 
-	@GetMapping
-	Race getRace(@RequestParam String id) throws RaceNotFoundException, BadRequestException;
+	@GetMapping(path = "/{id}")
+	Race getRace(@PathVariable String id) throws RaceNotFoundException, BadRequestException;
 
 	@GetMapping(path = "/all")
 	List<Race> getAllRaces() throws RaceNotFoundException;
@@ -30,24 +30,32 @@ public interface IRaceController
 	@PatchMapping
 	Race updateRace(@RequestBody @Valid UpdateRaceRequest request, @RequestParam String id) throws BadRequestException, RaceNotFoundException, UpdateException;
 
-	@PatchMapping(path = "/add-racer")
-	Race addRacer(@RequestBody @Valid AddRacerRequest request, @RequestParam String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException, UpdateException;
+	@PatchMapping(path = "{raceId}/add-racer")
+	Race addRacer(@RequestBody @Valid AddRacerRequest request, @PathVariable String raceId) throws BadRequestException, RaceNotFoundException, RacerNotFoundException, UpdateException;
 
-	@PostMapping(path = "/start-race")
-	Race startRace(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException, StartException;
+	@PostMapping(path = "/{raceId}/start")
+	Race startRace(@PathVariable String raceId) throws RaceNotFoundException, BadRequestException, StartException;
 
-	@PostMapping(path = "/end-race")
-	Race endRace(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException;
+	@PostMapping(path = "/{raceId}/end")
+	Race endRace(@PathVariable String raceId) throws RaceNotFoundException, BadRequestException;
 
-	@PostMapping(path = "/place")
-	Race setRacerResult(@RequestParam String raceId, @RequestBody @Valid SetResultRequest request) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException;
+	@PostMapping(path = "/{raceId}/place")
+	Race setRacerResult(@PathVariable String raceId, @RequestBody @Valid SetResultRequest request) throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException;
 
-	@GetMapping(path = "/results")
-	RaceResult getResults(@RequestParam String raceId) throws RaceNotFoundException, BadRequestException;
+	@GetMapping(path = "/{raceId}/results")
+	RaceResult getResults(@PathVariable String raceId) throws RaceNotFoundException, BadRequestException;
 
-	@DeleteMapping
-	Race deleteRace(@RequestParam String raceId) throws BadRequestException, RaceNotFoundException;
+	@DeleteMapping(path = "/{raceId}")
+	Race deleteRace(@PathVariable String raceId) throws BadRequestException, RaceNotFoundException;
 
+	/**
+	 * This endpoint should be deprecated in favor a different URI
+	 * @param racerId
+	 * @return
+	 * @throws BadRequestException
+	 * @throws RacerNotFoundException
+	 */
+	@Deprecated
 	@GetMapping(path = "/racer-results")
 	Map<UUID, Integer> getResultsForRacer(@RequestParam String racerId) throws BadRequestException, RacerNotFoundException;
 
