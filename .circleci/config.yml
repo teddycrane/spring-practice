@@ -58,11 +58,11 @@ jobs:
       - run:
           name: Build Containerized Application
           command: docker-compose build
-      - run:
-          name: Run Containerized Application and Run Deployed Integration Tests
-          command: |
-            docker compose up -d
-            docker exec 
+      # - run:
+      #     name: Run Containerized Application and Run Deployed Integration Tests
+      #     command: |
+      #       docker compose up -d
+      #       docker exec 
 
   automation-local:
     machine: true
