@@ -3,8 +3,11 @@ package com.teddycrane.springpractice.tests.servicetests;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.EndException;
 import com.teddycrane.springpractice.error.RaceNotFoundException;
+import com.teddycrane.springpractice.error.StartException;
 import com.teddycrane.springpractice.error.UpdateException;
 import com.teddycrane.springpractice.race.model.RaceRepository;
 import com.teddycrane.springpractice.racer.model.RacerRepository;
@@ -228,6 +231,15 @@ public class RaceServiceTest {
 	}
 
 	@Test
+	public void addRacer_shouldThrowExceptionWhenRaceIsNotFound() {
+		List<UUID> racerList = new ArrayList<>();
+		when(raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+		// test
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.addRacer(requestUUID, racerList));
+	}
+
+	@Test
 	public void startRace_shouldStartRace() {
 		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
 
@@ -239,6 +251,29 @@ public class RaceServiceTest {
 		Assertions.assertNotNull(result);
 		Assertions.assertNotNull(result.getStartTime());
 		Assertions.assertNull(result.getEndTime());
+	}
+
+	@Test
+	public void startRace_shouldErrorIfStartTimeIsNotNull() {
+		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
+		race.setStartTime(new Date());
+		Assertions.assertNotNull(race.getStartTime());
+
+		Assertions.assertThrows(StartException.class, () -> this.raceService.startRace(requestUUID));
+	}
+
+	@Test
+	public void startRace_shouldErrorIfEndTimeIsNotNull() {
+		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
+		race.setEndTime(new Date());
+
+		Assertions.assertThrows(StartException.class, () -> this.raceService.startRace(requestUUID));
+	}
+
+	@Test
+	public void startRace_shouldErrorIfBadId() {
+		when(this.raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.startRace(UUID.randomUUID()));
 	}
 
 	@Test
@@ -283,14 +318,5 @@ public class RaceServiceTest {
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(2, result.getFinishOrder().size());
 		Assertions.assertTrue(result.getFinishOrder().containsKey(racerList.get(0)));
-	}
-
-	@Test
-	public void shouldThrowExceptionWhenRaceIsNotFound() {
-		List<UUID> racerList = new ArrayList<>();
-		when(raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
-
-		// test
-		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.addRacer(requestUUID, racerList));
 	}
 }
