@@ -58,11 +58,11 @@ jobs:
       - run:
           name: Build Containerized Application
           command: docker-compose build
-      - run:
-          name: Run Containerized Application and Run Deployed Integration Tests
-          command: |
-            docker-compose up -d
-            docker-compose run -d spring-practice bash ./ci-scripts/integration-tests.sh
+      # - run:
+      #     name: Run Containerized Application and Run Deployed Integration Tests
+      #     command: |
+      #       docker-compose up -d
+      #       docker-compose exec -d "$(docker ps --format "{{.ID}} {{.Names}}" | grep spring-practice_spring-practice_1 | cut -f1 -d " ")" bash ./ci-scripts/integration-tests.sh
 
   automation-local:
     machine: true
@@ -106,7 +106,7 @@ workflows:
           requires:
             - build-application
             - test
-          # filters:
-          #   branches:
-          #     only:
-          #       - main
+          filters:
+            branches:
+              only:
+                - main
