@@ -3,7 +3,7 @@ package com.teddycrane.springpractice.tests.integration;
 import com.teddycrane.springpractice.racer.RacerController;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+@Disabled
 public class ITRacerController extends IntegrationBase {
 
     @Autowired
