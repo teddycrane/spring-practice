@@ -10,6 +10,7 @@ import com.teddycrane.springpractice.error.RacerNotFoundException;
 import com.teddycrane.springpractice.error.StartException;
 import com.teddycrane.springpractice.error.UpdateException;
 import com.teddycrane.springpractice.race.model.RaceRepository;
+import com.teddycrane.springpractice.race.model.RaceResult;
 import com.teddycrane.springpractice.racer.model.RacerRepository;
 import com.teddycrane.springpractice.race.model.IRaceService;
 import com.teddycrane.springpractice.race.RaceService;
@@ -21,6 +22,7 @@ import java.util.*;
 import org.junit.jupiter.api.*;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RaceServiceTest {
@@ -39,6 +41,9 @@ public class RaceServiceTest {
 
 	@Captor
 	private ArgumentCaptor<Race> argument;
+
+	@Captor
+	private ArgumentCaptor<UUID> idCaptor;
 
 	@BeforeEach
 	public void init() {
@@ -377,5 +382,32 @@ public class RaceServiceTest {
 		Assertions.assertNull(race.getStartTime());
 		Assertions.assertThrows(StartException.class,
 				() -> this.raceService.placeRacersInFinishOrder(requestUUID, List.of(UUID.randomUUID())));
+	}
+
+	private Race getResults_happy_setUp(List<Racer> racerList) {
+		Race result = new Race(race);
+		result.setStartTime(new Date());
+		result.setRacers(racerList);
+
+		Date finishDate = new Date();
+		Map<Racer, Date> finishOrder = new HashMap<>();
+		racerList.forEach((racer) -> finishOrder.put(racer, finishDate));
+		result.setFinishOrder(finishOrder);
+		return result;
+	}
+
+	@Test
+	public void getResults_shouldGetResults() {
+		List<Racer> racerList = TestResourceGenerator.generateRacerList(5);
+		Race expected = this.getResults_happy_setUp(racerList);
+		when(this.raceRepository.findById(requestUUID)).thenReturn(Optional.of(expected));
+
+		RaceResult result = this.raceService.getResults(requestUUID);
+		verify(this.raceRepository).findById(idCaptor.capture());
+		Assertions.assertEquals(requestUUID, idCaptor.getValue());
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(expected.getName(), result.getName());
+		Assertions.assertEquals(expected.getCategory(), result.getCategory());
 	}
 }
