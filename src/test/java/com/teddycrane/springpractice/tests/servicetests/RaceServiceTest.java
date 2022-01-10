@@ -5,6 +5,7 @@ import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.RaceNotFoundException;
+import com.teddycrane.springpractice.error.UpdateException;
 import com.teddycrane.springpractice.race.model.RaceRepository;
 import com.teddycrane.springpractice.racer.model.RacerRepository;
 import com.teddycrane.springpractice.race.model.IRaceService;
@@ -19,12 +20,10 @@ import org.junit.jupiter.api.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class RaceServiceTest
-{
+public class RaceServiceTest {
 
 	private final UUID requestUUID = UUID.randomUUID();
 	private final UUID badRequestUUID = UUID.randomUUID();
-	private final String requestString = requestUUID.toString();
 
 	@Mock
 	private RaceRepository raceRepository;
@@ -39,8 +38,7 @@ public class RaceServiceTest
 	private ArgumentCaptor<Race> argument;
 
 	@BeforeEach
-	public void init()
-	{
+	public void init() {
 		MockitoAnnotations.openMocks(this);
 		this.raceService = new RaceService(raceRepository, racerRepository);
 		this.raceList = TestResourceGenerator.generateRaceList(10);
@@ -52,16 +50,14 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldGetAllRaces()
-	{
+	public void getAllRaces_shouldGetAllRaces() {
 		List<Race> result = this.raceService.getAllRaces();
 		Assertions.assertEquals(10, result.size());
 		Assertions.assertEquals(raceList, result);
 	}
 
 	@Test
-	public void shouldGetASingleRace()
-	{
+	public void getRace_shouldGetASingleRace() {
 		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(raceList.get(0)));
 
 		// test
@@ -70,8 +66,7 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldThrowRaceNotFoundIfRaceIsNotFound()
-	{
+	public void getRace_shouldThrowRaceNotFoundIfRaceIsNotFound() {
 		when(raceRepository.findById(badRequestUUID)).thenReturn(Optional.empty());
 
 		// test
@@ -79,8 +74,7 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldCreateRace()
-	{
+	public void createRace_shouldCreateRace() {
 		when(raceRepository.findByName("name")).thenReturn(Optional.empty());
 
 		// test
@@ -92,8 +86,7 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldHandleNameCollisions()
-	{
+	public void createRace_shouldHandleNameCollisions() {
 		Race test = new Race(race);
 		test.setName("name");
 		test.setCategory(Category.CAT5);
@@ -104,8 +97,7 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldCreateRaceWithStartTime()
-	{
+	public void createRace_shouldCreateRaceWithStartTime() {
 		Date startTime = new Date();
 		when(raceRepository.findByName("name")).thenReturn(Optional.empty());
 
@@ -119,8 +111,7 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldCreateRaceWithStartAndEndTime()
-	{
+	public void createRace_shouldCreateRaceWithStartAndEndTime() {
 		Date startTime = new Date();
 		Date endTime = new Date();
 		Race expected = new Race(race);
@@ -142,8 +133,7 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldThrowErrorIfDuplicateWithStartTime()
-	{
+	public void createRace_shouldThrowErrorIfDuplicateWithStartTime() {
 		Date startTime = new Date();
 		Race test = new Race(race);
 		test.setName("name");
@@ -152,12 +142,12 @@ public class RaceServiceTest
 		when(raceRepository.findByName("name")).thenReturn(Optional.of(test));
 
 		// test
-		Assertions.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5, startTime));
+		Assertions.assertThrows(DuplicateItemException.class,
+				() -> this.raceService.createRace("name", Category.CAT5, startTime));
 	}
 
 	@Test
-	public void shouldThrowErrorIfDuplicateWithStartAndEndTime()
-	{
+	public void createRace_shouldThrowErrorIfDuplicateWithStartAndEndTime() {
 		Date startTime = new Date();
 		Date endTime = new Date();
 		Race test = new Race(race);
@@ -168,12 +158,12 @@ public class RaceServiceTest
 		when(raceRepository.findByName("name")).thenReturn(Optional.of(test));
 
 		// test
-		Assertions.assertThrows(DuplicateItemException.class, () -> this.raceService.createRace("name", Category.CAT5, startTime, endTime));
+		Assertions.assertThrows(DuplicateItemException.class,
+				() -> this.raceService.createRace("name", Category.CAT5, startTime, endTime));
 	}
 
 	@Test
-	public void shouldUpdateRace()
-	{
+	public void updateRace_shouldUpdateRace() {
 		Race test = new Race(race);
 		Race expected = new Race(test);
 		expected.setName("New Name");
@@ -190,28 +180,27 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldHandleDuplicationErrors()
-	{
+	public void updateRace_shouldHandleDuplicationErrors() {
 		Race existing = new Race("New Name", Category.CAT5);
 		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
 		when(raceRepository.findByName("New Name")).thenReturn(Optional.of(existing));
 
 		// test
-		Assertions.assertThrows(DuplicateItemException.class, () -> this.raceService.updateRace(requestUUID, "New Name", Category.CAT5));
+		Assertions.assertThrows(DuplicateItemException.class,
+				() -> this.raceService.updateRace(requestUUID, "New Name", Category.CAT5));
 	}
 
 	@Test
-	public void shouldHandleRaceNotFound()
-	{
+	public void updateRace_shouldHandleRaceNotFound() {
 		when(raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
 		// test
-		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.updateRace(requestUUID, "test", null));
+		Assertions.assertThrows(RaceNotFoundException.class,
+				() -> this.raceService.updateRace(requestUUID, "test", null));
 	}
 
 	@Test
-	public void shouldAddRacerToRace()
-	{
+	public void addRacer_shouldAddRacerToRace() {
 		// setup
 		List<UUID> racerIds = new ArrayList<>();
 		for (int i = 0; i < 5; i++)
@@ -230,8 +219,16 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldStartRace()
-	{
+	public void addRacer_shouldNotAddRacerIfRaceIsStarted() {
+		race.setStartTime(new Date(System.currentTimeMillis() - 1000));
+		when(this.raceRepository.findById(any(UUID.class))).thenReturn(Optional.of(race));
+
+		Assertions.assertThrows(UpdateException.class,
+				() -> this.raceService.addRacer(UUID.randomUUID(), List.of(UUID.randomUUID())));
+	}
+
+	@Test
+	public void startRace_shouldStartRace() {
 		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
 
 		// test
@@ -245,8 +242,7 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldEndRace()
-	{
+	public void endRace_shouldEndRace() {
 		Date startTime = new Date();
 		Race expected = new Race(race);
 		expected.setStartTime(startTime);
@@ -262,8 +258,7 @@ public class RaceServiceTest
 	}
 
 	@Test
-	public void shouldSetRacersInFinishPlaces()
-	{
+	public void placeRacersInFinishOrder_shouldSetRacersInFinishPlaces() {
 		List<Racer> racerList = TestResourceGenerator.generateRacerList(5);
 		Date startTime = new Date();
 		Race expected = new Race(race);
@@ -290,23 +285,8 @@ public class RaceServiceTest
 		Assertions.assertTrue(result.getFinishOrder().containsKey(racerList.get(0)));
 	}
 
-
-//	@Test
-//	public void shouldThrowExceptionWhenAddingRacersToRaceThatHasAlreadyStarted()
-//	{
-//		List<UUID> racerList = TestResourceGenerator.generateRacerList(3).stream().map(Racer::getId).collect(Collectors.toList());
-//		Date startTime = new Date();
-//		Race existing = new Race(race);
-//		existing.setStartTime(startTime);
-//		when(raceRepository.findById(requestUUID)).thenReturn(Optional.of(existing));
-//
-//		// test
-//		Assertions.assertThrows(UpdateException.class, () -> this.raceService.addRacer(requestUUID, racerList));
-//	}
-
 	@Test
-	public void shouldThrowExceptionWhenRaceIsNotFound()
-	{
+	public void shouldThrowExceptionWhenRaceIsNotFound() {
 		List<UUID> racerList = new ArrayList<>();
 		when(raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
