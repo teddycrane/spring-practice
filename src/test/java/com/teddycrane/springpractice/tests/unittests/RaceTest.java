@@ -83,11 +83,20 @@ public class RaceTest {
 		list.add(new Racer());
 		race2.setRacers(list);
 
+		// if object types are different, false
+		Assertions.assertNotEquals("", race1);
+
+		// if races are the same without racer list
 		Assertions.assertEquals(race1, race3);
 		Assertions.assertEquals(race1.hashCode(), race3.hashCode());
+
+		// if races are not the same because of the presence of a list of racers
 		Assertions.assertFalse(race1.equals(race2));
 
-		Assertions.assertFalse(race1.equals(""));
+		// true with list
+		race1.setRacers(new ArrayList<Racer>());
+		race3.setRacers(new ArrayList<Racer>());
+		Assertions.assertEquals(race1, race3);
 	}
 
 	@Test
@@ -116,11 +125,19 @@ public class RaceTest {
 		finishOrder.put(racers.get(1), new Date());
 		race.setFinishOrder(finishOrder);
 		Assertions.assertTrue(race.getFinishPlace(racers.get(1).getId()) > 0);
+		Assertions.assertTrue(race.getFinishPlace(racers.get(0).getId()) > 0);
+
+		Date same = new Date();
+		finishOrder.put(racers.get(2), same);
+		finishOrder.put(racers.get(3), same);
+		race.setFinishOrder(finishOrder);
+		Assertions.assertTrue(race.getFinishPlace(racers.get(2).getId()) > 0);
 	}
 
 	@Test
 	public void testIsStarted() {
 		try {
+			// if race is not started, date is null
 			Assertions.assertFalse(race.isStarted());
 			race.setStartTime(new Date());
 			Thread.sleep(100);
@@ -128,6 +145,9 @@ public class RaceTest {
 			Assertions.assertTrue(race.isStarted());
 
 			race.setStartTime(null);
+			Assertions.assertFalse(race.isStarted());
+
+			race.setStartTime(new Date(System.currentTimeMillis() + 10000));
 			Assertions.assertFalse(race.isStarted());
 		} catch (Exception e) {
 			Assertions.assertTrue(false);
