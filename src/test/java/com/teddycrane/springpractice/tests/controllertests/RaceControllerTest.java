@@ -1,6 +1,7 @@
 package com.teddycrane.springpractice.tests.controllertests;
 
 import com.teddycrane.springpractice.event.request.SetResultRequest;
+import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.race.request.CreateRaceRequest;
 import com.teddycrane.springpractice.race.RaceController;
 import com.teddycrane.springpractice.race.Race;
@@ -8,26 +9,28 @@ import com.teddycrane.springpractice.race.request.UpdateRaceRequest;
 import com.teddycrane.springpractice.racer.request.AddRacerRequest;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.RaceFilterType;
 import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.EndException;
 import com.teddycrane.springpractice.error.RaceNotFoundException;
+import com.teddycrane.springpractice.error.RacerNotFoundException;
+import com.teddycrane.springpractice.error.StartException;
 import com.teddycrane.springpractice.error.UpdateException;
 import com.teddycrane.springpractice.race.model.IRaceService;
+import com.teddycrane.springpractice.race.model.RaceResult;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.teddycrane.springpractice.tests.helpers.TestResourceGenerator.generateRacer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class RaceControllerTest
-{
+public class RaceControllerTest {
 
 	private final String requestString = UUID.randomUUID().toString();
 	private final UUID requestUUID = UUID.fromString(requestString);
@@ -41,22 +44,19 @@ public class RaceControllerTest
 	@Captor
 	private ArgumentCaptor<UUID> idCaptor;
 
-
 	/**
 	 * Maps the mock service layer results based on the provided inputs
 	 *
 	 * @param race The Race object to be returned from the service layer
 	 */
-	private void setupMockResponses(Race race)
-	{
+	private void setupMockResponses(Race race) {
 		when(raceService.startRace(requestUUID)).thenReturn(race);
 		when(raceService.endRace(requestUUID)).thenReturn(race);
 		when(raceService.placeRacersInFinishOrder(eq(requestUUID), any(ArrayList.class))).thenReturn(race);
 	}
 
 	@BeforeEach
-	public void init()
-	{
+	public void init() {
 		MockitoAnnotations.openMocks(this);
 		raceController = new RaceController(raceService);
 		// generate racers
@@ -72,20 +72,17 @@ public class RaceControllerTest
 		this.setupMockResponses(this.race);
 	}
 
-
 	// get all races tests
 
 	@Test
-	public void shouldGetAllRaces()
-	{
+	public void shouldGetAllRaces() {
 		when(raceService.getAllRaces()).thenReturn(raceList);
 
 		// test
 		List<Race> result = this.raceController.getAllRaces();
 		Assertions.assertEquals(5, result.size());
 
-		for (int i = 0; i < result.size(); i++)
-		{
+		for (int i = 0; i < result.size(); i++) {
 			Assertions.assertTrue(result.get(i).equals(raceList.get(i)));
 		}
 	}
@@ -93,8 +90,7 @@ public class RaceControllerTest
 	// get single race
 
 	@Test
-	public void getRaceShouldReturnARace()
-	{
+	public void getRaceShouldReturnARace() {
 		when(raceService.getRace(requestUUID)).thenReturn(race);
 
 		// test
@@ -107,8 +103,7 @@ public class RaceControllerTest
 	}
 
 	@Test
-	public void shouldHandleServiceExceptions()
-	{
+	public void shouldHandleServiceExceptions() {
 		when(raceService.getRace(requestUUID)).thenThrow(RaceNotFoundException.class);
 
 		// test
@@ -119,8 +114,7 @@ public class RaceControllerTest
 	// Create race
 
 	@Test
-	public void shouldCreateRace()
-	{
+	public void shouldCreateRace() {
 		when(raceService.createRace(eq("test name"), any(Category.class))).thenReturn(race);
 		ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<Category> category = ArgumentCaptor.forClass(Category.class);
@@ -135,8 +129,7 @@ public class RaceControllerTest
 	}
 
 	@Test
-	public void shouldHandleCreateErrors()
-	{
+	public void shouldHandleCreateErrors() {
 		when(raceService.createRace("test name", Category.CAT5)).thenThrow(DuplicateItemException.class);
 
 		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.createRace(null));
@@ -148,8 +141,7 @@ public class RaceControllerTest
 	// Update Race
 
 	@Test
-	public void shouldUpdateRace()
-	{
+	public void shouldUpdateRace() {
 		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenReturn(race);
 		ArgumentCaptor<String> newName = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<Category> newCategory = ArgumentCaptor.forClass(Category.class);
@@ -166,26 +158,29 @@ public class RaceControllerTest
 	}
 
 	@Test
-	public void shouldHandleUpdateErrors()
-	{
-		// both  params invalid
-		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest(null, null), UUID.randomUUID().toString()));
+	public void shouldHandleUpdateErrors() {
+		// both params invalid
+		Assertions.assertThrows(BadRequestException.class,
+				() -> this.raceController.updateRace(new UpdateRaceRequest(null, null), UUID.randomUUID().toString()));
 
 		// bad UUID
-		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), "bad value"));
+		Assertions.assertThrows(BadRequestException.class,
+				() -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), "bad value"));
 
 		// generic update exception
 		when(raceService.updateRace(requestUUID, "test name", Category.CAT4)).thenThrow(UpdateException.class);
 
-		Assertions.assertThrows(UpdateException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT4), requestString));
+		Assertions.assertThrows(UpdateException.class,
+				() -> this.raceController.updateRace(new UpdateRaceRequest("test name", Category.CAT4), requestString));
 
-		when(raceService.updateRace(any(UUID.class), any(String.class), any(Category.class))).thenThrow(RaceNotFoundException.class);
-		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), requestString));
+		when(raceService.updateRace(any(UUID.class), any(String.class), any(Category.class)))
+				.thenThrow(RaceNotFoundException.class);
+		Assertions.assertThrows(RaceNotFoundException.class,
+				() -> this.raceController.updateRace(new UpdateRaceRequest("test", Category.CAT5), requestString));
 	}
 
 	@Test
-	public void shouldAddARacer()
-	{
+	public void shouldAddARacer() {
 		ArrayList<UUID> ids = new ArrayList<>();
 		ids.add(UUID.randomUUID());
 		Race testResult = new Race();
@@ -199,26 +194,173 @@ public class RaceControllerTest
 	}
 
 	@Test
-	public void shouldStartRace()
-	{
+	public void addRace_ShouldHandleRacerNotFoundError() {
+		UUID noRacer, raceId;
+		noRacer = UUID.randomUUID();
+		raceId = UUID.randomUUID();
+		List<UUID> racerList = List.of(noRacer);
+
+		AddRacerRequest request = new AddRacerRequest(racerList);
+
+		when(this.raceService.addRacer(raceId, racerList)).thenThrow(RacerNotFoundException.class);
+
+		Assertions.assertThrows(RacerNotFoundException.class,
+				() -> this.raceController.addRacer(request, raceId.toString()));
+	}
+
+	@Test
+	public void addRace_shouldHandleRaceNotFoundError() {
+		UUID raceId, racerId;
+		raceId = UUID.randomUUID();
+		racerId = UUID.randomUUID();
+		List<UUID> racerList = List.of(racerId);
+
+		when(this.raceService.addRacer(raceId, racerList)).thenThrow(RaceNotFoundException.class);
+
+		Assertions.assertThrows(RaceNotFoundException.class,
+				() -> this.raceController.addRacer(new AddRacerRequest(racerList), raceId.toString()));
+	}
+
+	@Test
+	public void addRace_shouldHandleBadUUID() {
+		String bad = "test";
+		Assertions.assertThrows(BadRequestException.class,
+				() -> this.raceController.addRacer(new AddRacerRequest(List.of(UUID.randomUUID())), bad));
+	}
+
+	@Test
+	public void shouldStartRace() {
 		Race result = this.raceController.startRace(requestString);
 		Assertions.assertTrue(result.equals(race));
 	}
 
 	@Test
-	public void shouldEndRace()
-	{
+	public void startRace_shouldHandleBadId() {
+		String bad = "test";
+
+		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.startRace(bad));
+	}
+
+	@Test
+	public void startRace_shouldHandleRaceNotFound() {
+		when(this.raceService.startRace(any(UUID.class))).thenThrow(RaceNotFoundException.class);
+
+		Assertions.assertThrows(RaceNotFoundException.class,
+				() -> this.raceController.startRace(UUID.randomUUID().toString()));
+	}
+
+	@Test
+	public void startRace_shouldHandleStartExceptions() {
+		when(this.raceService.startRace(any(UUID.class))).thenThrow(StartException.class);
+		Assertions.assertThrows(StartException.class,
+				() -> this.raceController.startRace(UUID.randomUUID().toString()));
+	}
+
+	@Test
+	public void shouldEndRace() {
 		Race result = this.raceController.endRace(requestString);
 		Assertions.assertTrue(result.equals(race));
 	}
 
 	@Test
-	public void shouldSetRacerResult()
-	{
+	public void endRace_shouldHandleBadId() {
+		String bad = "test";
+
+		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.endRace(bad));
+	}
+
+	@Test
+	public void endRace_shouldHandleRaceNotFound() {
+		when(this.raceService.endRace(any(UUID.class))).thenThrow(RaceNotFoundException.class);
+
+		Assertions.assertThrows(RaceNotFoundException.class,
+				() -> this.raceController.endRace(UUID.randomUUID().toString()));
+	}
+
+	@Test
+	public void shouldSetRacerResult() {
 		String[] ids = new String[1];
 		ids[0] = racerList.get(0).getId().toString();
 		SetResultRequest request = new SetResultRequest(ids);
 		Race result = this.raceController.setRacerResult(requestString, request);
 		Assertions.assertTrue(result.equals(race));
+	}
+
+	@Test
+	public void setRacerResult_shouldHandleBadId() {
+		String bad = "test";
+		Assertions.assertThrows(BadRequestException.class,
+				() -> this.raceController.setRacerResult(bad, new SetResultRequest()));
+	}
+
+	@Test
+	public void getResults_shouldReturnValidData() {
+		UUID raceId = race.getId();
+		RaceResult expected = new RaceResult(race.getName(), race.getCategory(), race.getRacers());
+		when(this.raceService.getResults(raceId)).thenReturn(expected);
+
+		RaceResult result = this.raceController.getResults(raceId.toString());
+		Assertions.assertEquals(expected, result);
+	}
+
+	@Test
+	public void getResults_shouldHandleBadId() {
+		String bad = "test";
+		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.getResults(bad));
+	}
+
+	@Test
+	public void getResults_shouldHandleRaceNotFound() {
+		when(this.raceService.getResults(any(UUID.class))).thenThrow(RaceNotFoundException.class);
+
+		Assertions.assertThrows(RaceNotFoundException.class,
+				() -> this.raceController.getResults(UUID.randomUUID().toString()));
+	}
+
+	@Test
+	public void deleteRacer_shouldDeleteActiveRace() {
+		UUID raceId = race.getId();
+		when(this.raceService.deleteRace(raceId)).thenReturn(race);
+
+		Race actual = this.raceController.deleteRace(raceId.toString());
+		Assertions.assertEquals(race, actual);
+	}
+
+	@Test
+	public void deleteRace_shouldHandleBadId() {
+		String bad = "test";
+		Assertions.assertThrows(BadRequestException.class, () -> this.raceController.deleteRace(bad));
+	}
+
+	@Test
+	public void deleteRace_shouldHandleRaceNotFound() {
+		UUID badUUID = UUID.randomUUID();
+		when(this.raceService.deleteRace(badUUID)).thenThrow(RaceNotFoundException.class);
+
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceController.deleteRace(badUUID.toString()));
+	}
+
+	@Test
+	public void filterRaces_shouldFilterByCategory() {
+		when(this.raceService.filterRace(eq(RaceFilterType.CATEGORY), any(Either.class))).thenReturn(raceList);
+
+		Collection<Race> result = this.raceController.filterRaces("category", "cat1");
+		Assertions.assertEquals(raceList, result);
+	}
+
+	@Test
+	public void filterRaces_shouldFilterByName() {
+		when(this.raceService.filterRace(eq(RaceFilterType.NAME), any(Either.class))).thenReturn(raceList);
+
+		Collection<Race> result = this.raceController.filterRaces("name", "test");
+		Assertions.assertEquals(raceList, result);
+	}
+
+	@Test
+	public void filterRaces_shouldHandleInvalidInputs() {
+		Assertions.assertThrows(BadRequestException.class,
+				() -> this.raceController.filterRaces("bad type", "bad value"));
+		Assertions.assertThrows(BadRequestException.class,
+				() -> this.raceController.filterRaces("category", "bad value"));
 	}
 }
