@@ -160,7 +160,7 @@ public class RaceController extends BaseController implements IRaceController {
 			throw new BadRequestException(String.format("Unable to parse the provided id"));
 		} catch (RaceNotFoundException e) {
 			throw new RaceNotFoundException(e.getMessage());
-		} 
+		}
 	}
 
 	@Override
