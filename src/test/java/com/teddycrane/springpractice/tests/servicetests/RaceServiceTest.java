@@ -3,6 +3,7 @@ package com.teddycrane.springpractice.tests.servicetests;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.EndException;
 import com.teddycrane.springpractice.error.RaceNotFoundException;
@@ -16,6 +17,7 @@ import com.teddycrane.springpractice.race.model.IRaceService;
 import com.teddycrane.springpractice.race.RaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.mockito.*;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
 
 import java.util.*;
 
@@ -409,5 +411,31 @@ public class RaceServiceTest {
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(expected.getName(), result.getName());
 		Assertions.assertEquals(expected.getCategory(), result.getCategory());
+	}
+
+	@Test
+	public void getResults_shouldHandleBadId() {
+		when(this.raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.getResults(requestUUID));
+	}
+
+	@Test
+	public void deleteRace_shouldDeleteRace() {
+		when(this.raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
+
+		Race result = this.raceService.deleteRace(requestUUID);
+
+		Assertions.assertNotNull(result);
+		verify(raceRepository).delete(argument.capture());
+		Assertions.assertEquals(result, argument.getValue());
+
+	}
+
+	@Test
+	public void deleteRace_shouldHandleRaceNotFound() {
+		when(this.raceRepository.findById(requestUUID)).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.deleteRace(requestUUID));
 	}
 }
