@@ -1,7 +1,7 @@
 package com.teddycrane.springpractice.racer;
 
+import com.google.gson.Gson;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.helper.EnumHelpers;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,17 +119,8 @@ public class Racer {
 
 	@Override
 	public String toString() {
-		StringBuilder result = new StringBuilder();
-		result.append("{\n");
-		result.append(String.format("    \"id\": \"%s\",\n", this.id));
-		result.append(String.format("    \"firstName\": \"%s\",\n", this.firstName));
-		result.append(String.format("    \"lastName\": \"%s\",\n", this.lastName));
-		result.append(String.format("    \"category\": \"%s\",\n", EnumHelpers.getCategoryMapping(this.category)));
-		if (birthDate != null)
-			result.append(String.format("    \"birthDate\" : \"%s\"\n", this.birthDate));
-		result.append(String.format("    \"isDeleted\": \"%s\"\n", this.isDeleted));
-		result.append("}");
-		return result.toString();
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 
 	@Override

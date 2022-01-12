@@ -1,7 +1,7 @@
 package com.teddycrane.springpractice.race;
 
+import com.google.gson.Gson;
 import com.teddycrane.springpractice.enums.Category;
-import com.teddycrane.springpractice.helper.EnumHelpers;
 import com.teddycrane.springpractice.racer.Racer;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
@@ -170,23 +170,8 @@ public class Race {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("{\n");
-		builder.append(String.format("    \"name\": \"%s\",\n", this.name));
-		builder.append(String.format("    \"id\": \"%s\",\n", this.id.toString()));
-		builder.append(String.format("    \"category\": \"%s\",\n", EnumHelpers.getCategoryMapping(this.category)));
-		builder.append("    \"riders\": [\n");
-		if (racers.size() > 0) {
-			for (int i = 0; i < this.racers.size(); i++) {
-				builder.append(String.format("        %s", this.racers.get(i).toString()));
-				if (i != this.racers.size())
-					builder.append(",");
-				builder.append("\n");
-			}
-		}
-		builder.append("    ]\n");
-		builder.append("}");
-		return builder.toString();
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 
 	@Override
