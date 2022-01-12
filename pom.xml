@@ -337,6 +337,8 @@
 					<excludes>
 						<exclude>com/teddycrane/springpractice/SpringPracticeApplication.class</exclude>
 						<exclude>com/teddycrane/springpractice/ProjectConfiguration.class</exclude>
+						<exclude>com/teddycrane/springpractice/enums/*.class</exclude>
+						<exclude>com/teddycrane/springpractice/**/model/*.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>
