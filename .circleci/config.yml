@@ -65,7 +65,8 @@ jobs:
       #       docker-compose exec -d "$(docker ps --format "{{.ID}} {{.Names}}" | grep spring-practice_spring-practice_1 | cut -f1 -d " ")" bash ./ci-scripts/integration-tests.sh
 
   automation-local:
-    image: cimg/openjdk:16.0.2-node
+    docker:
+      image: cimg/openjdk:16.0.2-node
     steps:
       - checkout
       - run:
