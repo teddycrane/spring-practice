@@ -25,7 +25,7 @@ jobs:
       - checkout
       - run:
           name: Test Application
-          command: mvn clean verify
+          command: mvn clean verify -DskipITs
       - run:
           name: Clean up generated results
           command: |
