@@ -73,8 +73,8 @@ jobs:
           name: Create Environment Config
           command: echo "SECRET_KEY=$(openssl rand -base64 64)\nTEST_USER=${TEST_USER}" > .env
       - run:
-          name: Failsafe integration tests
-          command: mvn failsafe:integration-test 
+          name: Run Failsafe Integration Tests
+          command: mvn clean test -DskipTests
       - store-test-results:
           path: target/failsafe-reports
           # Skip codecov upload for now until I figure out how to get both the failsafe and surefire results working
