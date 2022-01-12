@@ -74,9 +74,11 @@ jobs:
           command: echo "SECRET_KEY=$(openssl rand -base64 64)\nTEST_USER=${TEST_USER}" > .env
       - run:
           name: Run Failsafe Integration Tests
-          command: mvn clean test -DskipTests
+          command: |
+            mvn clean install -DskipTests
+            mvn failsafe:integration-test
       - store-test-results:
-          path: target/failsafe-reports
+          path: target/failsafe-reports/*.xml
           # Skip codecov upload for now until I figure out how to get both the failsafe and surefire results working
 
 workflows:
