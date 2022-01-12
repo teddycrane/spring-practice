@@ -1,5 +1,7 @@
 package com.teddycrane.springpractice.user.response;
 
+import com.google.gson.Gson;
+
 public class AuthenticationResponse {
 
 	private boolean authenticated;
@@ -39,4 +41,11 @@ public class AuthenticationResponse {
 		}
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		Gson json = new Gson();
+		return json.toJson(this);
+	}
+
 }

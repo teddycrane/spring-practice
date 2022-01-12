@@ -1,17 +1,17 @@
 package com.teddycrane.springpractice.tests.integration;
 
+import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 import com.teddycrane.springpractice.SpringPracticeApplication;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
+import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("test")
 @SpringBootTest(classes = SpringPracticeApplication.class)
 // @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
-@Sql(scripts = "/import.sql")
+// @Sql(scripts = "/import.sql")
 @AutoConfigureMockMvc
 class IntegrationBase {
 
@@ -37,6 +37,8 @@ class IntegrationBase {
 
     protected final Gson gson = new Gson();
 
+    protected final Faker faker = new Faker();
+
     /**
      * Makes a request to get an authentication token.
      *
@@ -49,10 +51,13 @@ class IntegrationBase {
 
         MvcResult response = this.mockMvc.perform(post("/users/login")
                 .contentType("application/json")
-                .content(requestBody)).andReturn();
-        String result = response.getResponse().getContentAsString();
-        System.out.printf("result {}", result);
-        return String.format("Bearer {}", result);
+                .content(requestBody))
+                .andReturn();
+
+        // get the token out of the body
+        AuthenticationResponse result = gson.fromJson(response.getResponse().getContentAsString(),
+                AuthenticationResponse.class);
+        return "Bearer " + result.getToken();
     }
 
     protected ResultActions performGet(String url) throws Exception {
