@@ -39,6 +39,8 @@ class IntegrationBase {
 
     protected final Faker faker = new Faker();
 
+    protected String authToken;
+
     /**
      * Makes a request to get an authentication token.
      *

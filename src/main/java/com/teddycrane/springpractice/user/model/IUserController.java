@@ -24,8 +24,8 @@ public interface IUserController {
 	@GetMapping(path = "/all")
 	Collection<User> getAllUsers();
 
-	@GetMapping
-	User getUser(@RequestParam String id) throws BadRequestException, UserNotFoundError;
+	@GetMapping(path = "/{id}")
+	User getUser(@PathVariable String id) throws BadRequestException, UserNotFoundError;
 
 	@PostMapping
 	User createUser(@RequestBody @Valid CreateUserRequest request) throws BadRequestException, DuplicateItemException;
@@ -37,6 +37,7 @@ public interface IUserController {
 	@PatchMapping
 	User updateUser(@RequestBody @Valid UpdateUserRequest request) throws BadRequestException, UserNotFoundError;
 
+	// TODO update to be requestBody instead
 	@PostMapping(path = "/reset-password")
 	PasswordResetResponse resetPassword(@RequestParam String userId) throws BadRequestException, UserNotFoundError;
 
