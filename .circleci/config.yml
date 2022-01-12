@@ -78,7 +78,7 @@ jobs:
             mvn clean install -DskipTests
             mvn failsafe:integration-test
       - store-test-results:
-          path: target/failsafe-reports/*.xml
+          path: target/failsafe-reports
           # Skip codecov upload for now until I figure out how to get both the failsafe and surefire results working
 
 workflows:
