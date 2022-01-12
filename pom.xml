@@ -379,11 +379,58 @@
 						</goals>
 						<configuration>
 							<rules>
+								<!-- <rule>
+									<element>
+										CLASS
+									</element>
+									<excludes>
+										<exclude>*Test</exclude>
+										<exclude>IT*</exclude>
+									</excludes>
+									<limits>
+										<limit>
+											<counter>
+												BRANCH
+											</counter>
+											<value>
+												COVEREDRATIO
+											</value>
+											<minimum>
+												50%
+											</minimum>
+										</limit>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>50%</minimum>
+										</limit>
+									</limits>
+								</rule> -->
 								<rule>
 									<element>
-										BUNDLE
+										BUNDLE	
 									</element>
 									<limits>
+										<limit>
+											<counter>
+												BRANCH
+											</counter>
+											<value>
+												COVEREDRATIO
+											</value>
+											<minimum>
+												60%
+											</minimum>
+										</limit>
+										<limit>
+											<counter>
+												LINE
+											</counter>
+											<value>
+												COVEREDRATIO
+											</value>
+											<minimum>60%</minimum>
+										</limit>
 										<limit>
 											<counter>
 												COMPLEXITY
@@ -392,9 +439,14 @@
 												COVEREDRATIO
 											</value>
 											<minimum>
-												0.48
+												60%
 											</minimum>
 										</limit>
+										<!-- <limit>
+											<counter>CLASS</counter>
+											<value>MISSEDCOUNT</value>
+											<maximum>0</maximum>
+										</limit> -->
 									</limits>
 								</rule>
 							</rules>

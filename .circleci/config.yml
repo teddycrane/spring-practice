@@ -25,7 +25,7 @@ jobs:
       - checkout
       - run:
           name: Test Application
-          command: mvn test
+          command: mvn clean verify
       - run:
           name: Clean up generated results
           command: |
