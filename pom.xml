@@ -429,7 +429,7 @@
 												COVEREDRATIO
 											</value>
 											<minimum>
-												60%
+												50%
 											</minimum>
 										</limit>
 										<limit>

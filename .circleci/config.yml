@@ -65,29 +65,15 @@ jobs:
       #       docker-compose exec -d "$(docker ps --format "{{.ID}} {{.Names}}" | grep spring-practice_spring-practice_1 | cut -f1 -d " ")" bash ./ci-scripts/integration-tests.sh
 
   automation-local:
-    machine: true
+    image: cimg/openjdk:16.0.2-node
     steps:
       - checkout
-      - run:
-          name: Install JDK 11
-          command: |
-            sudo apt-get update && sudo apt-get install openjdk-11-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
-            java -version
       - run:
           name: Create Environment Config
           command: echo "SECRET_KEY=$(openssl rand -base64 64)\nMYSQL_USER=${TEST_DB_USER}\nMYSQL_PASSWORD=${TEST_DB_PASSWORD}" > .env
       - run:
-          name: Create Database Storage
-          command: mkdir ~/mysql-data
-      - run:
-          name: Start Test DB and Run Integration Tests
-          command: |
-            docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='${TEST_ROOT_PASSWORD}' -e MYSQL_USER='${TEST_DB_USER}' -e MYSQL_PASSWORD='${TEST_DB_PASSWORD}' -e MYSQL_DATABASE='SPRING' mysql
-            docker container exec -i spring-test-db mysql -u root --password=$TEST_ROOT_PASSWORD SPRING < ./containers/spring.sql
-            mvn clean install -DskipTests
-            mvn failsafe:integration-test
+          name: Failsafe integration tests
+          command: mvn clean verify -DskipTests # skip unit tests here to improve run time
       - store-test-results:
           path: target/failsafe-reports
           # Skip codecov upload for now until I figure out how to get both the failsafe and surefire results working
@@ -98,10 +84,10 @@ workflows:
     jobs:
       - build-application
       - test
-      # - automation-local:
-      #     requires:
-      #       - build-application
-      #       - test
+      - automation-local:
+          requires:
+            - build-application
+            - test
       - compose:
           requires:
             - build-application
