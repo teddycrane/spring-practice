@@ -82,5 +82,14 @@ class UserTest {
 
         // test different types equals
         Assertions.assertFalse(u.equals(""));
+
+        Assertions.assertNotNull(new User(UserType.USER, "First", "last"));
+        Assertions.assertFalse(user.getIsDeleted());
     }
+
+    @Test
+    public void hashCode_shouldGenerate() {
+        Assertions.assertNotNull(user.hashCode());
+    }
+
 }

@@ -41,11 +41,4 @@ public class AuthenticationResponse {
 		}
 		return false;
 	}
-
-	@Override
-	public String toString() {
-		Gson json = new Gson();
-		return json.toJson(this);
-	}
-
 }
