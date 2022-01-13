@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.apache.logging.log4j.LogManager;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -61,12 +60,16 @@ public class JwtHelper implements IJwtHelper {
         }
     }
 
+    /**
+     * Ensures that an auth token is valid
+     * 
+     * @param token The auth token to validate
+     * @return True if the token is valid and issued by this instance of the
+     *         application, and otherwise false.
+     */
     public boolean ensureTokenIsValid(String token) {
-        logger.trace("ensureTokenIsValid called");
-        Jws<Claims> jws;
-
         try {
-            jws = Jwts.parserBuilder()
+            Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);

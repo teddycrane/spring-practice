@@ -6,6 +6,9 @@ import com.teddycrane.springpractice.SpringPracticeApplication;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,8 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @ActiveProfiles("test")
 @SpringBootTest(classes = SpringPracticeApplication.class)
-// @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
-// @Sql(scripts = "/import.sql")
+@TestInstance(Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
 class IntegrationBase {
 
@@ -39,7 +41,12 @@ class IntegrationBase {
 
     protected final Faker faker = new Faker();
 
-    protected String authToken;
+    protected String userAuthToken;
+
+    @BeforeAll
+    public void setUp() throws Exception {
+        this.userAuthToken = this.getUserAuthToken();
+    }
 
     /**
      * Makes a request to get an authentication token.

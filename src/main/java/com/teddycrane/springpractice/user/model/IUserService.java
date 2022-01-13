@@ -1,7 +1,7 @@
 package com.teddycrane.springpractice.user.model;
 
 import com.teddycrane.springpractice.error.InternalServerError;
-import com.teddycrane.springpractice.error.NotAuthenticatedException;
+import com.teddycrane.springpractice.error.NoCredentialsException;
 import com.teddycrane.springpractice.user.User;
 import com.teddycrane.springpractice.enums.UserSearchType;
 import com.teddycrane.springpractice.enums.UserStatus;
@@ -31,7 +31,7 @@ public interface IUserService {
 			Optional<UserType> type) throws DuplicateItemException, InternalServerError;
 
 	AuthenticationResponse login(@Nullable String username, @Nullable String email, String password)
-			throws NotAuthenticatedException, UserNotFoundError;
+			throws NoCredentialsException, UserNotFoundError;
 
 	User updateUser(UUID id, Optional<String> username, Optional<String> password, Optional<String> firstName,
 			Optional<String> lastName, Optional<String> email, Optional<UserType> userType)

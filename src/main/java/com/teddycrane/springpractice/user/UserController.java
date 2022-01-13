@@ -4,6 +4,7 @@ import com.teddycrane.springpractice.enums.UserSearchType;
 import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.*;
+import com.teddycrane.springpractice.helper.IJwtHelper;
 import com.teddycrane.springpractice.models.BaseController;
 import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.user.model.IUserController;
@@ -30,10 +31,12 @@ import javax.validation.Valid;
 public class UserController extends BaseController implements IUserController {
 
 	private final IUserService userService;
+	private final IJwtHelper jwtHelper;
 
-	public UserController(IUserService userService) {
+	public UserController(IUserService userService, IJwtHelper jwtHelper) {
 		super();
 		this.userService = userService;
+		this.jwtHelper = jwtHelper;
 	}
 
 	@Override
@@ -76,7 +79,7 @@ public class UserController extends BaseController implements IUserController {
 
 	@Override
 	public AuthenticationResponse login(AuthenticationRequest request)
-			throws BadRequestException, NotAuthenticatedException, UserNotFoundError {
+			throws BadRequestException, NoCredentialsException, UserNotFoundError {
 		logger.trace("login requested");
 
 		Optional<String> username = request.getUsername();
@@ -97,11 +100,20 @@ public class UserController extends BaseController implements IUserController {
 	}
 
 	@Override
-	public User updateUser(UpdateUserRequest request) throws BadRequestException, UserNotFoundError {
+	public User updateUser(UpdateUserRequest request, String authToken) throws BadRequestException, ForbiddenException, UserNotFoundError {
 		logger.trace("updateUser called");
 
+		// validate and extract user id from auth token
+		String requester = this.jwtHelper.getIdFromToken(authToken.split(" ")[1]);
+
 		try {
+			UUID requesterId = UUID.fromString(requester);
 			UUID id = UUID.fromString(request.getUserId());
+
+			if (!requesterId.equals(id)) {
+				logger.error("The requester ID {} does not match the id updates have been requested for {}", requester, request.getUserId());
+				throw new NoCredentialsException("Cannot update other users!");
+			}
 			return this.userService.updateUser(id,
 					request.getUsername(),
 					request.getPassword(),
