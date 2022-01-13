@@ -1,6 +1,5 @@
 package com.teddycrane.springpractice.tests.integration;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
-import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 
 @Tag("Integration")
 @TestInstance(Lifecycle.PER_CLASS)
