@@ -98,7 +98,14 @@ public class Event {
 		this.isActive = isActive;
 	}
 
-	public boolean equals(Event other) {
+	@Override
+	public boolean equals(Object other) {
+		return this.getClass().equals(other.getClass())
+				? this.equals((Event) other)
+				: false;
+	}
+
+	private boolean equals(Event other) {
 		return this.id.equals(other.id) && this.name.equals(other.name) && this.startDate.equals(other.startDate)
 				&& this.endDate.equals(other.endDate) && this.races.equals(other.races)
 				&& this.isActive == other.isActive;
