@@ -335,9 +335,13 @@
 				</version>
 				<configuration>
 					<excludes>
+						<!-- Exclude spring boot boilerplate -->
 						<exclude>com/teddycrane/springpractice/SpringPracticeApplication.class</exclude>
+						<!-- Exclude spring boot config class -->
 						<exclude>com/teddycrane/springpractice/ProjectConfiguration.class</exclude>
+						<!-- exclude enums (JRE provides test coverage already) -->
 						<exclude>com/teddycrane/springpractice/enums/*.class</exclude>
+						<!-- Exclude interfaces driving controllers and services -->
 						<exclude>com/teddycrane/springpractice/**/model/*.class</exclude>
 					</excludes>
 				</configuration>
