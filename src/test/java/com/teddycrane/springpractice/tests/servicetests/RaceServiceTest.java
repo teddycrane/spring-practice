@@ -3,12 +3,16 @@ package com.teddycrane.springpractice.tests.servicetests;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.RaceFilterType;
+import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.EndException;
+import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.error.RaceNotFoundException;
 import com.teddycrane.springpractice.error.RacerNotFoundException;
 import com.teddycrane.springpractice.error.StartException;
 import com.teddycrane.springpractice.error.UpdateException;
+import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.race.model.RaceRepository;
 import com.teddycrane.springpractice.race.model.RaceResult;
 import com.teddycrane.springpractice.racer.model.RacerRepository;
@@ -410,4 +414,58 @@ public class RaceServiceTest {
 		Assertions.assertEquals(expected.getName(), result.getName());
 		Assertions.assertEquals(expected.getCategory(), result.getCategory());
 	}
+
+	@Test
+	public void getResults_shouldHandleBadId() {
+		when(this.raceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.getResults(requestUUID));
+	}
+
+	@Test
+	public void deleteRace_shouldDeleteRace() {
+		when(this.raceRepository.findById(requestUUID)).thenReturn(Optional.of(race));
+
+		Race result = this.raceService.deleteRace(requestUUID);
+
+		Assertions.assertNotNull(result);
+		verify(raceRepository).delete(argument.capture());
+		Assertions.assertEquals(result, argument.getValue());
+
+	}
+
+	@Test
+	public void deleteRace_shouldHandleRaceNotFound() {
+		when(this.raceRepository.findById(requestUUID)).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.deleteRace(requestUUID));
+	}
+
+	@Test
+	public void filterRace_shouldFilterRaceByCategory() {
+		when(this.raceRepository.findByCategory(Category.CAT1)).thenReturn(raceList);
+		Collection<Race> races = this.raceService.filterRace(RaceFilterType.CATEGORY, Either.right(Category.CAT1));
+
+		Assertions.assertNotNull(races);
+	}
+
+	@Test
+	public void filterRace_shouldFilterRaceByName() {
+		when(this.raceRepository.findByNameContaining("name")).thenReturn(raceList);
+		Collection<Race> races = this.raceService.filterRace(RaceFilterType.NAME, Either.left("name"));
+
+		Assertions.assertNotNull(races);
+	}
+
+	@Test
+	public void filterRace_shouldHandleNoRaceFound() {
+		when(this.raceRepository.findByCategory(any(Category.class))).thenReturn(List.of());
+		when(this.raceRepository.findByNameContaining(any(String.class))).thenReturn(List.of());
+
+		Assertions.assertThrows(InternalServerError.class,
+				() -> this.raceService.filterRace(RaceFilterType.CATEGORY, Either.left("test")));
+		Assertions.assertThrows(InternalServerError.class,
+				() -> this.raceService.filterRace(RaceFilterType.NAME, Either.right(Category.CAT1)));
+	}
+
 }

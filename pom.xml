@@ -242,13 +242,17 @@
 			</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.9</version>
+		</dependency>
+		<dependency>
 			<groupId>
 				io.jsonwebtoken
 			</groupId>
 			<artifactId>
-				jjwt-jackson
+				jjwt-gson
 			</artifactId>
-			<!-- or jjwt-gson if Gson is preferred -->
 			<version>
 				0.11.2
 			</version>
@@ -274,6 +278,12 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.200</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -323,6 +333,18 @@
 				<version>
 					0.8.7
 				</version>
+				<configuration>
+					<excludes>
+						<!-- Exclude spring boot boilerplate -->
+						<exclude>com/teddycrane/springpractice/SpringPracticeApplication.class</exclude>
+						<!-- Exclude spring boot config class -->
+						<exclude>com/teddycrane/springpractice/ProjectConfiguration.class</exclude>
+						<!-- exclude enums (JRE provides test coverage already) -->
+						<exclude>com/teddycrane/springpractice/enums/*.class</exclude>
+						<!-- Exclude interfaces driving controllers and services -->
+						<exclude>com/teddycrane/springpractice/**/model/*.class</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<!--
 					Prepares the property pointing to the JaCoCo runtime agent which
@@ -333,17 +355,9 @@
 							pre-unit-test
 						</id>
 						<goals>
-							<goal>
-								prepare-agent
-							</goal>
+							<goal>prepare-agent</goal>
 						</goals>
-						<configuration>
-							<!--
-							<propertyName>
-							surefireArgLine
-							</propertyName>
-							-->
-						</configuration>
+						<configuration />
 					</execution>
 					<!--
 					Ensures that the code coverage report for unit tests is created
@@ -369,6 +383,50 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>prepare-agent-integration</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>report-integration</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>merge-results</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>merge</goal>
+						</goals>
+						<configuration>
+							<fileSets>
+								<fileSet>
+									<directory>${project.build.directory}</directory>
+									<includes>
+										<include>*.exec</include>
+									</includes>
+									<excludes>
+										<exclude>aggregate.exec</exclude>
+									</excludes>
+								</fileSet>
+							</fileSets>
+							<destFile>${project.build.directory}/aggregate.exec</destFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-merge-report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/aggregate.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
 						<id>
 							default-check
 						</id>
@@ -379,11 +437,58 @@
 						</goals>
 						<configuration>
 							<rules>
+								<!-- <rule>
+									<element>
+										CLASS
+									</element>
+									<excludes>
+										<exclude>*Test</exclude>
+										<exclude>IT*</exclude>
+									</excludes>
+									<limits>
+										<limit>
+											<counter>
+												BRANCH
+											</counter>
+											<value>
+												COVEREDRATIO
+											</value>
+											<minimum>
+												50%
+											</minimum>
+										</limit>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>50%</minimum>
+										</limit>
+									</limits>
+								</rule> -->
 								<rule>
 									<element>
-										BUNDLE
+										BUNDLE	
 									</element>
 									<limits>
+										<limit>
+											<counter>
+												BRANCH
+											</counter>
+											<value>
+												COVEREDRATIO
+											</value>
+											<minimum>
+												50%
+											</minimum>
+										</limit>
+										<limit>
+											<counter>
+												LINE
+											</counter>
+											<value>
+												COVEREDRATIO
+											</value>
+											<minimum>50%</minimum>
+										</limit>
 										<limit>
 											<counter>
 												COMPLEXITY
@@ -392,9 +497,14 @@
 												COVEREDRATIO
 											</value>
 											<minimum>
-												0.48
+												50%
 											</minimum>
 										</limit>
+										<!-- <limit>
+											<counter>CLASS</counter>
+											<value>MISSEDCOUNT</value>
+											<maximum>0</maximum>
+										</limit> -->
 									</limits>
 								</rule>
 							</rules>

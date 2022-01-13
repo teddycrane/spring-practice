@@ -16,6 +16,7 @@ import com.teddycrane.springpractice.helper.IJwtHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,6 +39,7 @@ enum RequestHeaderName {
 }
 
 @Component
+@Order(1)
 public class AuthorizationInterceptor implements HandlerInterceptor {
     private static final Logger logger = LogManager.getLogger(AuthorizationInterceptor.class);
 
@@ -89,8 +91,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         Map<RequestHeaderName, String> result = new HashMap<>();
         try {
             result.put(RequestHeaderName.AUTHORIZATION, this.getAuthorizationToken(request));
-            // setting X-id Header as optional
-            // result.put(RequestHeaderName.ID, this.getRequesterId(request));
             return result;
         } catch (HeaderNotFoundException | HeaderFormatError e) {
             logger.error(e.getMessage());
@@ -130,7 +130,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         try {
             // get required headers
             Map<RequestHeaderName, String> headers = this.validateRequiredHeaders(request);
-            // logger.info("Request made by user {}", headers.get(RequestHeaderName.ID));
 
             // validate auth token
             boolean authResult = this.validateAuthToken(headers.get(RequestHeaderName.AUTHORIZATION));
@@ -146,12 +145,13 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             String userId = this.validator.getIdFromToken(headers.get(RequestHeaderName.AUTHORIZATION));
             boolean allowed = this.authService.isResourceAllowedForUser(userId, requestUri, requestMethod);
 
-            if (!allowed)
-            {
+            if (!allowed) {
                 response = generateResponse(response, HttpServletResponse.SC_FORBIDDEN, "Insufficient permissions.");
                 logger.trace(REQUEST_END);
                 return false;
             }
+
+            request.setAttribute("X-Requester", userId);
             return true;
         } catch (HeaderNotFoundException e) {
             logger.trace("Throwing custom bad request error");

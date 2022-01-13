@@ -1,5 +1,7 @@
 package com.teddycrane.springpractice.user.response;
 
+import com.google.gson.Gson;
+
 public class AuthenticationResponse {
 
 	private boolean authenticated;

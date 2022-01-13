@@ -10,10 +10,10 @@ jobs:
       - checkout
       - run:
           name: Build Application
-          command: mvn clean install -DskipTests
+          command: mvn clean install -DskipTests -DskipITs
       - run:
           name: Package Application
-          command: mvn package -DskipTests
+          command: mvn package -DskipTests -DskipITs
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
           name: app.jar
@@ -24,29 +24,28 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Test Application
-          command: mvn test
+          name: Run All Tests
+          command: mvn clean verify
       - run:
           name: Clean up generated results
           command: |
             rm -rf target/classes
-            rm -rf target/failsafe-reports
             rm -rf target/generated-sources 
             rm -rf target/generated-test-sources
             rm -rf target/maven-archiver
             rm -rf target/maven-status
             rm target/surefire-reports/*.dumpstream
             rm -rf target/test-classes
-      # - run:
-      #     name: Zip test coverage
-      #     command: zip -r coverage.zip target/site/jacoco-ut
-      # - store-artifacts:
-      #     path: coverage.zip
-      #     name: coverage.zip
+      - run:
+          name: Merge Test Results
+          command: |
+            mkdir target/merged-results
+            cp target/surefire-reports/*.xml target/merged-results
+            cp target/failsafe-reports/*.xml target/merged-results
       - store-artifacts:
-          path: target/site/jacoco-ut
+          path: target/site/jacoco-aggregate
       - store-test-results:
-          path: target/surefire-reports
+          path: target/merged-reports
       - run:
           name: Upload coverage statistics to Codecov
           command: bash <(curl -s https://codecov.io/bash)
@@ -64,33 +63,20 @@ jobs:
       #       docker-compose up -d
       #       docker-compose exec -d "$(docker ps --format "{{.ID}} {{.Names}}" | grep spring-practice_spring-practice_1 | cut -f1 -d " ")" bash ./ci-scripts/integration-tests.sh
 
+  # this step is largely redundant now, but I'm keeping it for an additional integration check
   automation-local:
-    machine: true
+    docker:
+      - image: cimg/openjdk:16.0.2-node
     steps:
       - checkout
       - run:
-          name: Install JDK 11
-          command: |
-            sudo apt-get update && sudo apt-get install openjdk-11-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
-            java -version
-      - run:
           name: Create Environment Config
-          command: echo "SECRET_KEY=$(openssl rand -base64 64)\nMYSQL_USER=${TEST_DB_USER}\nMYSQL_PASSWORD=${TEST_DB_PASSWORD}" > .env
+          command: echo "SECRET_KEY=$(openssl rand -base64 64)\nTEST_USER=${TEST_USER}" > .env
       - run:
-          name: Create Database Storage
-          command: mkdir ~/mysql-data
-      - run:
-          name: Start Test DB and Run Integration Tests
+          name: Run Failsafe Integration Tests
           command: |
-            docker run -d --name spring-test-db -p 3306:3306 -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD='${TEST_ROOT_PASSWORD}' -e MYSQL_USER='${TEST_DB_USER}' -e MYSQL_PASSWORD='${TEST_DB_PASSWORD}' -e MYSQL_DATABASE='SPRING' mysql
-            docker container exec -i spring-test-db mysql -u root --password=$TEST_ROOT_PASSWORD SPRING < ./containers/spring.sql
             mvn clean install -DskipTests
             mvn failsafe:integration-test
-      - store-test-results:
-          path: target/failsafe-reports
-          # Skip codecov upload for now until I figure out how to get both the failsafe and surefire results working
 
 workflows:
   version: 2
@@ -98,10 +84,10 @@ workflows:
     jobs:
       - build-application
       - test
-      # - automation-local:
-      #     requires:
-      #       - build-application
-      #       - test
+      - automation-local:
+          requires:
+            - build-application
+            - test
       - compose:
           requires:
             - build-application

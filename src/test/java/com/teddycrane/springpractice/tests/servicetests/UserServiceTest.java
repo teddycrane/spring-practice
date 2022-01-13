@@ -4,8 +4,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,7 +62,9 @@ public class UserServiceTest {
 
     @Test
     public void shouldGetAllUsers() {
-        when(this.userRepository.findAll()).thenReturn(userList);
+        List<User> list = new ArrayList<>();
+        userList.forEach((user) -> list.add(user));
+        when(this.userRepository.findAll()).thenReturn(list);
         Collection<User> result = this.userService.getAllUsers();
 
         Assertions.assertNotNull(result);

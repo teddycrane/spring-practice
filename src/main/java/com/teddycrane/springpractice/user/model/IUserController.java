@@ -1,9 +1,10 @@
 package com.teddycrane.springpractice.user.model;
 
-import com.teddycrane.springpractice.error.NotAuthenticatedException;
+import com.teddycrane.springpractice.error.NoCredentialsException;
 import com.teddycrane.springpractice.user.User;
 import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
+import com.teddycrane.springpractice.error.ForbiddenException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
@@ -24,19 +25,21 @@ public interface IUserController {
 	@GetMapping(path = "/all")
 	Collection<User> getAllUsers();
 
-	@GetMapping
-	User getUser(@RequestParam String id) throws BadRequestException, UserNotFoundError;
+	@GetMapping(path = "/{id}")
+	User getUser(@PathVariable String id) throws BadRequestException, UserNotFoundError;
 
 	@PostMapping
 	User createUser(@RequestBody @Valid CreateUserRequest request) throws BadRequestException, DuplicateItemException;
 
 	@PostMapping(path = "/login")
 	AuthenticationResponse login(@RequestBody @Valid AuthenticationRequest request)
-			throws BadRequestException, NotAuthenticatedException, UserNotFoundError;
+			throws BadRequestException, NoCredentialsException, UserNotFoundError;
 
 	@PatchMapping
-	User updateUser(@RequestBody @Valid UpdateUserRequest request) throws BadRequestException, UserNotFoundError;
+	User updateUser(@RequestBody @Valid UpdateUserRequest request, @RequestHeader("Authorization") String authToken)
+			throws BadRequestException, ForbiddenException, UserNotFoundError;
 
+	// TODO update to be requestBody instead
 	@PostMapping(path = "/reset-password")
 	PasswordResetResponse resetPassword(@RequestParam String userId) throws BadRequestException, UserNotFoundError;
 

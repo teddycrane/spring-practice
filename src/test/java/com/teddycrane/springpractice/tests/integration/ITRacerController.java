@@ -1,33 +1,38 @@
 package com.teddycrane.springpractice.tests.integration;
 
-import com.teddycrane.springpractice.racer.RacerController;
+import com.teddycrane.springpractice.racer.request.CreateRacerRequest;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 public class ITRacerController extends IntegrationBase {
 
-    @Autowired
-    private RacerController racerController;
+    private String authToken;
 
-    @Test
-    public void contextLoads() {
-        Assertions.assertNotNull(racerController);
+    @BeforeEach
+    public void authenticate() throws Exception {
+        this.authToken = this.getUserAuthToken();
     }
 
     @Test
-    public void shouldReturn200_WhenRacerIsCreated() throws Exception {
+    public void createRacer_shouldReturn200WhenCreated() throws Exception {
+        String firstName, lastName;
+        firstName = this.faker.name().firstName();
+        lastName = this.faker.name().lastName();
+        CreateRacerRequest request = new CreateRacerRequest(firstName, lastName);
+        String json = this.gson.toJson(request);
+
         this.mockMvc.perform(post("/racer/new")
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", authToken)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.firstName").value(firstName))
+                .andExpect(jsonPath("$.lastName").value(lastName));
     }
 }

@@ -2,8 +2,9 @@ package com.teddycrane.springpractice.race.model;
 
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.enums.Category;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface RaceRepository extends CrudRepository<Race, UUID>
+public interface RaceRepository extends JpaRepository<Race, UUID>
 {
 
 	Optional<Race> findByName(String name);

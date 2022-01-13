@@ -26,7 +26,9 @@ public class UpdateUserRequest {
         this.lastName = lastName;
         this.password = password;
         this.username = username;
-        this.email = FieldFormatValidator.isValidEmail(email) ? email : "";
+        // null check for email for deserialization
+        if (email != null)
+            this.email = FieldFormatValidator.isValidEmail(email) ? email : "";
         this.userType = userType;
     }
 

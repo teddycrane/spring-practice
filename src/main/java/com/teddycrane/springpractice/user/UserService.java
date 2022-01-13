@@ -7,7 +7,7 @@ import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
-import com.teddycrane.springpractice.error.NotAuthenticatedException;
+import com.teddycrane.springpractice.error.NoCredentialsException;
 import com.teddycrane.springpractice.error.UserNotFoundError;
 import com.teddycrane.springpractice.helper.JwtHelper;
 import com.teddycrane.springpractice.models.BaseService;
@@ -112,7 +112,7 @@ public class UserService extends BaseService implements IUserService {
 
 	@Override
 	public AuthenticationResponse login(String username, String email, String password)
-			throws NotAuthenticatedException, UserNotFoundError {
+			throws NoCredentialsException, UserNotFoundError {
 		logger.trace("login called");
 		Optional<User> user;
 
@@ -131,7 +131,7 @@ public class UserService extends BaseService implements IUserService {
 
 			if (u.getStatus() != UserStatus.ACTIVE) {
 				logger.error("Cannot authenticate an inactive user");
-				throw new NotAuthenticatedException(
+				throw new NoCredentialsException(
 						"The specified user is not active.  Please contact an administrator");
 			}
 
@@ -146,7 +146,7 @@ public class UserService extends BaseService implements IUserService {
 				return new AuthenticationResponse(true, token);
 			} else {
 				logger.info("The username and password combo provided are not valid");
-				throw new NotAuthenticatedException("An invalid username/password combination was provided.");
+				throw new NoCredentialsException("An invalid username/password combination was provided.");
 			}
 		} else {
 			logger.error("Unable to find the user {}", username);

@@ -1,5 +1,6 @@
 package com.teddycrane.springpractice.user;
 
+import com.google.gson.Gson;
 import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.helper.FieldFormatValidator;
@@ -199,18 +200,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("{\n");
-		builder.append(String.format("    \"userName\" : \"%s\",\n", username));
-		builder.append(String.format("    \"email\" : \"%s\",\n", email));
-		builder.append(String.format("    \"id\" : \"%s\",\n", id));
-		builder.append(String.format("    \"firstName\" : \"%s\",\n", firstName));
-		builder.append(String.format("    \"lastName\" : \"%s\",\n", lastName));
-		builder.append(String.format("    \"type\" : \"%s\",\n", type));
-		builder.append(String.format("    \"status\" : \"%s\",\n", status));
-		builder.append(String.format("    \"isDeleted\" : \"%s\"\n", isDeleted));
-		builder.append("}");
-		return builder.toString();
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 
 	@Override
