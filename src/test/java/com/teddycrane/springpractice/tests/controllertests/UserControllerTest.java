@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.helper.IJwtHelper;
+import com.teddycrane.springpractice.helper.JwtHelper;
 import com.teddycrane.springpractice.user.User;
 import com.teddycrane.springpractice.user.UserController;
 import com.teddycrane.springpractice.user.model.IUserController;
@@ -31,17 +33,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 public class UserControllerTest {
         private IUserController userController;
         private User user;
-        private UUID testUUID;
+        private final UUID testUUID = UUID.fromString("1023c9e1-6900-4520-b8ec-7753a5cdf120");
+        private final String fakeAuthToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwiaWF0IjoxNjQyMTA5OTk4LCJleHAiOjE2NDkwMTEzNTk4LCJpc3MiOiJjb20udGVkZHljcmFuZS5zcHJpbmdwcmFjdGljZSIsInN1YiI6InRlc3R1c2VyMiIsImp0aSI6IjEwMjNjOWUxLTY5MDAtNDUyMC1iOGVjLTc3NTNhNWNkZjEyMCJ9.fZ-PMicZq4lZ7aRokBP516JJ8YkaQDFaT-2IzSr0pDc-Xhvd-pUdiwfTnXhEgK1rHomlPw61lnfHkhVZrsis_g";
 
         @Mock
         private IUserService userService;
 
-        @Autowired
         private IJwtHelper jwtHelper;
 
         @Captor
@@ -61,12 +63,14 @@ public class UserControllerTest {
         ArgumentCaptor<Optional<UserType>> userTypeOptional;
 
         @BeforeEach
-        public void init() {
+        public void init() throws NoSuchAlgorithmException {
                 MockitoAnnotations.openMocks(this);
+
+                this.jwtHelper = new JwtHelper(
+                                "ziaNrj4XV/8rZPvbo5iSyWPEwGvGmU3fsxUsLIZNsy5VbVfoQagF0uRkMLIT1mOIlQrK2urhRMtrzW8pWs7pbg==");
 
                 this.userController = new UserController(this.userService, this.jwtHelper);
                 this.user = new User(UserType.USER, "first", "last", "username", "password", "email@email.fake");
-                this.testUUID = user.getId();
         }
 
         @Test
@@ -185,7 +189,8 @@ public class UserControllerTest {
 
         @Test
         public void updateUser_shouldUpdateUserWithAllValues() {
-                UUID id = UUID.randomUUID();
+                // TODO move this to class-level for more efficient re-use
+                UUID id = UUID.fromString("1023c9e1-6900-4520-b8ec-7753a5cdf120");
                 UpdateUserRequest request = new UpdateUserRequest(id.toString(), "firstName", "lastName",
                                 "password", "username", "email@email.com", UserType.USER);
 
@@ -200,7 +205,7 @@ public class UserControllerTest {
                                         Optional.of(UserType.USER)))
                                                         .thenReturn(expected);
 
-                        User result = this.userController.updateUser(request, UUID.randomUUID().toString());
+                        User result = this.userController.updateUser(request, fakeAuthToken);
                         verify(this.userService).updateUser(
                                         uuidCaptor.capture(),
                                         usernameOptional.capture(),
@@ -230,7 +235,7 @@ public class UserControllerTest {
                                 "password", "username", "email@email.com", UserType.USER);
 
                 Assertions.assertThrows(BadRequestException.class,
-                                () -> this.userController.updateUser(request, UUID.randomUUID().toString()));
+                                () -> this.userController.updateUser(request, fakeAuthToken));
         }
 
         @Test
@@ -243,7 +248,7 @@ public class UserControllerTest {
                                                 .thenThrow(IllegalAccessException.class);
 
                 Assertions.assertThrows(BadRequestException.class,
-                                () -> this.userController.updateUser(request, UUID.randomUUID().toString()));
+                                () -> this.userController.updateUser(request, fakeAuthToken));
         }
 
         @Test

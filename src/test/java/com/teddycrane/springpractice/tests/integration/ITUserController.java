@@ -31,12 +31,13 @@ public class ITUserController extends IntegrationBase {
 
     // @BeforeEach
     // public void setUp() throws Exception {
-    //     try {
-    //         this.userAuthToken = this.getUserAuthToken();
-    //     } catch (Exception e) {
-    //         System.out.println("Unhandled Exception thrown while getting authentication token");
-    //         throw new Exception("Fatal Error");
-    //     }
+    // try {
+    // this.userAuthToken = this.getUserAuthToken();
+    // } catch (Exception e) {
+    // System.out.println("Unhandled Exception thrown while getting authentication
+    // token");
+    // throw new Exception("Fatal Error");
+    // }
     // }
 
     @Test
@@ -119,15 +120,20 @@ public class ITUserController extends IntegrationBase {
                 .andExpect(status().isOk());
     }
 
-    // @Test
-    // @DisplayName("Should not allow non Admin or Root users to update other
-    // users")
-    // public void updateUser_shouldNotAllowBasicUserToAccess() throws Exception {
+    @Test
+    @DisplayName("Should not allow non Admin or Root users to update other users")
+    public void updateUser_shouldNotAllowBasicUserToAccess() throws Exception {
+        String userId = "5e0c215b-4309-4902-97cf-01e7fc2a17b1";
+        String firstName = faker.name().firstName();
+        String lastName = faker.name().lastName();
 
-    // UpdateUserRequest request = new UpdateUserRequest(userId, firstName,
-    // lastName, password, username, email, userType)
-    // this.mockMvc.perform(patch("/users")
-    // .contentType(MediaType.APPLICATION_JSON)
-    // .header("Authorization"));
-    // }
+        String content = String.format("{\"userId\": \"%s\",\"firstName\":\"%s\",\"lastName\":\"%s\"}", userId,
+                firstName, lastName);
+
+        this.mockMvc.perform(patch("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", userAuthToken)
+                .content(content))
+                .andExpect(status().is4xxClientError());
+    }
 }
