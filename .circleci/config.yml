@@ -10,10 +10,10 @@ jobs:
       - checkout
       - run:
           name: Build Application
-          command: mvn clean install -DskipTests
+          command: mvn clean install -DskipTests -DskipITs
       - run:
           name: Package Application
-          command: mvn package -DskipTests
+          command: mvn package -DskipTests -DskipITs
       - store-artifacts:
           path: target/spring-practice-0.0.1.jar
           name: app.jar
@@ -24,29 +24,28 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Test Application
-          command: mvn clean verify -DskipITs
+          name: Run All Tests
+          command: mvn clean verify
       - run:
           name: Clean up generated results
           command: |
             rm -rf target/classes
-            rm -rf target/failsafe-reports
             rm -rf target/generated-sources 
             rm -rf target/generated-test-sources
             rm -rf target/maven-archiver
             rm -rf target/maven-status
             rm target/surefire-reports/*.dumpstream
             rm -rf target/test-classes
-      # - run:
-      #     name: Zip test coverage
-      #     command: zip -r coverage.zip target/site/jacoco-ut
-      # - store-artifacts:
-      #     path: coverage.zip
-      #     name: coverage.zip
+      - run:
+          name: Merge Test Results
+          command: |
+            mkdir target/merged-results
+            cp target/surefire-reports/*.xml target/merged-results
+            cp target/failsafe-reports/*.xml target/merged-results
       - store-artifacts:
-          path: target/site/jacoco-ut
+          path: target/site/jacoco-aggregate
       - store-test-results:
-          path: target/surefire-reports
+          path: target/merged-reports
       - run:
           name: Upload coverage statistics to Codecov
           command: bash <(curl -s https://codecov.io/bash)
@@ -64,6 +63,7 @@ jobs:
       #       docker-compose up -d
       #       docker-compose exec -d "$(docker ps --format "{{.ID}} {{.Names}}" | grep spring-practice_spring-practice_1 | cut -f1 -d " ")" bash ./ci-scripts/integration-tests.sh
 
+  # this step is largely redundant now, but I'm keeping it for an additional integration check
   automation-local:
     docker:
       - image: cimg/openjdk:16.0.2-node
@@ -77,9 +77,6 @@ jobs:
           command: |
             mvn clean install -DskipTests
             mvn failsafe:integration-test
-      - store-test-results:
-          path: target/failsafe-reports
-          # Skip codecov upload for now until I figure out how to get both the failsafe and surefire results working
 
 workflows:
   version: 2

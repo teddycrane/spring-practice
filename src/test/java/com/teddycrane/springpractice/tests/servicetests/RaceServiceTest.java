@@ -3,13 +3,16 @@ package com.teddycrane.springpractice.tests.servicetests;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
 import com.teddycrane.springpractice.enums.Category;
+import com.teddycrane.springpractice.enums.RaceFilterType;
 import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.EndException;
+import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.error.RaceNotFoundException;
 import com.teddycrane.springpractice.error.RacerNotFoundException;
 import com.teddycrane.springpractice.error.StartException;
 import com.teddycrane.springpractice.error.UpdateException;
+import com.teddycrane.springpractice.models.Either;
 import com.teddycrane.springpractice.race.model.RaceRepository;
 import com.teddycrane.springpractice.race.model.RaceResult;
 import com.teddycrane.springpractice.racer.model.RacerRepository;
@@ -17,7 +20,6 @@ import com.teddycrane.springpractice.race.model.IRaceService;
 import com.teddycrane.springpractice.race.RaceService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.mockito.*;
-import org.springframework.web.client.HttpClientErrorException.BadRequest;
 
 import java.util.*;
 
@@ -438,4 +440,32 @@ public class RaceServiceTest {
 
 		Assertions.assertThrows(RaceNotFoundException.class, () -> this.raceService.deleteRace(requestUUID));
 	}
+
+	@Test
+	public void filterRace_shouldFilterRaceByCategory() {
+		when(this.raceRepository.findByCategory(Category.CAT1)).thenReturn(raceList);
+		Collection<Race> races = this.raceService.filterRace(RaceFilterType.CATEGORY, Either.right(Category.CAT1));
+
+		Assertions.assertNotNull(races);
+	}
+
+	@Test
+	public void filterRace_shouldFilterRaceByName() {
+		when(this.raceRepository.findByNameContaining("name")).thenReturn(raceList);
+		Collection<Race> races = this.raceService.filterRace(RaceFilterType.NAME, Either.left("name"));
+
+		Assertions.assertNotNull(races);
+	}
+
+	@Test
+	public void filterRace_shouldHandleNoRaceFound() {
+		when(this.raceRepository.findByCategory(any(Category.class))).thenReturn(List.of());
+		when(this.raceRepository.findByNameContaining(any(String.class))).thenReturn(List.of());
+
+		Assertions.assertThrows(InternalServerError.class,
+				() -> this.raceService.filterRace(RaceFilterType.CATEGORY, Either.left("test")));
+		Assertions.assertThrows(InternalServerError.class,
+				() -> this.raceService.filterRace(RaceFilterType.NAME, Either.right(Category.CAT1)));
+	}
+
 }
