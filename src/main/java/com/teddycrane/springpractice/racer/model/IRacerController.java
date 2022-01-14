@@ -20,63 +20,71 @@ import org.springframework.web.bind.annotation.*;
 public interface IRacerController {
 
   @Operation(summary = "Get all racers")
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Found racers",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  array = @ArraySchema(schema = @Schema(implementation = Racer.class)))
-            }),
-      })
+  @ApiResponses(value =
+                {
+                  @ApiResponse(
+                      responseCode = "200", description = "Found racers",
+                      content =
+                      {
+                        @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(
+                                schema = @Schema(implementation = Racer.class)))
+                      })
+                  ,
+                })
   @GetMapping(path = "/all")
-  List<Racer> getAllRacers(
-      @Parameter(description = "Boolean flag indicating if deleted entries should be included")
-          @RequestParam(required = false)
-          boolean isDeleted);
+  List<Racer>
+  getAllRacers(@Parameter(
+      description =
+          "Boolean flag indicating if deleted entries should be included")
+               @RequestParam(required = false) boolean isDeleted);
 
   @Operation(summary = "Get racer by ID")
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Found racer",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = Racer.class))
-            }),
-        @ApiResponse(
-            responseCode = "404",
-            description = "No racers found for the specified ID",
-            content = {@Content()})
-      })
+  @ApiResponses(value =
+                {
+                  @ApiResponse(
+                      responseCode = "200", description = "Found racer",
+                      content =
+                      {
+                        @Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = Racer.class))
+                      })
+                  ,
+                      @ApiResponse(responseCode = "404",
+                                   description =
+                                       "No racers found for the specified ID",
+                                   content = { @Content() })
+                })
   @GetMapping("/{id}")
-  Racer getRacer(
-      @Parameter(description = "The object ID to find the racer associated with") @PathVariable
-          String id)
-      throws RacerNotFoundException;
+  Racer
+  getRacer(@Parameter(
+      description = "The object ID to find the racer associated with")
+           @PathVariable String id) throws RacerNotFoundException;
 
   @Operation(summary = "Create new racer")
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Successfully created racer",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = Racer.class))
-            }),
-        @ApiResponse(responseCode = "400", description = "Unable to create racer")
-      })
+  @ApiResponses(value =
+                {
+                  @ApiResponse(
+                      responseCode = "200",
+                      description = "Successfully created racer",
+                      content =
+                      {
+                        @Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = Racer.class))
+                      })
+                  ,
+                      @ApiResponse(responseCode = "400",
+                                   description = "Unable to create racer")
+                })
   @PostMapping(path = "/new")
-  Racer addRacer(@Valid @RequestBody CreateRacerRequest request) throws BadRequestException;
+  Racer
+  addRacer(@Valid @RequestBody CreateRacerRequest request)
+      throws BadRequestException;
 
   @PatchMapping(path = "/update/{id}")
-  Racer updateRacer(@RequestBody UpdateRacerRequest request, @PathVariable String id)
+  Racer updateRacer(@RequestBody UpdateRacerRequest request,
+                    @PathVariable String id)
       throws RacerNotFoundException, BadRequestException;
 
   @DeleteMapping(path = "/{id}")
@@ -86,6 +94,7 @@ public interface IRacerController {
   Racer restoreRacer(@PathVariable String id) throws RacerNotFoundException;
 
   @GetMapping(path = "/filter")
-  List<Racer> getRacersByType(@RequestParam String type, @RequestParam String value)
+  List<Racer> getRacersByType(@RequestParam String type,
+                              @RequestParam String value)
       throws BadRequestException;
 }

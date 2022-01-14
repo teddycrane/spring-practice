@@ -17,7 +17,8 @@ public interface IRaceService {
 
   Race createRace(String name, Category category) throws DuplicateItemException;
 
-  Race createRace(String name, Category category, Date startTime) throws DuplicateItemException;
+  Race createRace(String name, Category category, Date startTime)
+      throws DuplicateItemException;
 
   Race createRace(String name, Category category, Date startTime, Date endTime)
       throws DuplicateItemException;
@@ -33,7 +34,8 @@ public interface IRaceService {
   Race endRace(UUID id) throws RaceNotFoundException, EndException;
 
   Race placeRacersInFinishOrder(UUID raceId, List<UUID> requestIds)
-      throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException;
+      throws RaceNotFoundException, RacerNotFoundException,
+             DuplicateItemException, StartException;
 
   RaceResult getResults(UUID raceId) throws RaceNotFoundException;
 
@@ -41,6 +43,7 @@ public interface IRaceService {
 
   Map<UUID, Integer> getResultsForRacer(UUID id) throws RacerNotFoundException;
 
-  Collection<Race> filterRace(RaceFilterType filter, Either<String, Category> value)
+  Collection<Race> filterRace(RaceFilterType filter,
+                              Either<String, Category> value)
       throws BadRequestException, InternalServerError;
 }

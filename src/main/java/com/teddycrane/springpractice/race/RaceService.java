@@ -22,7 +22,8 @@ public class RaceService extends BaseService implements IRaceService {
 
   private final RacerRepository racerRepository;
 
-  public RaceService(RaceRepository raceRepository, RacerRepository racerRepository) {
+  public RaceService(RaceRepository raceRepository,
+                     RacerRepository racerRepository) {
     super();
     this.raceRepository = raceRepository;
     this.racerRepository = racerRepository;
@@ -46,25 +47,27 @@ public class RaceService extends BaseService implements IRaceService {
       return new Race(result.get());
     } else {
       this.logger.error("Unable to find a race with the id {}", id);
-      throw new RaceNotFoundException(String.format("Unable to find a race with id %s\n", id));
+      throw new RaceNotFoundException(
+          String.format("Unable to find a race with id %s\n", id));
     }
   }
 
   @Override
-  public Race createRace(String name, Category category) throws DuplicateItemException {
+  public Race createRace(String name, Category category)
+      throws DuplicateItemException {
     this.logger.trace("createRace called");
     Optional<Race> existing = this.raceRepository.findByName(name);
 
     if (existing.isPresent()) {
-      if (existing.get().getCategory() == category && existing.get().getName().equals(name)) {
+      if (existing.get().getCategory() == category &&
+          existing.get().getName().equals(name)) {
         this.logger.error(
             "Name collision detected! A race with the name {} and the same category already"
                 + " exists!",
             name);
-        throw new DuplicateItemException(
-            String.format(
-                "An event for category %s with name %s already exists!",
-                EnumHelpers.getCategoryMapping(category), name));
+        throw new DuplicateItemException(String.format(
+            "An event for category %s with name %s already exists!",
+            EnumHelpers.getCategoryMapping(category), name));
       }
     }
     return this.raceRepository.save(new Race(name, category));
@@ -79,21 +82,21 @@ public class RaceService extends BaseService implements IRaceService {
 
     if (existing.isPresent()) {
       Race race = new Race(existing.get());
-      if (race.getName().equals(name)
-          && race.getCategory() == category
-          && race.getStartTime().equals(startTime)) {
+      if (race.getName().equals(name) && race.getCategory() == category &&
+          race.getStartTime().equals(startTime)) {
         this.logger.error(
             "Name collision detected! A race with the name {} in the same category already exists!",
             name);
-        throw new DuplicateItemException("A race with this same name already exists!");
+        throw new DuplicateItemException(
+            "A race with this same name already exists!");
       }
     }
     return this.raceRepository.save(new Race(name, category, startTime));
   }
 
   @Override
-  public Race createRace(String name, Category category, Date startTime, Date endTime)
-      throws DuplicateItemException {
+  public Race createRace(String name, Category category, Date startTime,
+                         Date endTime) throws DuplicateItemException {
     this.logger.trace("createRace called");
 
     Optional<Race> existing = this.raceRepository.findByName(name);
@@ -105,10 +108,12 @@ public class RaceService extends BaseService implements IRaceService {
         this.logger.error(
             "Name collision detected! A race with the name {} in the same category already exists!",
             name);
-        throw new DuplicateItemException("A race with the same name already exists!");
+        throw new DuplicateItemException(
+            "A race with the same name already exists!");
       }
     }
-    return this.raceRepository.save(new Race(name, category, startTime, endTime));
+    return this.raceRepository.save(
+        new Race(name, category, startTime, endTime));
   }
 
   @Override
@@ -131,21 +136,22 @@ public class RaceService extends BaseService implements IRaceService {
 
       // name collision validation
       if (other.isPresent()) {
-        if (other.get().getName().equals(name) && other.get().getCategory() == category) {
+        if (other.get().getName().equals(name) &&
+            other.get().getCategory() == category) {
           this.logger.error(
               "An item with the name {} in the same category already exists.  Please try again.",
               name);
-          throw new DuplicateItemException(
-              String.format(
-                  "An item with the name %s and category %s already exists!",
-                  name, EnumHelpers.getCategoryMapping(category)));
+          throw new DuplicateItemException(String.format(
+              "An item with the name %s and category %s already exists!", name,
+              EnumHelpers.getCategoryMapping(category)));
         }
       }
 
       return this.raceRepository.save(race);
     } else {
       this.logger.error("Unable to find a race with the id {}", id);
-      throw new RaceNotFoundException(String.format("Unable to find a race with id %s", id));
+      throw new RaceNotFoundException(
+          String.format("Unable to find a race with id %s", id));
     }
   }
 
@@ -167,32 +173,35 @@ public class RaceService extends BaseService implements IRaceService {
         logger.error(
             "Cannot add racers to a race that is already started! Start time: {}",
             r.getStartTime());
-        throw new UpdateException("Cannot add racers to a race that has already started!");
+        throw new UpdateException(
+            "Cannot add racers to a race that has already started!");
       }
 
       // create set to de-dupe
       racers = new ArrayList<>(r.getRacers());
-      Set<UUID> idSet = racers.stream().map(Racer::getId).collect(Collectors.toSet());
-      List<UUID> deDupedIds =
-          racerIds.stream()
-              .filter((element) -> !idSet.contains(element))
-              .collect(Collectors.toList());
+      Set<UUID> idSet =
+          racers.stream().map(Racer::getId).collect(Collectors.toSet());
+      List<UUID> deDupedIds = racerIds.stream()
+                                  .filter((element) -> !idSet.contains(element))
+                                  .collect(Collectors.toList());
 
       try {
-        // since we've removed duplicates earlier, we just forEach the iterable onto the list of
-        // racers in the Race object
+        // since we've removed duplicates earlier, we just forEach the iterable
+        // onto the list of racers in the Race object
         Iterable<Racer> _racers = this.racerRepository.findAllById(deDupedIds);
         _racers.forEach(r::addRacer);
       } catch (IllegalArgumentException e) {
         this.logger.error("Unable to find a racer! More info: ");
         this.logger.error(e.getMessage());
-        throw new RacerNotFoundException("Cannot find a racer with a null id or entry.  ");
+        throw new RacerNotFoundException(
+            "Cannot find a racer with a null id or entry.  ");
       }
 
       return this.raceRepository.save(r);
     } else {
       this.logger.error("Unable to find a race with the id {}", id);
-      throw new RaceNotFoundException(String.format("Unable to find Race with id %s", id));
+      throw new RaceNotFoundException(
+          String.format("Unable to find Race with id %s", id));
     }
   }
 
@@ -206,18 +215,23 @@ public class RaceService extends BaseService implements IRaceService {
 
       // check if the start time exists, and if so, throw error
       if (race.getStartTime() != null) {
-        this.logger.error("Unable to start a race that has already been started!");
-        throw new StartException("Unable to start a race that has already been started!");
+        this.logger.error(
+            "Unable to start a race that has already been started!");
+        throw new StartException(
+            "Unable to start a race that has already been started!");
       } else if (race.getEndTime() != null) {
         this.logger.error("Unable to start a race that has already finished!");
-        throw new StartException("Unable to start a race that is already finished");
+        throw new StartException(
+            "Unable to start a race that is already finished");
       } else {
-        this.logger.info(String.format("Starting race %s at time %s", id, new Date()));
+        this.logger.info(
+            String.format("Starting race %s at time %s", id, new Date()));
         race.setStartTime(new Date());
         return this.raceRepository.save(race);
       }
     } else {
-      String message = String.format("Unable to find a race with the id %s", id);
+      String message =
+          String.format("Unable to find a race with the id %s", id);
       this.logger.error(message);
       throw new RaceNotFoundException(message);
     }
@@ -237,17 +251,20 @@ public class RaceService extends BaseService implements IRaceService {
         throw new EndException("Unable to end a race that has not started!");
       } else if (race.getStartTime().after(new Date())) {
         this.logger.error("Unable to end a race that starts in the future!");
-        throw new EndException("Unable to start a race that starts in the future");
+        throw new EndException(
+            "Unable to start a race that starts in the future");
       } else if (race.getEndTime() != null) {
         this.logger.error("Unable to end a race that has already finished!");
-        throw new EndException("Unable to end a race that has already finished!");
+        throw new EndException(
+            "Unable to end a race that has already finished!");
       } else {
         // if the checks above ALL fail, then the race is able to be finished
         race.setEndTime(new Date());
         return this.raceRepository.save(race);
       }
     } else {
-      String message = String.format("Unable to find a race with the id %s", id);
+      String message =
+          String.format("Unable to find a race with the id %s", id);
       this.logger.error(message);
       throw new RaceNotFoundException(message);
     }
@@ -255,7 +272,8 @@ public class RaceService extends BaseService implements IRaceService {
 
   @Override
   public Race placeRacersInFinishOrder(UUID raceId, List<UUID> requestIds)
-      throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException, StartException {
+      throws RaceNotFoundException, RacerNotFoundException,
+             DuplicateItemException, StartException {
     this.logger.trace("placeRacerInFinishOrder called");
 
     Optional<Race> _race = this.raceRepository.findById(raceId);
@@ -268,9 +286,11 @@ public class RaceService extends BaseService implements IRaceService {
       result.forEach(racers::add);
 
       if (racers.size() < requestIds.size()) {
-        this.logger.error("One or more of the provided ids was not found, {}", racers);
-        throw new RacerNotFoundException(
-            String.format("one or more of the provided id's was not found.  Ids: %s", racers));
+        this.logger.error("One or more of the provided ids was not found, {}",
+                          racers);
+        throw new RacerNotFoundException(String.format(
+            "one or more of the provided id's was not found.  Ids: %s",
+            racers));
       } else if (race.getStartTime() != null) {
         this.logger.trace("Placing racers {}", racers);
         // ensure that the race has been started
@@ -281,11 +301,14 @@ public class RaceService extends BaseService implements IRaceService {
         race.setFinishOrder(resultMap);
         return this.raceRepository.save(race);
       } else {
-        this.logger.error("Cannot set finishers for a race that has not been started!");
-        throw new StartException("Cannot set finishers for a race that is not started");
+        this.logger.error(
+            "Cannot set finishers for a race that has not been started!");
+        throw new StartException(
+            "Cannot set finishers for a race that is not started");
       }
     } else {
-      String message = String.format("Unable to find a race with the id %s", raceId);
+      String message =
+          String.format("Unable to find a race with the id %s", raceId);
       this.logger.error("Unable to find a race with the id {}", raceId);
       throw new RaceNotFoundException(message);
     }
@@ -305,19 +328,19 @@ public class RaceService extends BaseService implements IRaceService {
       Map<Racer, Date> finishTimes = new HashMap<>(race.getFinishOrder());
 
       // put entries into stream for sorting
-      List<Racer> sorted =
-          finishTimes.entrySet().parallelStream()
-              .sorted(Map.Entry.comparingByValue())
-              .map(Map.Entry::getKey)
-              .collect(Collectors.toList());
+      List<Racer> sorted = finishTimes.entrySet()
+                               .parallelStream()
+                               .sorted(Map.Entry.comparingByValue())
+                               .map(Map.Entry::getKey)
+                               .collect(Collectors.toList());
 
       result = new RaceResult(race.getName(), race.getCategory(), sorted);
 
       return result;
     } else {
       this.logger.error("Unable to find a race with the id {}", raceId);
-      throw new RaceNotFoundException(
-          String.format("Unable to find a race with the provided id %s", raceId));
+      throw new RaceNotFoundException(String.format(
+          "Unable to find a race with the provided id %s", raceId));
     }
   }
 
@@ -341,7 +364,8 @@ public class RaceService extends BaseService implements IRaceService {
   }
 
   @Override
-  public Map<UUID, Integer> getResultsForRacer(UUID id) throws RacerNotFoundException {
+  public Map<UUID, Integer> getResultsForRacer(UUID id)
+      throws RacerNotFoundException {
     logger.trace("getResultsForRacer called");
 
     Optional<Racer> _racer = this.racerRepository.findById(id);
@@ -353,50 +377,49 @@ public class RaceService extends BaseService implements IRaceService {
           .findAllById(this.raceRepository.findRacesWithRacer(id.toString()))
           .forEach(races::add);
 
-      races.forEach(
-          (race) -> {
-            logger.info("Calculating finish place for racer {} in race {}", id, race.getId());
-            response.put(race.getId(), race.getFinishPlace(id));
-          });
+      races.forEach((race) -> {
+        logger.info("Calculating finish place for racer {} in race {}", id,
+                    race.getId());
+        response.put(race.getId(), race.getFinishPlace(id));
+      });
 
       return response;
     } else {
       logger.error("Unable to find a racer with id {}", id);
-      throw new RacerNotFoundException("Unable to find a racer with the provided id!");
+      throw new RacerNotFoundException(
+          "Unable to find a racer with the provided id!");
     }
   }
 
   @Override
-  public Collection<Race> filterRace(RaceFilterType filter, Either<String, Category> value)
+  public Collection<Race> filterRace(RaceFilterType filter,
+                                     Either<String, Category> value)
       throws BadRequestException, InternalServerError {
     logger.trace("filterRace called");
     Optional<String> name = value.fromLeft();
     Optional<Category> category = value.fromRight();
 
     switch (filter) {
-      case CATEGORY:
-        {
-          if (category.isEmpty()) {
-            logger.error("No category value supplied! Value provided: {}", value);
-            throw new InternalServerError("Internal server error");
-          }
+    case CATEGORY: {
+      if (category.isEmpty()) {
+        logger.error("No category value supplied! Value provided: {}", value);
+        throw new InternalServerError("Internal server error");
+      }
 
-          return this.raceRepository.findByCategory(category.get());
-        }
-      case NAME:
-        {
-          if (name.isEmpty()) {
-            logger.error("No name provided! Value provided: {}", value);
-            throw new InternalServerError("Internal Server Error");
-          }
+      return this.raceRepository.findByCategory(category.get());
+    }
+    case NAME: {
+      if (name.isEmpty()) {
+        logger.error("No name provided! Value provided: {}", value);
+        throw new InternalServerError("Internal Server Error");
+      }
 
-          return this.raceRepository.findByNameContaining(name.get());
-        }
-      default:
-        {
-          logger.error("No filter type provided");
-          throw new BadRequestException("No filter type provided!");
-        }
+      return this.raceRepository.findByNameContaining(name.get());
+    }
+    default: {
+      logger.error("No filter type provided");
+      throw new BadRequestException("No filter type provided!");
+    }
     }
   }
 }

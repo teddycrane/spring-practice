@@ -15,9 +15,7 @@ public class UpdateRaceRequest {
     this.category = category;
   }
 
-  public Optional<String> getName() {
-    return Optional.ofNullable(name);
-  }
+  public Optional<String> getName() { return Optional.ofNullable(name); }
 
   public Optional<Category> getCategory() {
     return Optional.ofNullable(category);
@@ -25,9 +23,7 @@ public class UpdateRaceRequest {
 
   @Override
   public String toString() {
-    return "{\n"
-        + String.format("    \"name\" : \"%s\",\n", name)
-        + String.format("    \"category\" : \"%s\"\n", category)
-        + "}";
+    return "{\n" + String.format("    \"name\" : \"%s\",\n", name) +
+        String.format("    \"category\" : \"%s\"\n", category) + "}";
   }
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface IAuthService {
-  boolean isResourceAllowedForUser(String userId, String resourcePath, String method)
+  boolean isResourceAllowedForUser(String userId, String resourcePath,
+                                   String method)
       throws UserNotFoundError, BadRequestException;
 }

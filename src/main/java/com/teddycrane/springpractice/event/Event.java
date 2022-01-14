@@ -16,8 +16,7 @@ public class Event {
 
   private boolean isActive;
 
-  @Column(unique = true)
-  private String name;
+  @Column(unique = true) private String name;
 
   @OneToMany private List<Race> races;
   private Date startDate, endDate;
@@ -55,57 +54,39 @@ public class Event {
     this.isActive = other.isActive;
   }
 
-  public UUID getId() {
-    return id;
-  }
+  public UUID getId() { return id; }
 
-  public String getName() {
-    return name;
-  }
+  public String getName() { return name; }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+  public void setName(String name) { this.name = name; }
 
-  public Collection<Race> getRaces() {
-    return new ArrayList<>(this.races);
-  }
+  public Collection<Race> getRaces() { return new ArrayList<>(this.races); }
 
   public void setRaces(Collection<Race> races) {
     this.races = new ArrayList<>(races);
   }
 
-  public Date getStartDate() {
-    return new Date(startDate.getTime());
-  }
+  public Date getStartDate() { return new Date(startDate.getTime()); }
 
   public void setStartDate(Date startDate) {
     this.startDate = new Date(startDate.getTime());
   }
 
-  public Date getEndDate() {
-    return new Date(endDate.getTime());
-  }
+  public Date getEndDate() { return new Date(endDate.getTime()); }
 
   public void setEndDate(Date endDate) {
     this.endDate = new Date(endDate.getTime());
   }
 
-  public boolean getIsActive() {
-    return isActive;
-  }
+  public boolean getIsActive() { return isActive; }
 
-  public void setIsActive(boolean isActive) {
-    this.isActive = isActive;
-  }
+  public void setIsActive(boolean isActive) { this.isActive = isActive; }
 
   public boolean equals(Event other) {
-    return this.id.equals(other.id)
-        && this.name.equals(other.name)
-        && this.startDate.equals(other.startDate)
-        && this.endDate.equals(other.endDate)
-        && this.races.equals(other.races)
-        && this.isActive == other.isActive;
+    return this.id.equals(other.id) && this.name.equals(other.name) &&
+        this.startDate.equals(other.startDate) &&
+        this.endDate.equals(other.endDate) && this.races.equals(other.races) &&
+        this.isActive == other.isActive;
   }
 
   public String toString() {

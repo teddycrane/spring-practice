@@ -8,9 +8,7 @@ public enum UserSearchType {
 
   private final String text;
 
-  UserSearchType(final String text) {
-    this.text = text;
-  }
+  UserSearchType(final String text) { this.text = text; }
 
   @Override
   public String toString() {

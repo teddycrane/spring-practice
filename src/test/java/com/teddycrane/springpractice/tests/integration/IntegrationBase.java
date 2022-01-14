@@ -29,11 +29,9 @@ class IntegrationBase {
 
   @Autowired protected MockMvc mockMvc;
 
-  @Value("${test.user.username}")
-  private String testUsername;
+  @Value("${test.user.username}") private String testUsername;
 
-  @Value("${test.user.password}")
-  private String testUserPassword;
+  @Value("${test.user.password}") private String testUserPassword;
 
   protected final Gson gson = new Gson();
 
@@ -53,17 +51,20 @@ class IntegrationBase {
    * @throws Exception Throws an exception if an error occurs.
    */
   protected String getUserAuthToken() throws Exception {
-    AuthenticationRequest request = new AuthenticationRequest(testUsername, null, testUserPassword);
+    AuthenticationRequest request =
+        new AuthenticationRequest(testUsername, null, testUserPassword);
     String requestBody = this.gson.toJson(request);
 
-    MvcResult response =
-        this.mockMvc
-            .perform(post("/users/login").contentType("application/json").content(requestBody))
-            .andReturn();
+    MvcResult response = this.mockMvc
+                             .perform(post("/users/login")
+                                          .contentType("application/json")
+                                          .content(requestBody))
+                             .andReturn();
 
     // get the token out of the body
     AuthenticationResponse result =
-        gson.fromJson(response.getResponse().getContentAsString(), AuthenticationResponse.class);
+        gson.fromJson(response.getResponse().getContentAsString(),
+                      AuthenticationResponse.class);
     return "Bearer " + result.getToken();
   }
 

@@ -15,11 +15,13 @@ public interface IEventService {
 
   Event getEvent(UUID id) throws EventNotFoundException;
 
-  Event createEvent(String name, Date startDate, Date endDate) throws DuplicateItemException;
+  Event createEvent(String name, Date startDate, Date endDate)
+      throws DuplicateItemException;
 
   Event deleteEvent(UUID id) throws EventNotFoundException;
 
-  Event addRacesToEvent(UUID id, List<UUID> raceIds) throws EventNotFoundException;
+  Event addRacesToEvent(UUID id, List<UUID> raceIds)
+      throws EventNotFoundException;
 
   Event setEventAsActive(UUID id, boolean active) throws EventNotFoundException;
 }

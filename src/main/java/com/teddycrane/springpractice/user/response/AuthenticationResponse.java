@@ -15,28 +15,22 @@ public class AuthenticationResponse {
     this.token = token;
   }
 
-  public boolean isAuthenticated() {
-    return authenticated;
-  }
+  public boolean isAuthenticated() { return authenticated; }
 
   public void setAuthenticated(boolean authenticated) {
     this.authenticated = authenticated;
   }
 
-  public String getToken() {
-    return this.token;
-  }
+  public String getToken() { return this.token; }
 
-  public void setToken(String token) {
-    this.token = token;
-  }
+  public void setToken(String token) { this.token = token; }
 
   @Override
   public boolean equals(Object other) {
     if (other.getClass().equals(this.getClass())) {
-      AuthenticationResponse response = (AuthenticationResponse) other;
-      return response.isAuthenticated() == this.isAuthenticated()
-          && response.getToken().equals(this.token);
+      AuthenticationResponse response = (AuthenticationResponse)other;
+      return response.isAuthenticated() == this.isAuthenticated() &&
+          response.getToken().equals(this.token);
     }
     return false;
   }

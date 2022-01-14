@@ -23,14 +23,15 @@ public interface IRacerService {
    * Gets a racer by ID
    *
    * @param id The UUID of the racer to be found
-   * @return An Optional object wrapping a Racer that isPresent if the racer is found.
+   * @return An Optional object wrapping a Racer that isPresent if the racer is
+   *     found.
    */
   Racer getRacerById(UUID id) throws RacerNotFoundException;
 
   Racer addRacer(String firstName, String lastName);
 
-  Racer updateRacer(UUID id, String firstName, String lastName, Category category)
-      throws RacerNotFoundException;
+  Racer updateRacer(UUID id, String firstName, String lastName,
+                    Category category) throws RacerNotFoundException;
 
   Racer deleteRacer(UUID id) throws RacerNotFoundException;
 
@@ -38,5 +39,6 @@ public interface IRacerService {
 
   Racer restoreRacer(UUID id) throws RacerNotFoundException;
 
-  List<Racer> getRacersByType(RacerFilterType filterType, String value) throws BadRequestException;
+  List<Racer> getRacersByType(RacerFilterType filterType, String value)
+      throws BadRequestException;
 }

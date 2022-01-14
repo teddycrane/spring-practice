@@ -30,7 +30,11 @@ public class JwtHelper implements IJwtHelper {
   }
 
   private Claims getAllClaimsFromToken(String token) {
-    return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    return Jwts.parserBuilder()
+        .setSigningKey(key)
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
   }
 
   /**
@@ -38,21 +42,25 @@ public class JwtHelper implements IJwtHelper {
    *
    * @param <T> The object type that represents the claim
    * @param token The token to get the claim from
-   * @param claimsResolver A java.util.function that resolves the claim to the required type
+   * @param claimsResolver A java.util.function that resolves the claim to the
+   *     required type
    * @return The type <T> claim
    */
-  private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+  private <T> T getClaimFromToken(String token,
+                                  Function<Claims, T> claimsResolver) {
     final Claims claims = getAllClaimsFromToken(token);
     return claimsResolver.apply(claims);
   }
 
-  private <T> T getClaimFromToken(String token, String claim) throws NoSuchElementException {
+  private <T> T getClaimFromToken(String token, String claim)
+      throws NoSuchElementException {
     final Claims claims = getAllClaimsFromToken(token);
     if (claims.containsKey(claim)) {
-      return (T) claims.get(claim);
+      return (T)claims.get(claim);
     } else {
       logger.error("invalid claim provided");
-      throw new NoSuchElementException(String.format("No claim with the name %s", claim));
+      throw new NoSuchElementException(
+          String.format("No claim with the name %s", claim));
     }
   }
 
@@ -60,8 +68,8 @@ public class JwtHelper implements IJwtHelper {
    * Ensures that an auth token is valid
    *
    * @param token The auth token to validate
-   * @return True if the token is valid and issued by this instance of the application, and
-   *     otherwise false.
+   * @return True if the token is valid and issued by this instance of the
+   *     application, and otherwise false.
    */
   public boolean ensureTokenIsValid(String token) {
     try {

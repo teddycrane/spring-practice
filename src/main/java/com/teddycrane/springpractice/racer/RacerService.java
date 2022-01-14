@@ -51,8 +51,8 @@ public class RacerService extends BaseService implements IRacerService {
   }
 
   @Override
-  public Racer updateRacer(UUID id, String firstName, String lastName, Category category)
-      throws RacerNotFoundException {
+  public Racer updateRacer(UUID id, String firstName, String lastName,
+                           Category category) throws RacerNotFoundException {
     this.logger.trace("updateRacer called");
     Optional<Racer> r = this.racerRepository.findById(id);
     Racer racer;
@@ -60,12 +60,17 @@ public class RacerService extends BaseService implements IRacerService {
     if (r.isPresent()) {
       racer = new Racer(r.get());
       if (racer.getIsDeleted()) {
-        this.logger.error("The racer for id {} is deleted, and is unable to be edited", id);
-        throw new RacerNotFoundException("No valid racer found with the provided id");
+        this.logger.error(
+            "The racer for id {} is deleted, and is unable to be edited", id);
+        throw new RacerNotFoundException(
+            "No valid racer found with the provided id");
       }
-      if (firstName != null) racer.setFirstName(firstName);
-      if (lastName != null) racer.setLastName(lastName);
-      if (category != null) racer.setCategory(category);
+      if (firstName != null)
+        racer.setFirstName(firstName);
+      if (lastName != null)
+        racer.setLastName(lastName);
+      if (category != null)
+        racer.setCategory(category);
 
       return this.racerRepository.save(racer);
     } else {
@@ -119,7 +124,8 @@ public class RacerService extends BaseService implements IRacerService {
       return this.racerRepository.save(r);
     } else {
       this.logger.trace("Unable to find with id {}", id);
-      throw new RacerNotFoundException(String.format("Unable to find a racer with id %s", id));
+      throw new RacerNotFoundException(
+          String.format("Unable to find a racer with id %s", id));
     }
   }
 
@@ -130,35 +136,35 @@ public class RacerService extends BaseService implements IRacerService {
     List<Racer> result;
 
     switch (filterType) {
-      case CATEGORY:
-        {
-          this.logger.trace("filtering racers by category {}", value);
+    case CATEGORY: {
+      this.logger.trace("filtering racers by category {}", value);
 
-          // necessary to figure out enum value here since Java doesn't have union types
-          EnumSet<Category> values = EnumSet.allOf(Category.class);
-          if (!values.contains(Category.valueOf(value.toUpperCase()))) {
-            this.logger.error("Unable to parse a category value for {}", value);
-            throw new BadRequestException("Unable to parse a category value!");
-          }
+      // necessary to figure out enum value here since Java doesn't have union
+      // types
+      EnumSet<Category> values = EnumSet.allOf(Category.class);
+      if (!values.contains(Category.valueOf(value.toUpperCase()))) {
+        this.logger.error("Unable to parse a category value for {}", value);
+        throw new BadRequestException("Unable to parse a category value!");
+      }
 
-          result = this.racerRepository.findByCategory(Category.valueOf(value.toUpperCase()));
-          break;
-        }
-      case FIRSTNAME:
-        {
-          result = new ArrayList<>();
-          Iterable<Racer> iterable = this.racerRepository.findByFirstNameContaining(value);
-          iterable.forEach(result::add);
-          break;
-        }
-      case LASTNAME:
-        {
-          result = new ArrayList<>();
-          this.racerRepository.findByLastNameContaining(value).forEach(result::add);
-          break;
-        }
-      default:
-        result = new ArrayList<>();
+      result = this.racerRepository.findByCategory(
+          Category.valueOf(value.toUpperCase()));
+      break;
+    }
+    case FIRSTNAME: {
+      result = new ArrayList<>();
+      Iterable<Racer> iterable =
+          this.racerRepository.findByFirstNameContaining(value);
+      iterable.forEach(result::add);
+      break;
+    }
+    case LASTNAME: {
+      result = new ArrayList<>();
+      this.racerRepository.findByLastNameContaining(value).forEach(result::add);
+      break;
+    }
+    default:
+      result = new ArrayList<>();
     }
     return result;
   }

@@ -21,7 +21,8 @@ class UserTest {
 
   @Test
   public void shouldCreateUserWithConstructor() {
-    user = new User(UserType.USER, "test", "name", "testuser", "password", "email@email.com");
+    user = new User(UserType.USER, "test", "name", "testuser", "password",
+                    "email@email.com");
 
     Assertions.assertEquals("test", user.getFirstName());
     Assertions.assertEquals("name", user.getLastName());
@@ -31,41 +32,29 @@ class UserTest {
 
   @Test
   public void shouldHandleEmailsOnConstruction() {
-    user = new User(UserType.USER, "test", "name", "testuser", "password", "email");
+    user = new User(UserType.USER, "test", "name", "testuser", "password",
+                    "email");
 
     Assertions.assertEquals("", user.getEmail());
 
     user.setEmail("email@email.com");
     Assertions.assertEquals("email@email.com", user.getEmail());
 
-    Assertions.assertThrows(IllegalArgumentException.class, () -> user.setEmail(""));
+    Assertions.assertThrows(IllegalArgumentException.class,
+                            () -> user.setEmail(""));
   }
 
   @Test
   public void shouldCorrectlyFormatToString() {
-    User u =
-        new User(
-            UserType.USER,
-            "first",
-            "last",
-            "test",
-            "password",
-            "email@email.com",
-            UserStatus.ACTIVE);
+    User u = new User(UserType.USER, "first", "last", "test", "password",
+                      "email@email.com", UserStatus.ACTIVE);
     Assertions.assertNotNull(u.toString());
   }
 
   @Test
   public void testEquality() {
-    User u =
-        new User(
-            UserType.USER,
-            "first",
-            "last",
-            "test",
-            "password",
-            "email@email.com",
-            UserStatus.ACTIVE);
+    User u = new User(UserType.USER, "first", "last", "test", "password",
+                      "email@email.com", UserStatus.ACTIVE);
     User other = new User(u);
 
     Assertions.assertTrue(u.equals(other));

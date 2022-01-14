@@ -9,9 +9,7 @@ public enum Category {
 
   private final String text;
 
-  Category(final String text) {
-    this.text = text;
-  }
+  Category(final String text) { this.text = text; }
 
   @Override
   public String toString() {

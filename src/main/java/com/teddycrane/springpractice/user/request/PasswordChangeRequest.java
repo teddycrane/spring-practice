@@ -7,15 +7,9 @@ public class PasswordChangeRequest {
   @NotNull private String oldPassword;
   @NotNull private String newPassword;
 
-  public String getOldPassword() {
-    return oldPassword;
-  }
+  public String getOldPassword() { return oldPassword; }
 
-  public String getNewPassword() {
-    return newPassword;
-  }
+  public String getNewPassword() { return newPassword; }
 
-  public String getUserId() {
-    return userId;
-  }
+  public String getUserId() { return userId; }
 }

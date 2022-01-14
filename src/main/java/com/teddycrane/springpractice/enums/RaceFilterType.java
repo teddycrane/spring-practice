@@ -6,11 +6,7 @@ public enum RaceFilterType {
 
   private final String text;
 
-  RaceFilterType(String text) {
-    this.text = text;
-  }
+  RaceFilterType(String text) { this.text = text; }
 
-  public String toString() {
-    return this.text;
-  }
+  public String toString() { return this.text; }
 }

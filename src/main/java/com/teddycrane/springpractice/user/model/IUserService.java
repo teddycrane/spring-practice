@@ -25,37 +25,31 @@ public interface IUserService {
 
   User getUser(UUID id) throws UserNotFoundError;
 
-  User createUser(
-      String firstName,
-      String lastName,
-      String userName,
-      String email,
-      String password,
-      Optional<UserType> type)
+  User createUser(String firstName, String lastName, String userName,
+                  String email, String password, Optional<UserType> type)
       throws DuplicateItemException, InternalServerError;
 
-  AuthenticationResponse login(@Nullable String username, @Nullable String email, String password)
+  AuthenticationResponse login(@Nullable String username,
+                               @Nullable String email, String password)
       throws NoCredentialsException, UserNotFoundError;
 
-  User updateUser(
-      UUID id,
-      Optional<String> username,
-      Optional<String> password,
-      Optional<String> firstName,
-      Optional<String> lastName,
-      Optional<String> email,
-      Optional<UserType> userType)
+  User updateUser(UUID id, Optional<String> username, Optional<String> password,
+                  Optional<String> firstName, Optional<String> lastName,
+                  Optional<String> email, Optional<UserType> userType)
       throws IllegalAccessException, UserNotFoundError;
 
   PasswordResetResponse resetPassword(UUID id) throws UserNotFoundError;
 
-  Collection<User> searchUsersByTypeOrRole(
-      UserSearchType type, Either<UserStatus, UserType> searchValue) throws BadRequestException;
-
-  Collection<User> searchUsersByPrimitiveValue(UserSearchType type, String value)
+  Collection<User>
+  searchUsersByTypeOrRole(UserSearchType type,
+                          Either<UserStatus, UserType> searchValue)
       throws BadRequestException;
 
-  PasswordChangeResponse changePassword(
-      UUID userId, UUID requesterId, String oldPassword, String newPassword)
+  Collection<User> searchUsersByPrimitiveValue(UserSearchType type,
+                                               String value)
+      throws BadRequestException;
+
+  PasswordChangeResponse changePassword(UUID userId, UUID requesterId,
+                                        String oldPassword, String newPassword)
       throws UserNotFoundError;
 }

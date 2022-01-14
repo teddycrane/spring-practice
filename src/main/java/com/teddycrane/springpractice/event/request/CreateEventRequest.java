@@ -24,9 +24,7 @@ public class CreateEventRequest {
     this.endDate = endDate;
   }
 
-  public String getName() {
-    return name;
-  }
+  public String getName() { return name; }
 
   public Optional<Date> getStartDate() {
     return Optional.ofNullable(this.startDate);

@@ -15,7 +15,5 @@ public class PasswordResetResponse extends BaseSuccessResponse {
     this.newPassword = newPassword;
   }
 
-  public String getNewPassword() {
-    return this.newPassword;
-  }
+  public String getNewPassword() { return this.newPassword; }
 }

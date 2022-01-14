@@ -7,11 +7,7 @@ public enum RacerFilterType {
 
   private final String text;
 
-  RacerFilterType(final String text) {
-    this.text = text;
-  }
+  RacerFilterType(final String text) { this.text = text; }
 
-  public String toString() {
-    return this.text;
-  }
+  public String toString() { return this.text; }
 }
