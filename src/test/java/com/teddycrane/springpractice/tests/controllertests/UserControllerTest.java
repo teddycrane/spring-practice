@@ -9,12 +9,14 @@ import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.InternalServerError;
 import com.teddycrane.springpractice.helper.IJwtHelper;
 import com.teddycrane.springpractice.helper.JwtHelper;
+import com.teddycrane.springpractice.models.UserData;
 import com.teddycrane.springpractice.user.User;
 import com.teddycrane.springpractice.user.UserController;
 import com.teddycrane.springpractice.user.model.IUserController;
 import com.teddycrane.springpractice.user.model.IUserService;
 import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
+import com.teddycrane.springpractice.user.request.UpdateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,6 +27,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+import org.dom4j.util.UserDataElement;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -57,6 +60,8 @@ public class UserControllerTest {
 
   private String secretKey;
 
+  private String fakeAuthToken;
+
   @BeforeEach
   public void init() throws NoSuchAlgorithmException {
     MockitoAnnotations.openMocks(this);
@@ -68,6 +73,8 @@ public class UserControllerTest {
     this.userController = new UserController(this.userService, this.jwtHelper);
     this.user = new User(UserType.USER, "first", "last", "username", "password",
                          "email@email.fake");
+
+    this.fakeAuthToken = this.jwtHelper.generateToken(new UserData(user.getUsername(), user.getId().toString(), String.format("%s %s", user.getFirstName(), user.getLastName()))));
   }
 
   @Test
@@ -225,5 +232,56 @@ public class UserControllerTest {
     // test uuid error
     Assertions.assertThrows(BadRequestException.class,
                             () -> this.userController.resetPassword("test"));
+  }
+
+  @Test
+  public void updateUser_shouldUpdateUserWithAllValues() {
+    // TODO move this to class-level for more efficient re-use
+    UUID id = UUID.fromString("1023c9e1-6900-4520-b8ec-7753a5cdf120");
+    UpdateUserRequest request = new UpdateUserRequest(
+        id.toString(), "firstName", "lastName", "password", "username",
+        "email@email.com", UserType.USER);
+
+    User expected =
+        new User(id, UserType.USER, "firstName", "lastName", "username",
+                 "password", "email@email.com", UserStatus.ACTIVE);
+
+    try {
+      when(this.userService.updateUser(
+               id, Optional.of("username"), Optional.of("password"),
+               Optional.of("firstName"), Optional.of("lastName"),
+               Optional.of("email@email.com"), Optional.of(UserType.USER)))
+          .thenReturn(expected);
+
+      User result = this.userController.updateUser(request, fakeAuthToken);
+      verify(this.userService)
+          .updateUser(uuidCaptor.capture(), usernameOptional.capture(),
+                      passwordOptional.capture(), firstNameOptional.capture(),
+                      lastNameOptional.capture(), emailOptional.capture(),
+                      userTypeOptional.capture());
+
+      Assertions.assertEquals(id, uuidCaptor.getValue());
+      Assertions.assertEquals("username", usernameOptional.getValue().get());
+      Assertions.assertEquals("password", passwordOptional.getValue().get());
+      Assertions.assertEquals("firstName", firstNameOptional.getValue().get());
+      Assertions.assertEquals("lastName", lastNameOptional.getValue().get());
+
+      Assertions.assertTrue(expected.equals(result));
+
+    } catch (IllegalAccessException e) {
+      // fail test because for some reason we have to have a try/catch here wtf
+      Assertions.assertTrue(false);
+    }
+  }
+
+  @Test
+  public void updateUser_shouldHandleInvalidUUIDForUpdatingUsers() {
+    UpdateUserRequest request =
+        new UpdateUserRequest("bad-uuid", "firstName", "lastName", "password",
+                              "username", "email@email.com", UserType.USER);
+
+    Assertions.assertThrows(
+        BadRequestException.class,
+        () -> this.userController.updateUser(request, fakeAuthToken));
   }
 }
