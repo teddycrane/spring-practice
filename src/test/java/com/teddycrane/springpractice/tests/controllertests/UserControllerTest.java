@@ -75,9 +75,11 @@ public class UserControllerTest {
     this.user = new User(UserType.USER, "first", "last", "username", "password",
                          "email@email.fake");
 
-    this.fakeAuthToken = this.jwtHelper.generateToken(new UserData(
-        user.getUsername(), user.getId().toString(),
-        String.format("%s %s", user.getFirstName(), user.getLastName())));
+    this.fakeAuthToken = String.format(
+        "Bearer %s",
+        this.jwtHelper.generateToken(new UserData(
+            user.getUsername(), user.getId().toString(),
+            String.format("%s %s", user.getFirstName(), user.getLastName()))));
   }
 
   @Test
