@@ -127,4 +127,22 @@ public class EventControllerTest {
 
 		assertThrows(EventNotFoundException.class, () -> this.eventController.deleteEvent(testString));
 	}
+
+	@Test
+	public void startEvent_shouldStartEvent() {
+		Event expected = new Event(event);
+		event.setIsActive(true);
+		when(this.eventService.setEventAsActive(testId, true)).thenReturn(expected);
+
+		Event actual = this.eventController.startEvent(testString);
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void startEvent_shouldHandleErrors() {
+		assertThrows(BadRequestException.class, () -> this.eventController.startEvent("not a uuid"));
+
+		when(this.eventService.setEventAsActive(testId, true)).thenThrow(EventNotFoundException.class);
+		assertThrows(EventNotFoundException.class, () -> this.eventController.startEvent(testString));
+	}
 }
