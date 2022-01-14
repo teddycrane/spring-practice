@@ -36,16 +36,16 @@ jobs:
             rm -rf target/maven-status
             rm target/surefire-reports/*.dumpstream
             rm -rf target/test-classes
-      # - run:
-      #     name: Merge Test Results
-      #     command: |
-      #       mkdir target/merged-results
-      #       cp target/surefire-reports/*.xml target/merged-results
-      #       cp target/failsafe-reports/*.xml target/merged-results
+      - run:
+          name: Merge Test Results
+          command: |
+            mkdir target/merged-results
+            cp target/surefire-reports/*.xml target/merged-results
+            cp target/failsafe-reports/*.xml target/merged-results
       - store-artifacts:
-          path: target/site/jacoco-ut
+          path: target/site/jacoco-aggregate
       - store-test-results:
-          path: target/surefire-reports
+          path: target/merged-reports
       - run:
           name: Upload coverage statistics to Codecov
           command: bash <(curl -s https://codecov.io/bash)

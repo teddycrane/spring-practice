@@ -82,7 +82,7 @@ public class RaceTest {
     race2.setRacers(list);
 
     // if object types are different, false
-    Assertions.assertNotEquals("", race1);
+    Assertions.assertFalse(race1.equals(""));
 
     // if races are the same without racer list
     Assertions.assertEquals(race1, race3);
