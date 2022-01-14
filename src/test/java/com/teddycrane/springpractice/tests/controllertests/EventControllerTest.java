@@ -3,6 +3,7 @@ package com.teddycrane.springpractice.tests.controllertests;
 import com.teddycrane.springpractice.event.EventController;
 import com.teddycrane.springpractice.event.model.IEventController;
 import com.teddycrane.springpractice.error.BadRequestException;
+import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.EventNotFoundException;
 import com.teddycrane.springpractice.event.Event;
 import com.teddycrane.springpractice.event.request.CreateEventRequest;
@@ -21,6 +22,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventControllerTest {
 	private IEventController eventController;
@@ -90,11 +92,39 @@ public class EventControllerTest {
 	}
 
 	@Test
+	public void createEvent_shouldErrorOnEmptyRequest() {
+		CreateEventRequest request = new CreateEventRequest();
+
+		assertThrows(BadRequestException.class, () -> this.eventController.createEvent(request));
+	}
+
+	@Test
+	public void createEvent_shouldDisallowDuplicates() {
+		when(this.eventService.createEvent(any(String.class), any(Date.class), any(Date.class)))
+				.thenThrow(DuplicateItemException.class);
+		CreateEventRequest request = new CreateEventRequest("test", new Date(), new Date());
+
+		assertThrows(DuplicateItemException.class, () -> this.eventController.createEvent(request));
+	}
+
+	@Test
 	public void deleteEvent_shouldDeleteEvent() {
 		when(this.eventService.deleteEvent(any(UUID.class))).thenReturn(event);
 
 		// test
 		Event result = this.eventController.deleteEvent(UUID.randomUUID().toString());
 		Assertions.assertTrue(result.equals(event));
+	}
+
+	@Test
+	public void deleteEvent_shouldHandleBadId() {
+		assertThrows(BadRequestException.class, () -> this.eventController.deleteEvent("bad id"));
+	}
+
+	@Test
+	public void deleteEvent_shouldHandleNoEvent() {
+		when(this.eventService.deleteEvent(testId)).thenThrow(EventNotFoundException.class);
+
+		assertThrows(EventNotFoundException.class, () -> this.eventController.deleteEvent(testString));
 	}
 }
