@@ -33,8 +33,8 @@ public class EventTest {
 
     testEvent = new Event("Test Name 2", new Date(1), new Date(2));
     Assertions.assertEquals("Test Name 2", testEvent.getName());
-    Assertions.assertEquals(new Date(1), testEvent.getStartDate());
-    Assertions.assertEquals(new Date(2), testEvent.getEndDate());
+    Assertions.assertEquals(new Date(1), testEvent.getStartDate().orElse(null));
+    Assertions.assertEquals(new Date(2), testEvent.getEndDate().orElse(null));
 
     testEvent = new Event(event);
     Assertions.assertEquals(event.getName(), testEvent.getName());
@@ -45,7 +45,7 @@ public class EventTest {
 
     testEvent = new Event("Test Name 3", new Date(3));
     Assertions.assertEquals("Test Name 3", testEvent.getName());
-    Assertions.assertEquals(new Date(3), testEvent.getStartDate());
+    Assertions.assertEquals(new Date(3), testEvent.getStartDate().orElse(null));
   }
 
   @Test

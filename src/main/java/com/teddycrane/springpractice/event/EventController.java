@@ -56,9 +56,9 @@ public class EventController
     try {
       if (request.getName() != null && (request.getStartDate().isPresent() ||
                                         request.getEndDate().isPresent())) {
-        return this.eventService.createEvent(request.getName(),
-                                             request.getStartDate().get(),
-                                             request.getEndDate().get());
+        return this.eventService.createEvent(
+            request.getName(), request.getStartDate().orElse(null),
+            request.getEndDate().orElse(null));
       } else {
         logger.error(
             "Invalid request body.  Unable to create an event without a name and at least one of"

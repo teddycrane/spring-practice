@@ -2,6 +2,7 @@ package com.teddycrane.springpractice.tests.controllertests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.teddycrane.springpractice.error.BadRequestException;
@@ -81,6 +82,17 @@ public class EventControllerTest {
     Event result = this.eventController.createEvent(
         new CreateEventRequest("name", new Date(), new Date()));
     Assertions.assertTrue(result.equals(event));
+  }
+
+  @Test
+  public void createEvent_shouldCreateWhenDatesAreNotPresent() {
+    when(this.eventService.createEvent(anyString(), any(Date.class), any()))
+        .thenReturn(event);
+
+    Event result = this.eventController.createEvent(
+        new CreateEventRequest("name", new Date(), null));
+
+    assertNotNull(result);
   }
 
   @Test

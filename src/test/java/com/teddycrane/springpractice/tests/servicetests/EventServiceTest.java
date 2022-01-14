@@ -84,8 +84,8 @@ public class EventServiceTest {
 
     assertThrows(DuplicateItemException.class,
                  ()
-                     -> this.eventService.createEvent("name",
-                                                      expected.getStartDate(),
-                                                      expected.getEndDate()));
+                     -> this.eventService.createEvent(
+                         "name", expected.getStartDate().orElse(null),
+                         expected.getEndDate().orElse(null)));
   }
 }

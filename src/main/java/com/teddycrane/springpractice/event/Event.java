@@ -66,13 +66,17 @@ public class Event {
     this.races = new ArrayList<>(races);
   }
 
-  public Date getStartDate() { return new Date(startDate.getTime()); }
+  public Optional<Date> getStartDate() {
+    return Optional.ofNullable(this.startDate);
+  }
 
   public void setStartDate(Date startDate) {
     this.startDate = new Date(startDate.getTime());
   }
 
-  public Date getEndDate() { return new Date(endDate.getTime()); }
+  public Optional<Date> getEndDate() {
+    return Optional.ofNullable(this.endDate);
+  }
 
   public void setEndDate(Date endDate) {
     this.endDate = new Date(endDate.getTime());
