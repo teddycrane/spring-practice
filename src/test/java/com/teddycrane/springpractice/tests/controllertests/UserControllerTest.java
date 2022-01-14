@@ -111,7 +111,7 @@ public class UserControllerTest {
     Assertions.assertEquals(null, emailCaptor.getValue());
     Assertions.assertEquals("password", passwordCaptor.getValue());
 
-    Assertions.assertTrue(response.equals(result));
+    Assertions.assertFalse(response.equals(result));
   }
 
   @Test
