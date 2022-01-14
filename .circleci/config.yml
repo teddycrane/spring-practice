@@ -91,7 +91,6 @@ workflows:
       - compose:
           requires:
             - build-application
-            - test
           filters:
             branches:
               only:
