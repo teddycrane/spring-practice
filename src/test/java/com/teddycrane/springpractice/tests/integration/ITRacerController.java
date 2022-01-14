@@ -26,11 +26,10 @@ public class ITRacerController extends IntegrationBase {
     String json = this.gson.toJson(request);
 
     this.mockMvc
-        .perform(
-            post("/racer/new")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", authToken)
-                .content(json))
+        .perform(post("/racer/new")
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .header("Authorization", authToken)
+                     .content(json))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").exists())
         .andExpect(jsonPath("$.firstName").value(firstName))

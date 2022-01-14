@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/events")
-public class EventController extends BaseController implements IEventController {
+public class EventController
+    extends BaseController implements IEventController {
 
   private final IEventService eventService;
 
@@ -30,7 +31,8 @@ public class EventController extends BaseController implements IEventController 
   }
 
   @Override
-  public Event getEvent(String eventId) throws BadRequestException, EventNotFoundException {
+  public Event getEvent(String eventId)
+      throws BadRequestException, EventNotFoundException {
     logger.trace("getEvent called");
 
     try {
@@ -40,8 +42,9 @@ public class EventController extends BaseController implements IEventController 
       throw new EventNotFoundException(e.getMessage());
     } catch (IllegalArgumentException e) {
       System.out.println("Bad id provided");
-      throw new BadRequestException(
-          String.format("The id %s was provided in a format that was not readable. ", eventId));
+      throw new BadRequestException(String.format(
+          "The id %s was provided in a format that was not readable. ",
+          eventId));
     }
   }
 
@@ -51,14 +54,15 @@ public class EventController extends BaseController implements IEventController 
     this.logger.trace("createEvent called");
 
     try {
-      if (request.getName() != null
-          && (request.getStartDate().isPresent() || request.getEndDate().isPresent())) {
-        return this.eventService.createEvent(
-            request.getName(), request.getStartDate().get(), request.getEndDate().get());
+      if (request.getName() != null && (request.getStartDate().isPresent() ||
+                                        request.getEndDate().isPresent())) {
+        return this.eventService.createEvent(request.getName(),
+                                             request.getStartDate().get(),
+                                             request.getEndDate().get());
       } else {
         System.out.println(
             "Invalid request body.  Unable to create an event without a name and at least one of"
-                + " [startDate, endDate]");
+            + " [startDate, endDate]");
         throw new BadRequestException(
             "Unable to create an event without a name, and at least one of [startDate, endDate]!");
       }
@@ -68,16 +72,17 @@ public class EventController extends BaseController implements IEventController 
   }
 
   @Override
-  public Event deleteEvent(String id) throws BadRequestException, EventNotFoundException {
+  public Event deleteEvent(String id)
+      throws BadRequestException, EventNotFoundException {
     this.logger.trace("deleteEvent called");
     try {
       UUID eventId = UUID.fromString(id);
       return this.eventService.deleteEvent(eventId);
     } catch (IllegalArgumentException e) {
       this.logger.error(String.format("Unable to parse provided id %s", id), e);
-      throw new BadRequestException(
-          String.format(
-              "Unable to handle id %s.  Please check the provided id and try again. ", id));
+      throw new BadRequestException(String.format(
+          "Unable to handle id %s.  Please check the provided id and try again. ",
+          id));
     } catch (EventNotFoundException e) {
       throw new EventNotFoundException(e.getMessage());
     }
@@ -95,7 +100,8 @@ public class EventController extends BaseController implements IEventController 
       return this.eventService.addRacesToEvent(id, request.getRaceIds());
     } catch (IllegalArgumentException e) {
       this.logger.trace("Bad UUID!", e);
-      throw new BadRequestException(String.format("Unable to parse the id %s", eventId));
+      throw new BadRequestException(
+          String.format("Unable to parse the id %s", eventId));
     } catch (EventNotFoundException e) {
       throw new EventNotFoundException(e.getMessage());
     }

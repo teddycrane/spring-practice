@@ -11,9 +11,12 @@ public class EnumHelperTest {
 
   @Test
   public void testEnumValue_shouldVerifyEnumValue() {
-    Assertions.assertTrue(EnumHelpers.testEnumValue(Category.class, Category.CAT1.toString()));
-    Assertions.assertTrue(EnumHelpers.testEnumValue(RaceFilterType.class, "name"));
-    Assertions.assertTrue(EnumHelpers.testEnumValue(RacerFilterType.class, "category"));
+    Assertions.assertTrue(
+        EnumHelpers.testEnumValue(Category.class, Category.CAT1.toString()));
+    Assertions.assertTrue(
+        EnumHelpers.testEnumValue(RaceFilterType.class, "name"));
+    Assertions.assertTrue(
+        EnumHelpers.testEnumValue(RacerFilterType.class, "category"));
   }
 
   @Test

@@ -31,7 +31,8 @@ public class RacerTest {
     Assertions.assertEquals(fullConstructorTestRacer.getFirstName(), "fname");
     Assertions.assertEquals(fullConstructorTestRacer.getLastName(), "lname");
     Assertions.assertFalse(fullConstructorTestRacer.getIsDeleted());
-    Assertions.assertEquals(fullConstructorTestRacer.getCategory(), Category.CAT5);
+    Assertions.assertEquals(fullConstructorTestRacer.getCategory(),
+                            Category.CAT5);
   }
 
   @Test

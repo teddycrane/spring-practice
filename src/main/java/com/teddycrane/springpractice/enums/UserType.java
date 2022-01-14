@@ -7,11 +7,7 @@ public enum UserType {
 
   private final String text;
 
-  UserType(String text) {
-    this.text = text;
-  }
+  UserType(String text) { this.text = text; }
 
-  public String toString() {
-    return this.text;
-  }
+  public String toString() { return this.text; }
 }

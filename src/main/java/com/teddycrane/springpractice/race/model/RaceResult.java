@@ -17,28 +17,22 @@ public class RaceResult {
     this.results = new ArrayList<>(results);
   }
 
-  public List<Racer> getResults() {
-    return new ArrayList<>(results);
-  }
+  public List<Racer> getResults() { return new ArrayList<>(results); }
 
-  public String getName() {
-    return name;
-  }
+  public String getName() { return name; }
 
-  public Category getCategory() {
-    return category;
-  }
+  public Category getCategory() { return category; }
 
   private boolean trueEquals(RaceResult other) {
-    return this.name.equals(other.name)
-        && this.category.equals(other.category)
-        && this.results.equals(other.results);
+    return this.name.equals(other.name) &&
+        this.category.equals(other.category) &&
+        this.results.equals(other.results);
   }
 
   @Override
   public boolean equals(Object other) {
     if (other.getClass().equals(this.getClass())) {
-      return this.trueEquals((RaceResult) other);
+      return this.trueEquals((RaceResult)other);
     }
     return false;
   }

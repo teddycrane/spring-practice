@@ -18,22 +18,24 @@ import org.springframework.http.MediaType;
 @TestInstance(Lifecycle.PER_CLASS)
 public class ITUserController extends IntegrationBase {
 
-  @Value("${test.user.username}")
-  private String testUsername;
+  @Value("${test.user.username}") private String testUsername;
 
-  @Value("${test.user.password}")
-  private String testUserPassword;
+  @Value("${test.user.password}") private String testUserPassword;
 
   private final String editableUserId = "7825ff10-d79e-494c-bfc4-a0184ae7badf";
 
   @Test
-  @DisplayName("Users with User level permissions should be able to authenticate")
-  public void authentication_shouldAuthenticateForUsers() throws Exception {
-    AuthenticationRequest request =
-        new AuthenticationRequest(this.testUsername, null, this.testUserPassword);
+  @DisplayName(
+      "Users with User level permissions should be able to authenticate")
+  public void
+  authentication_shouldAuthenticateForUsers() throws Exception {
+    AuthenticationRequest request = new AuthenticationRequest(
+        this.testUsername, null, this.testUserPassword);
     String requestBody = this.gson.toJson(request);
     this.mockMvc
-        .perform(post("/users/login").contentType("application/json").content(requestBody))
+        .perform(post("/users/login")
+                     .contentType("application/json")
+                     .content(requestBody))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.authenticated").value("true"))
         .andExpect(jsonPath("$.token").exists())
@@ -52,10 +54,9 @@ public class ITUserController extends IntegrationBase {
   @DisplayName("Should get all users")
   public void getUsers_shouldReturnAListOfUsers() throws Exception {
     this.mockMvc
-        .perform(
-            get("/users/all")
-                .contentType("application/json")
-                .header("Authorization", this.userAuthToken))
+        .perform(get("/users/all")
+                     .contentType("application/json")
+                     .header("Authorization", this.userAuthToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$.[0]").exists());
@@ -65,10 +66,9 @@ public class ITUserController extends IntegrationBase {
   @DisplayName("Should get a single user by user id")
   public void getUser_shouldGetUserById() throws Exception {
     this.mockMvc
-        .perform(
-            get(String.format("/users/%s", editableUserId))
-                .header("Authorization", userAuthToken)
-                .contentType(MediaType.APPLICATION_JSON))
+        .perform(get(String.format("/users/%s", editableUserId))
+                     .header("Authorization", userAuthToken)
+                     .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(editableUserId))
         .andExpect(jsonPath("$.firstName").value("Test"));
@@ -84,12 +84,13 @@ public class ITUserController extends IntegrationBase {
     String email = faker.bothify("??????@email.fake");
     UserType type = UserType.USER;
 
-    CreateUserRequest request =
-        new CreateUserRequest(username, password, firstName, lastName, email, type);
+    CreateUserRequest request = new CreateUserRequest(
+        username, password, firstName, lastName, email, type);
     String requestBody = this.gson.toJson(request);
     this.mockMvc
-        .perform(
-            post("/users/create-new").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .perform(post("/users/create-new")
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .content(requestBody))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").exists());
   }
@@ -101,17 +102,15 @@ public class ITUserController extends IntegrationBase {
     String firstName = faker.name().firstName();
     String lastName = faker.name().lastName();
 
-    String content =
-        String.format(
-            "{\"userId\": \"%s\",\"firstName\":\"%s\",\"lastName\":\"%s\"}",
-            userId, firstName, lastName);
+    String content = String.format(
+        "{\"userId\": \"%s\",\"firstName\":\"%s\",\"lastName\":\"%s\"}", userId,
+        firstName, lastName);
 
     this.mockMvc
-        .perform(
-            patch("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-                .header("Authorization", userAuthToken))
+        .perform(patch("/users")
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .content(content)
+                     .header("Authorization", userAuthToken))
         .andExpect(status().isOk());
   }
 
@@ -122,17 +121,15 @@ public class ITUserController extends IntegrationBase {
     String firstName = faker.name().firstName();
     String lastName = faker.name().lastName();
 
-    String content =
-        String.format(
-            "{\"userId\": \"%s\",\"firstName\":\"%s\",\"lastName\":\"%s\"}",
-            userId, firstName, lastName);
+    String content = String.format(
+        "{\"userId\": \"%s\",\"firstName\":\"%s\",\"lastName\":\"%s\"}", userId,
+        firstName, lastName);
 
     this.mockMvc
-        .perform(
-            patch("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", userAuthToken)
-                .content(content))
+        .perform(patch("/users")
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .header("Authorization", userAuthToken)
+                     .content(content))
         .andExpect(status().is4xxClientError());
   }
 }

@@ -17,11 +17,9 @@ public class Race {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private final UUID id;
 
-  @Column(unique = true)
-  private String name = "";
+  @Column(unique = true) private String name = "";
 
-  @Enumerated(EnumType.STRING)
-  private Category category = Category.CAT5;
+  @Enumerated(EnumType.STRING) private Category category = Category.CAT5;
 
   @OneToMany private List<Racer> racers;
 
@@ -68,49 +66,31 @@ public class Race {
     this.endTime = new Date(endTime.getTime());
   }
 
-  public List<Racer> getRacers() {
-    return racers;
-  }
+  public List<Racer> getRacers() { return racers; }
 
   public void setRacers(List<Racer> racers) {
     this.racers = new ArrayList<>(racers);
   }
 
-  public String getName() {
-    return name;
-  }
+  public String getName() { return name; }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+  public void setName(String name) { this.name = name; }
 
-  public Category getCategory() {
-    return category;
-  }
+  public Category getCategory() { return category; }
 
-  public void setCategory(Category category) {
-    this.category = category;
-  }
+  public void setCategory(Category category) { this.category = category; }
 
-  public Date getStartTime() {
-    return startTime;
-  }
+  public Date getStartTime() { return startTime; }
 
-  public void setStartTime(Date startTime) {
-    this.startTime = startTime;
-  }
+  public void setStartTime(Date startTime) { this.startTime = startTime; }
 
-  public Date getEndTime() {
-    return endTime;
-  }
+  public Date getEndTime() { return endTime; }
 
   public boolean isStarted() {
     return this.startTime != null && this.startTime.before(new Date());
   }
 
-  public void setEndTime(Date endTime) {
-    this.endTime = endTime;
-  }
+  public void setEndTime(Date endTime) { this.endTime = endTime; }
 
   public Map<Racer, Date> getFinishOrder() {
     return new HashMap<>(this.finishOrder);
@@ -123,19 +103,17 @@ public class Race {
 
   public int getFinishPlace(UUID racerId) {
     // todo update this later to handle same finish time collisions
-    List<UUID> sortedEntryList =
-        finishOrder.entrySet().stream()
-            .sorted(new FinishOrderComparator())
-            .map((element) -> element.getKey().getId())
-            .collect(Collectors.toList());
+    List<UUID> sortedEntryList = finishOrder.entrySet()
+                                     .stream()
+                                     .sorted(new FinishOrderComparator())
+                                     .map((element) -> element.getKey().getId())
+                                     .collect(Collectors.toList());
 
     // we add 1 to the result since no racer can be in 0th place
     return sortedEntryList.indexOf(racerId) + 1;
   }
 
-  public UUID getId() {
-    return this.id;
-  }
+  public UUID getId() { return this.id; }
 
   public Racer addRacer(Racer r) {
     this.racers.add(new Racer(r));
@@ -145,21 +123,23 @@ public class Race {
   @Override
   public boolean equals(Object other) {
     if (other.getClass().equals(this.getClass())) {
-      Race otherRace = (Race) other;
+      Race otherRace = (Race)other;
       return this.equals(otherRace);
     }
     return false;
   }
 
   private boolean equals(@NotNull Race other) {
-    boolean primitiveCompare =
-        this.id == other.id && this.name.equals(other.name) && this.category == other.category;
+    boolean primitiveCompare = this.id == other.id &&
+                               this.name.equals(other.name) &&
+                               this.category == other.category;
 
-    // skip expensive list comparison if the other race does not have the same ID as
-    // this one.
+    // skip expensive list comparison if the other race does not have the same
+    // ID as this one.
     if (primitiveCompare && this.racers.size() == other.racers.size()) {
       // todo update this to actually compare the order as well
-      return this.racers.containsAll(other.racers) && this.finishOrder.equals(other.finishOrder);
+      return this.racers.containsAll(other.racers) &&
+          this.finishOrder.equals(other.finishOrder);
     }
 
     return primitiveCompare;

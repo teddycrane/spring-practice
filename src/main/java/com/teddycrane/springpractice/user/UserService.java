@@ -70,7 +70,8 @@ public class UserService extends BaseService implements IUserService {
       byte[] bytes = md.digest(rawPassword.getBytes());
       StringBuilder builder = new StringBuilder();
       for (int i = 0; i < bytes.length; i++) {
-        builder.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+        builder.append(
+            Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
       }
       result = builder.toString();
 
@@ -82,37 +83,28 @@ public class UserService extends BaseService implements IUserService {
   }
 
   @Override
-  public User createUser(
-      String firstName,
-      String lastName,
-      String userName,
-      String email,
-      String password,
-      Optional<UserType> type)
+  public User createUser(String firstName, String lastName, String userName,
+                         String email, String password, Optional<UserType> type)
       throws DuplicateItemException, InternalServerError {
     logger.trace("createUser called");
     Optional<User> existing = this.userRepository.findByUsername(userName);
 
     if (existing.isPresent()) {
       logger.error("Unable to create a user with a duplicate username!");
-      throw new DuplicateItemException("Unable to create a user with a duplicate username!");
+      throw new DuplicateItemException(
+          "Unable to create a user with a duplicate username!");
     }
 
     // hash password
     String hashedPassword = getSecurePassword(password);
     return this.userRepository.save(
-        new User(
-            type.orElse(UserType.USER),
-            firstName,
-            lastName,
-            userName,
-            hashedPassword,
-            email,
-            UserStatus.ACTIVE));
+        new User(type.orElse(UserType.USER), firstName, lastName, userName,
+                 hashedPassword, email, UserStatus.ACTIVE));
   }
 
   @Override
-  public AuthenticationResponse login(String username, String email, String password)
+  public AuthenticationResponse login(String username, String email,
+                                      String password)
       throws NoCredentialsException, UserNotFoundError {
     logger.trace("login called");
     Optional<User> user;
@@ -136,19 +128,20 @@ public class UserService extends BaseService implements IUserService {
             "The specified user is not active.  Please contact an administrator");
       }
 
-      // this is the user provided password that should be compared to the one in the
-      // db
+      // this is the user provided password that should be compared to the one
+      // in the db
       String hashedProvidedPassword = getSecurePassword(password);
 
       if (hashedProvidedPassword.equals(u.getPassword())) {
         UserData userDataObject =
-            new UserData(
-                u.getUsername(), u.getId().toString(), u.getFirstName() + " " + u.getLastName());
+            new UserData(u.getUsername(), u.getId().toString(),
+                         u.getFirstName() + " " + u.getLastName());
         String token = this.tokenHelper.generateToken(userDataObject);
         return new AuthenticationResponse(true, token);
       } else {
         logger.info("The username and password combo provided are not valid");
-        throw new NoCredentialsException("An invalid username/password combination was provided.");
+        throw new NoCredentialsException(
+            "An invalid username/password combination was provided.");
       }
     } else {
       logger.error("Unable to find the user {}", username);
@@ -157,14 +150,10 @@ public class UserService extends BaseService implements IUserService {
   }
 
   @Override
-  public User updateUser(
-      UUID id,
-      Optional<String> username,
-      Optional<String> password,
-      Optional<String> firstName,
-      Optional<String> lastName,
-      Optional<String> email,
-      Optional<UserType> userType)
+  public User updateUser(UUID id, Optional<String> username,
+                         Optional<String> password, Optional<String> firstName,
+                         Optional<String> lastName, Optional<String> email,
+                         Optional<UserType> userType)
       throws IllegalAccessException, UserNotFoundError {
     logger.trace("updateUser called");
 
@@ -177,20 +166,29 @@ public class UserService extends BaseService implements IUserService {
 
     User user = existing.get();
 
-    // keep this if for now, since we're not actually supporting disabled users yet
+    // keep this if for now, since we're not actually supporting disabled users
+    // yet
     if (user.getStatus() != UserStatus.ACTIVE) {
-      throw new IllegalAccessException("The specified user is not an active user");
+      throw new IllegalAccessException(
+          "The specified user is not an active user");
     }
 
-    // todo set up logic for requiring a password reset before changing the status
+    // todo set up logic for requiring a password reset before changing the
+    // status
 
-    if (username.isPresent()) user.setUsername(username.get());
-    if (password.isPresent()) user.setPassword(password.get());
-    if (firstName.isPresent()) user.setFirstName(firstName.get());
-    if (lastName.isPresent()) user.setLastName(lastName.get());
+    if (username.isPresent())
+      user.setUsername(username.get());
+    if (password.isPresent())
+      user.setPassword(password.get());
+    if (firstName.isPresent())
+      user.setFirstName(firstName.get());
+    if (lastName.isPresent())
+      user.setLastName(lastName.get());
     // todo set up enum validation
-    if (userType.isPresent()) user.setType(userType.get());
-    if (email.isPresent()) user.setEmail(email.get());
+    if (userType.isPresent())
+      user.setType(userType.get());
+    if (email.isPresent())
+      user.setEmail(email.get());
 
     return this.userRepository.save(user);
   }
@@ -219,8 +217,10 @@ public class UserService extends BaseService implements IUserService {
   }
 
   @Override
-  public Collection<User> searchUsersByTypeOrRole(
-      UserSearchType type, Either<UserStatus, UserType> searchValue) throws BadRequestException {
+  public Collection<User>
+  searchUsersByTypeOrRole(UserSearchType type,
+                          Either<UserStatus, UserType> searchValue)
+      throws BadRequestException {
     logger.trace("searchUsersByTypeOrRole called");
 
     Optional<UserStatus> statusValue = searchValue.fromLeft();
@@ -232,12 +232,14 @@ public class UserService extends BaseService implements IUserService {
       return this.userRepository.findByStatus(statusValue.get());
     } else {
       logger.error("Search type and value are mismatched");
-      throw new BadRequestException("Search type and search value are incompatible.");
+      throw new BadRequestException(
+          "Search type and search value are incompatible.");
     }
   }
 
   @Override
-  public Collection<User> searchUsersByPrimitiveValue(UserSearchType type, String value)
+  public Collection<User> searchUsersByPrimitiveValue(UserSearchType type,
+                                                      String value)
       throws BadRequestException, UserNotFoundError {
     logger.trace("searchUsersByPrimitiveValue called");
     ArrayList<User> response = new ArrayList<>();
@@ -259,10 +261,12 @@ public class UserService extends BaseService implements IUserService {
   }
 
   @Override
-  public PasswordChangeResponse changePassword(
-      UUID userId, UUID requesterId, String oldPassword, String newPassword)
+  public PasswordChangeResponse changePassword(UUID userId, UUID requesterId,
+                                               String oldPassword,
+                                               String newPassword)
       throws UserNotFoundError {
-    logger.trace("changePassword called by requester {} for user {}", requesterId, userId);
+    logger.trace("changePassword called by requester {} for user {}",
+                 requesterId, userId);
     Optional<User> user = this.userRepository.findById(userId);
     // use this to determine if someone else is trying to reset a password
     Optional<User> _requester = this.userRepository.findById(requesterId);
@@ -282,16 +286,18 @@ public class UserService extends BaseService implements IUserService {
 
     // restrict non-own password editing to root users
     if (requester.getType() == UserType.ROOT) {
-      logger.info("Root user {} updating password for user {}", requesterId, userId);
+      logger.info("Root user {} updating password for user {}", requesterId,
+                  userId);
     }
 
     // if the old password and the new password match, then update the password
     if (u.getPassword().equals(this.getSecurePassword(oldPassword))) {
       // hash new password and set
       u.setPassword(this.getSecurePassword(newPassword));
-      // update status only if a password change is required, otherwise keep status
-      // the same
-      if (u.getStatus() == UserStatus.PASSWORDCHANGEREQUIRED) u.setStatus(UserStatus.ACTIVE);
+      // update status only if a password change is required, otherwise keep
+      // status the same
+      if (u.getStatus() == UserStatus.PASSWORDCHANGEREQUIRED)
+        u.setStatus(UserStatus.ACTIVE);
     }
     User result = this.userRepository.save(u);
     return new PasswordChangeResponse(true, result.getUsername());

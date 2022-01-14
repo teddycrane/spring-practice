@@ -63,7 +63,8 @@ public class RacerServiceTest {
     when(racerRepository.findById(random)).thenReturn(Optional.empty());
 
     // test
-    Assertions.assertThrows(RacerNotFoundException.class, () -> racerService.getRacerById(random));
+    Assertions.assertThrows(RacerNotFoundException.class,
+                            () -> racerService.getRacerById(random));
   }
 
   @Test
@@ -79,10 +80,12 @@ public class RacerServiceTest {
 
   @Test
   public void updateRacerWhenSuccessful() {
-    when(racerRepository.findById(request.getId())).thenReturn(Optional.of(request));
+    when(racerRepository.findById(request.getId()))
+        .thenReturn(Optional.of(request));
 
     // test
-    this.racerService.updateRacer(request.getId(), "updatedFname", "updatedLname", Category.CAT1);
+    this.racerService.updateRacer(request.getId(), "updatedFname",
+                                  "updatedLname", Category.CAT1);
     Mockito.verify(racerRepository).save(argument.capture());
     Racer result = argument.getValue();
 
@@ -94,12 +97,14 @@ public class RacerServiceTest {
 
   @Test
   public void updateRacerWhenExceptionThrown() {
-    when(racerRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+    when(racerRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.empty());
 
     // test
-    Assertions.assertThrows(
-        RacerNotFoundException.class,
-        () -> racerService.updateRacer(UUID.randomUUID(), "test", "test", null));
+    Assertions.assertThrows(RacerNotFoundException.class,
+                            ()
+                                -> racerService.updateRacer(
+                                    UUID.randomUUID(), "test", "test", null));
   }
 
   @Test
@@ -134,11 +139,12 @@ public class RacerServiceTest {
 
   @Test
   public void deleteRacerWhenNoRacerIsFound() {
-    when(racerRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+    when(racerRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.empty());
 
     // test
-    Assertions.assertThrows(
-        RacerNotFoundException.class, () -> racerService.deleteRacer(UUID.randomUUID()));
+    Assertions.assertThrows(RacerNotFoundException.class,
+                            () -> racerService.deleteRacer(UUID.randomUUID()));
   }
 
   @Test

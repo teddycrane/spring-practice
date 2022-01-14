@@ -9,15 +9,11 @@ public class AddRacerRequest {
 
   @NotEmpty private List<UUID> racerIds;
 
-  public AddRacerRequest() {
-    racerIds = new ArrayList<>();
-  }
+  public AddRacerRequest() { racerIds = new ArrayList<>(); }
 
   public AddRacerRequest(List<UUID> racerIds) {
     this.racerIds = new ArrayList<>(racerIds);
   }
 
-  public List<UUID> getRacerIds() {
-    return new ArrayList<>(this.racerIds);
-  }
+  public List<UUID> getRacerIds() { return new ArrayList<>(this.racerIds); }
 }

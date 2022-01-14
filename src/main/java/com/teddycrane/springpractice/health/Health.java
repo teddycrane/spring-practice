@@ -18,13 +18,9 @@ public class Health {
     this.name = name;
   }
 
-  public String getStatus() {
-    return status;
-  }
+  public String getStatus() { return status; }
 
-  public String getName() {
-    return name;
-  }
+  public String getName() { return name; }
 
   @Override
   public String toString() {

@@ -22,8 +22,10 @@ public interface RaceRepository extends JpaRepository<Race, UUID> {
    * @param racerId The UUID of the Racer to be queried for
    * @return A List of UUIDs of Races containing the specified Racer
    */
-  @Query(value = "SELECT race_id from race_racers WHERE racers_id = ?1", nativeQuery = true)
-  List<UUID> findRacesWithRacer(@Param("id") String racerId);
+  @Query(value = "SELECT race_id from race_racers WHERE racers_id = ?1",
+         nativeQuery = true)
+  List<UUID>
+  findRacesWithRacer(@Param("id") String racerId);
 
   Collection<Race> findByCategory(Category category);
 

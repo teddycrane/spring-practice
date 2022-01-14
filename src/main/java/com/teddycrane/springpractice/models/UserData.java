@@ -11,15 +11,9 @@ public class UserData {
     this.name = name;
   }
 
-  public String getUsername() {
-    return username;
-  }
+  public String getUsername() { return username; }
 
-  public String getId() {
-    return id;
-  }
+  public String getId() { return id; }
 
-  public String getName() {
-    return name;
-  }
+  public String getName() { return name; }
 }

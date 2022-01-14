@@ -19,13 +19,8 @@ public class CreateUserRequest {
   // Can be null, defaults to basic user type (least-privileged)
   @Nullable private UserType type;
 
-  public CreateUserRequest(
-      String username,
-      String password,
-      String firstName,
-      String lastName,
-      String email,
-      UserType type) {
+  public CreateUserRequest(String username, String password, String firstName,
+                           String lastName, String email, UserType type) {
     this.username = username;
     this.password = password;
     this.firstName = firstName;
@@ -34,27 +29,15 @@ public class CreateUserRequest {
     this.type = type;
   }
 
-  public String getFirstName() {
-    return firstName;
-  }
+  public String getFirstName() { return firstName; }
 
-  public String getLastName() {
-    return lastName;
-  }
+  public String getLastName() { return lastName; }
 
-  public String getUsername() {
-    return username;
-  }
+  public String getUsername() { return username; }
 
-  public String getPassword() {
-    return password;
-  }
+  public String getPassword() { return password; }
 
-  public String getEmail() {
-    return email;
-  }
+  public String getEmail() { return email; }
 
-  public Optional<UserType> getType() {
-    return Optional.ofNullable(type);
-  }
+  public Optional<UserType> getType() { return Optional.ofNullable(type); }
 }

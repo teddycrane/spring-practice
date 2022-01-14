@@ -55,12 +55,13 @@ public class EventControllerTest {
 
   @Test
   public void shouldCreateEvent() {
-    when(this.eventService.createEvent(any(String.class), any(Date.class), any(Date.class)))
+    when(this.eventService.createEvent(any(String.class), any(Date.class),
+                                       any(Date.class)))
         .thenReturn(event);
 
     // test
-    Event result =
-        this.eventController.createEvent(new CreateEventRequest("name", new Date(), new Date()));
+    Event result = this.eventController.createEvent(
+        new CreateEventRequest("name", new Date(), new Date()));
     Assertions.assertTrue(result.equals(event));
   }
 
@@ -69,7 +70,8 @@ public class EventControllerTest {
     when(this.eventService.deleteEvent(any(UUID.class))).thenReturn(event);
 
     // test
-    Event result = this.eventController.deleteEvent(UUID.randomUUID().toString());
+    Event result =
+        this.eventController.deleteEvent(UUID.randomUUID().toString());
     Assertions.assertTrue(result.equals(event));
   }
 }

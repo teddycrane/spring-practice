@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/events")
 public interface IEventController {
 
-  @GetMapping(path = "/all")
-  List<Event> getAllEvents();
+  @GetMapping(path = "/all") List<Event> getAllEvents();
 
   @GetMapping
-  Event getEvent(@RequestParam String eventId) throws BadRequestException, EventNotFoundException;
+  Event getEvent(@RequestParam String eventId)
+      throws BadRequestException, EventNotFoundException;
 
   @PostMapping
   Event createEvent(@RequestBody @Valid CreateEventRequest request)
@@ -29,7 +29,8 @@ public interface IEventController {
       throws BadRequestException, EventNotFoundException;
 
   @PatchMapping(path = "/add-races")
-  Event addRacesToEvent(@RequestParam String eventId, @RequestBody UpdateEventRequest request)
+  Event addRacesToEvent(@RequestParam String eventId,
+                        @RequestBody UpdateEventRequest request)
       throws EventNotFoundException, BadRequestException;
 
   @PostMapping(path = "/start-event")

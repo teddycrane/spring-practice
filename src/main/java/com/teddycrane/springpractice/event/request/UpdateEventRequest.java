@@ -16,13 +16,9 @@ public class UpdateEventRequest {
 
   private List<UUID> raceIds;
 
-  public Optional<String> getName() {
-    return Optional.ofNullable(this.name);
-  }
+  public Optional<String> getName() { return Optional.ofNullable(this.name); }
 
-  public List<UUID> getRaceIds() {
-    return raceIds;
-  }
+  public List<UUID> getRaceIds() { return raceIds; }
 
   public Optional<Date> getStartDate() {
     return Optional.ofNullable(this.startDate);
