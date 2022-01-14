@@ -17,8 +17,11 @@ import com.teddycrane.springpractice.user.request.AuthenticationRequest;
 import com.teddycrane.springpractice.user.request.CreateUserRequest;
 import com.teddycrane.springpractice.user.response.AuthenticationResponse;
 import com.teddycrane.springpractice.user.response.PasswordResetResponse;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,8 +59,8 @@ public class UserControllerTest {
   public void init() throws NoSuchAlgorithmException {
     MockitoAnnotations.openMocks(this);
 
-    this.jwtHelper = new JwtHelper(
-        "ziaNrj4XV/8rZPvbo5iSyWPEwGvGmU3fsxUsLIZNsy5VbVfoQagF0uRkMLIT1mOIlQrK2urhRMtrzW8pWs7pbg==");
+    this.jwtHelper = new JwtHelper(Base64.getEncoder().encodeToString(
+        Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded()));
 
     this.userController = new UserController(this.userService, this.jwtHelper);
     this.user = new User(UserType.USER, "first", "last", "username", "password",
@@ -111,7 +114,7 @@ public class UserControllerTest {
     Assertions.assertEquals(null, emailCaptor.getValue());
     Assertions.assertEquals("password", passwordCaptor.getValue());
 
-    Assertions.assertFalse(response.equals(result));
+    Assertions.assertTrue(response.equals(result));
   }
 
   @Test
