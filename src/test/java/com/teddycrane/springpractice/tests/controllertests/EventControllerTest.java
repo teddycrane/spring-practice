@@ -1,8 +1,11 @@
 package com.teddycrane.springpractice.tests.controllertests;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.teddycrane.springpractice.error.BadRequestException;
+import com.teddycrane.springpractice.error.EventNotFoundException;
 import com.teddycrane.springpractice.event.Event;
 import com.teddycrane.springpractice.event.EventController;
 import com.teddycrane.springpractice.event.model.IEventController;
@@ -23,6 +26,8 @@ public class EventControllerTest {
 
   private Event event;
   private List<Event> eventList;
+  private UUID testId;
+  private String testString;
 
   @BeforeEach
   public void init() {
@@ -30,10 +35,12 @@ public class EventControllerTest {
     this.eventController = new EventController(eventService);
     event = TestResourceGenerator.generateEvent();
     eventList = TestResourceGenerator.generateEventList(10);
+    testId = event.getId();
+    testString = testId.toString();
   }
 
   @Test
-  public void shouldReturnAnEvent() {
+  public void getEvent_shouldReturnAnEvent() {
     when(this.eventService.getEvent(any(UUID.class))).thenReturn(event);
 
     // test
@@ -42,7 +49,18 @@ public class EventControllerTest {
   }
 
   @Test
-  public void shouldReturnAllEvents() {
+  public void getEvent_shouldHandleServiceErrors() {
+    assertThrows(BadRequestException.class,
+                 () -> this.eventController.getEvent("bad id"));
+
+    when(this.eventService.getEvent(testId))
+        .thenThrow(EventNotFoundException.class);
+    assertThrows(EventNotFoundException.class,
+                 () -> this.eventController.getEvent(testString));
+  }
+
+  @Test
+  public void getEvent_shouldReturnAllEvents() {
     when(this.eventService.getAllEvents()).thenReturn(eventList);
 
     // test
@@ -54,7 +72,7 @@ public class EventControllerTest {
   }
 
   @Test
-  public void shouldCreateEvent() {
+  public void createEvent_shouldCreateEvent() {
     when(this.eventService.createEvent(any(String.class), any(Date.class),
                                        any(Date.class)))
         .thenReturn(event);
@@ -66,7 +84,7 @@ public class EventControllerTest {
   }
 
   @Test
-  public void shouldDeleteEvent() {
+  public void deleteEvent_shouldDeleteEvent() {
     when(this.eventService.deleteEvent(any(UUID.class))).thenReturn(event);
 
     // test
