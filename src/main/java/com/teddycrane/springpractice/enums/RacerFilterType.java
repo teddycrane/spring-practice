@@ -1,20 +1,17 @@
 package com.teddycrane.springpractice.enums;
 
-public enum RacerFilterType
-{
-	FIRSTNAME("firstname"),
-	LASTNAME("lastname"),
-	CATEGORY("category");
+public enum RacerFilterType {
+  FIRSTNAME("firstname"),
+  LASTNAME("lastname"),
+  CATEGORY("category");
 
-	private final String text;
+  private final String text;
 
-	RacerFilterType(final String text)
-	{
-		this.text = text;
-	}
+  RacerFilterType(final String text) {
+    this.text = text;
+  }
 
-	public String toString()
-	{
-		return this.text;
-	}
+  public String toString() {
+    return this.text;
+  }
 }

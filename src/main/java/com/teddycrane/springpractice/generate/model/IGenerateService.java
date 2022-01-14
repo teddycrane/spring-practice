@@ -1,23 +1,21 @@
 package com.teddycrane.springpractice.generate.model;
 
+import com.teddycrane.springpractice.enums.Category;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.racer.Racer;
-import com.teddycrane.springpractice.enums.Category;
+import java.util.Collection;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-
 @Service
-public interface IGenerateService
-{
+public interface IGenerateService {
 
-	Collection<Racer> generateRacers(Integer number, Category category);
+  Collection<Racer> generateRacers(Integer number, Category category);
 
-	Collection<Racer> generateRacers(Integer number);
+  Collection<Racer> generateRacers(Integer number);
 
-	Collection<Racer> generateRacer(Category category);
+  Collection<Racer> generateRacer(Category category);
 
-	Collection<Racer> generateRacer();
+  Collection<Racer> generateRacer();
 
-	Collection<Race> generateRace(Integer number);
+  Collection<Race> generateRace(Integer number);
 }

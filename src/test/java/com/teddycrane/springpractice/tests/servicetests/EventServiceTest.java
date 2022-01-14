@@ -1,5 +1,3 @@
 package com.teddycrane.springpractice.tests.servicetests;
 
-public class EventServiceTest {
-    
-}
+public class EventServiceTest {}
