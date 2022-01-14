@@ -1,19 +1,19 @@
 package com.teddycrane.springpractice.enums;
 
 public enum UserSearchType {
-    TYPE("type"),
-    STATUS("status"),
-    USERNAME("username"),
-    FULLNAME("fullname");
+  TYPE("type"),
+  STATUS("status"),
+  USERNAME("username"),
+  FULLNAME("fullname");
 
-    private final String text;
+  private final String text;
 
-    UserSearchType(final String text) {
-        this.text = text;
-    }
+  UserSearchType(final String text) {
+    this.text = text;
+  }
 
-    @Override
-    public String toString() {
-        return this.text;
-    }
+  @Override
+  public String toString() {
+    return this.text;
+  }
 }

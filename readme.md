@@ -9,6 +9,8 @@ This project is built using a target of Java11, the most recent LTS release of t
 
 This project is using Maven as a build tool (although a Gradle migration is planned at some point). Maven is required to do package management, run tests and coverage, and build the application
 
+This project utilizes pre-commit hooks with `pre-commit`.  This can be installed either with pip `pip install pre-commit`, or with brew `brew install pre-commit`
+
 ## Local Development
 
 Local development requires some setup due to security keys being set as environment variables. To generate a valid signing key for local use, do the following.
