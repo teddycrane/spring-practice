@@ -28,7 +28,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-@Disabled
 public class UserControllerTest {
   private IUserController userController;
   private User user;
