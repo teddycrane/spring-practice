@@ -41,7 +41,7 @@ public class EventController
     } catch (EventNotFoundException e) {
       throw new EventNotFoundException(e.getMessage());
     } catch (IllegalArgumentException e) {
-      System.out.println("Bad id provided");
+      logger.error("The id {} is not a valid id", eventId);
       throw new BadRequestException(String.format(
           "The id %s was provided in a format that was not readable. ",
           eventId));
@@ -60,7 +60,7 @@ public class EventController
                                              request.getStartDate().get(),
                                              request.getEndDate().get());
       } else {
-        System.out.println(
+        logger.error(
             "Invalid request body.  Unable to create an event without a name and at least one of"
             + " [startDate, endDate]");
         throw new BadRequestException(
