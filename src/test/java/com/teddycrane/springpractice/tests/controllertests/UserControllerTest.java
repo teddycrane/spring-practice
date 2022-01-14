@@ -50,17 +50,20 @@ public class UserControllerTest {
   @Captor private ArgumentCaptor<Optional<UserType>> typeCaptor;
 
   @Captor
-  ArgumentCaptor<Optional<String>> usernameOptional, passwordOptional,
+  private ArgumentCaptor<Optional<String>> usernameOptional, passwordOptional,
       firstNameOptional, lastNameOptional, emailOptional;
 
-  @Captor ArgumentCaptor<Optional<UserType>> userTypeOptional;
+  @Captor private ArgumentCaptor<Optional<UserType>> userTypeOptional;
+
+  private String secretKey;
 
   @BeforeEach
   public void init() throws NoSuchAlgorithmException {
     MockitoAnnotations.openMocks(this);
+    this.secretKey = Base64.getEncoder().encodeToString(
+        Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded());
 
-    this.jwtHelper = new JwtHelper(Base64.getEncoder().encodeToString(
-        Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded()));
+    this.jwtHelper = new JwtHelper(secretKey);
 
     this.userController = new UserController(this.userService, this.jwtHelper);
     this.user = new User(UserType.USER, "first", "last", "username", "password",
