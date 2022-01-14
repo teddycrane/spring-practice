@@ -428,7 +428,7 @@
 					</execution>
 					<execution>
 						<id>
-							default-check
+							coverage-check
 						</id>
 						<goals>
 							<goal>
@@ -436,6 +436,7 @@
 							</goal>
 						</goals>
 						<configuration>
+							<dataFile>${project.build.directory}/aggregate.exec</dataFile>
 							<rules>
 								<!-- <rule>
 									<element>

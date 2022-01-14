@@ -1,19 +1,16 @@
 package com.teddycrane.springpractice.enums;
 
-public enum RaceFilterType
-{
-	CATEGORY("category"),
-	NAME("name");
+public enum RaceFilterType {
+  CATEGORY("category"),
+  NAME("name");
 
-	private final String text;
+  private final String text;
 
-	RaceFilterType(String text)
-	{
-		this.text = text;
-	}
+  RaceFilterType(String text) {
+    this.text = text;
+  }
 
-	public String toString()
-	{
-		return this.text;
-	}
+  public String toString() {
+    return this.text;
+  }
 }
