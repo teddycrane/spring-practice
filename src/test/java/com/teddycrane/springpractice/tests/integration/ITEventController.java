@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.UUID;
+
 @Tag("Integration")
 public class ITEventController extends IntegrationBase {
     private final String testEventId = "02fd6b48-33f0-4bdc-af52-ba4bbd802db7";
@@ -33,6 +35,16 @@ public class ITEventController extends IntegrationBase {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.id").value(testEventId));
+    }
+
+    @Test
+    public void getEvent_shouldFailForEventNotInDatabase() throws Exception {
+        String url = String.format("/events/%s", UUID.randomUUID());
+
+        this.mockMvc.perform(get(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", userAuthToken))
+                .andExpect(status().isNotFound());
     }
 
     @Test
