@@ -3,6 +3,7 @@ package com.teddycrane.springpractice.tests.controllertests;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.teddycrane.springpractice.enums.UserStatus;
 import com.teddycrane.springpractice.enums.UserType;
 import com.teddycrane.springpractice.error.BadRequestException;
 import com.teddycrane.springpractice.error.DuplicateItemException;
@@ -74,7 +75,9 @@ public class UserControllerTest {
     this.user = new User(UserType.USER, "first", "last", "username", "password",
                          "email@email.fake");
 
-    this.fakeAuthToken = this.jwtHelper.generateToken(new UserData(user.getUsername(), user.getId().toString(), String.format("%s %s", user.getFirstName(), user.getLastName()))));
+    this.fakeAuthToken = this.jwtHelper.generateToken(new UserData(
+        user.getUsername(), user.getId().toString(),
+        String.format("%s %s", user.getFirstName(), user.getLastName())));
   }
 
   @Test
