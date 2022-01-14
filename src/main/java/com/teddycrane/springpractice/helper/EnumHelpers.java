@@ -11,24 +11,18 @@ import org.jetbrains.annotations.NotNull;
 public class EnumHelpers {
 
   private static final HashMap<Category, String> categoryMappings =
-      new HashMap<>(
-          Map.of(
-              Category.CAT1,
-              "Category 1",
-              Category.CAT2,
-              "Category 2",
-              Category.CAT3,
-              "Category 3",
-              Category.CAT4,
-              "Category 4",
-              Category.CAT5,
-              "Category 5"));
+      new HashMap<>(Map.of(Category.CAT1, "Category 1", Category.CAT2,
+                           "Category 2", Category.CAT3, "Category 3",
+                           Category.CAT4, "Category 4", Category.CAT5,
+                           "Category 5"));
 
   /**
    * Takes in a String value to see if the FilterType enum contains the value.
    *
-   * @param value The value to test for inclusion in the set of values for FilterType.
-   * @return True if the value set for FilterType includes the test value, false if it does not.
+   * @param value The value to test for inclusion in the set of values for
+   *     FilterType.
+   * @return True if the value set for FilterType includes the test value, false
+   *     if it does not.
    */
   private static boolean racerFilterTypesContains(@NotNull String value) {
     try {
@@ -52,26 +46,29 @@ public class EnumHelpers {
    * Tests if a String value is contained in the set of Category enum values
    *
    * @param value The value to be tested
-   * @return True if the value is contained in Category values, otherwise, false.
+   * @return True if the value is contained in Category values, otherwise,
+   *     false.
    */
   private static boolean categoryTypesContains(@NotNull String value) {
     try {
-      return EnumSet.allOf(Category.class).contains(Category.valueOf(value.toUpperCase()));
+      return EnumSet.allOf(Category.class)
+          .contains(Category.valueOf(value.toUpperCase()));
     } catch (IllegalArgumentException e) {
       return false;
     }
   }
 
-  public static boolean testEnumValue(@NotNull Class<?> testClass, String value) {
+  public static boolean testEnumValue(@NotNull Class<?> testClass,
+                                      String value) {
     switch (testClass.getSimpleName()) {
-      case "Category":
-        return categoryTypesContains(value);
-      case "RacerFilterType":
-        return racerFilterTypesContains(value);
-      case "RaceFilterType":
-        return raceFilterTypesContains(value);
-      default:
-        return false;
+    case "Category":
+      return categoryTypesContains(value);
+    case "RacerFilterType":
+      return racerFilterTypesContains(value);
+    case "RaceFilterType":
+      return raceFilterTypesContains(value);
+    default:
+      return false;
     }
   }
 

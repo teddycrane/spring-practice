@@ -10,11 +10,7 @@ public class PasswordChangeResponse {
     this.username = username;
   }
 
-  public boolean isSuccess() {
-    return success;
-  }
+  public boolean isSuccess() { return success; }
 
-  public String getUsername() {
-    return username;
-  }
+  public String getUsername() { return username; }
 }

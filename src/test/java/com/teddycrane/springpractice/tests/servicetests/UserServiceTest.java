@@ -36,9 +36,8 @@ public class UserServiceTest {
   private IUserService userService;
 
   private JwtHelper jwtHelper =
-      new JwtHelper(
-          Base64.getEncoder()
-              .encodeToString(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded()));
+      new JwtHelper(Base64.getEncoder().encodeToString(
+          Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded()));
 
   @Mock private UserRepository userRepository;
 
@@ -79,24 +78,20 @@ public class UserServiceTest {
 
   @Test
   public void shouldThrowErrorIfUserDoesNotExist() {
-    when(this.userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+    when(this.userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.empty());
 
-    Assertions.assertThrows(
-        UserNotFoundError.class, () -> this.userService.getUser(UUID.randomUUID()));
+    Assertions.assertThrows(UserNotFoundError.class,
+                            () -> this.userService.getUser(UUID.randomUUID()));
   }
 
   @Test
   public void shouldCreateUser() {
     when(this.userRepository.save(any(User.class))).then(returnsFirstArg());
 
-    User result =
-        this.userService.createUser(
-            "firstName",
-            "lastName",
-            "username",
-            "email@email.com",
-            "password",
-            Optional.of(UserType.USER));
+    User result = this.userService.createUser(
+        "firstName", "lastName", "username", "email@email.com", "password",
+        Optional.of(UserType.USER));
 
     Assertions.assertNotNull(result);
     Assertions.assertEquals("firstName", result.getFirstName());
@@ -110,18 +105,16 @@ public class UserServiceTest {
   @Test
   public void shouldHandleUserCollisions() {
     User existing = TestResourceGenerator.generateUser();
-    when(this.userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(existing));
+    when(this.userRepository.findByUsername(any(String.class)))
+        .thenReturn(Optional.of(existing));
 
     Assertions.assertThrows(
         DuplicateItemException.class,
-        () ->
-            this.userService.createUser(
-                existing.getFirstName(),
-                existing.getLastName(),
-                existing.getUsername(),
-                existing.getPassword(),
-                existing.getEmail(),
-                Optional.empty()));
+        ()
+            -> this.userService.createUser(
+                existing.getFirstName(), existing.getLastName(),
+                existing.getUsername(), existing.getPassword(),
+                existing.getEmail(), Optional.empty()));
   }
 
   @Test
@@ -132,15 +125,10 @@ public class UserServiceTest {
     when(this.userRepository.save(any(User.class))).then(returnsFirstArg());
 
     try {
-      User result =
-          this.userService.updateUser(
-              id,
-              Optional.of("newUserName"),
-              Optional.of("newPassword"),
-              Optional.of("newFirstName"),
-              Optional.of("newLastName"),
-              Optional.of("newEmail@email.com"),
-              Optional.of(UserType.ADMIN));
+      User result = this.userService.updateUser(
+          id, Optional.of("newUserName"), Optional.of("newPassword"),
+          Optional.of("newFirstName"), Optional.of("newLastName"),
+          Optional.of("newEmail@email.com"), Optional.of(UserType.ADMIN));
 
       Assertions.assertNotNull(result);
     } catch (IllegalAccessException e) {
@@ -151,18 +139,16 @@ public class UserServiceTest {
 
   @Test
   public void shouldNotUpdateIfNoUserIsFound() {
-    when(this.userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+    when(this.userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.empty());
 
     Assertions.assertThrows(
         UserNotFoundError.class,
-        () ->
-            this.userService.updateUser(
-                UUID.randomUUID(),
-                Optional.of("newUserName"),
-                Optional.of("newPassword"),
-                Optional.of("newFirstName"),
-                Optional.of("newLastName"),
-                Optional.of("newEmail@email.com"),
+        ()
+            -> this.userService.updateUser(
+                UUID.randomUUID(), Optional.of("newUserName"),
+                Optional.of("newPassword"), Optional.of("newFirstName"),
+                Optional.of("newLastName"), Optional.of("newEmail@email.com"),
                 Optional.of(UserType.ADMIN)));
   }
 
@@ -171,34 +157,36 @@ public class UserServiceTest {
     User u = TestResourceGenerator.generateUser();
     u.setStatus(UserStatus.DISABLED);
 
-    when(this.userRepository.findById(any(UUID.class))).thenReturn(Optional.of(u));
+    when(this.userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(u));
 
     Assertions.assertThrows(
         IllegalAccessException.class,
-        () ->
-            this.userService.updateUser(
-                UUID.randomUUID(),
-                Optional.of("newUserName"),
-                Optional.of("newPassword"),
-                Optional.of("newFirstName"),
-                Optional.of("newLastName"),
-                Optional.of("newEmail@email.com"),
+        ()
+            -> this.userService.updateUser(
+                UUID.randomUUID(), Optional.of("newUserName"),
+                Optional.of("newPassword"), Optional.of("newFirstName"),
+                Optional.of("newLastName"), Optional.of("newEmail@email.com"),
                 Optional.of(UserType.ADMIN)));
   }
 
   @Test
   public void shouldResetPasswordForUser() {
-    when(this.userRepository.findById(this.user.getId())).thenReturn(Optional.of(this.user));
+    when(this.userRepository.findById(this.user.getId()))
+        .thenReturn(Optional.of(this.user));
 
-    PasswordResetResponse response = this.userService.resetPassword(this.user.getId());
+    PasswordResetResponse response =
+        this.userService.resetPassword(this.user.getId());
     Assertions.assertNotNull(response);
   }
 
   @Test
   public void shouldThrowErrorIfResettingPasswordForNonExistentUser() {
-    when(this.userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+    when(this.userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.empty());
 
     Assertions.assertThrows(
-        UserNotFoundError.class, () -> this.userService.resetPassword(UUID.randomUUID()));
+        UserNotFoundError.class,
+        () -> this.userService.resetPassword(UUID.randomUUID()));
   }
 }

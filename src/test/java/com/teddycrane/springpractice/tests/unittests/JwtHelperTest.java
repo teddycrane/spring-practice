@@ -15,9 +15,8 @@ public class JwtHelperTest {
 
   @BeforeEach
   public void init() {
-    String keyString =
-        Base64.getEncoder()
-            .encodeToString(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded());
+    String keyString = Base64.getEncoder().encodeToString(
+        Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded());
     jwtHelper = new JwtHelper(keyString);
   }
 
@@ -33,7 +32,8 @@ public class JwtHelperTest {
     Assertions.assertEquals("username", jwtHelper.getSubjectFromToken(token));
     Assertions.assertEquals("name", jwtHelper.getNameFromToken(token));
     Assertions.assertFalse(jwtHelper.isTokenExpired(token));
-    Assertions.assertEquals("com.teddycrane.springpractice", jwtHelper.getIssuerFromToken(token));
+    Assertions.assertEquals("com.teddycrane.springpractice",
+                            jwtHelper.getIssuerFromToken(token));
   }
 
   @Test

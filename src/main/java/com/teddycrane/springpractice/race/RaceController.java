@@ -28,7 +28,8 @@ public class RaceController extends BaseController implements IRaceController {
   }
 
   @Override
-  public Race getRace(String id) throws RaceNotFoundException, BadRequestException {
+  public Race getRace(String id)
+      throws RaceNotFoundException, BadRequestException {
     this.logger.trace("getRace called");
 
     try {
@@ -36,11 +37,13 @@ public class RaceController extends BaseController implements IRaceController {
       return this.raceService.getRace(uuid);
     } catch (RaceNotFoundException e) {
       this.logger.error("Unable to find race!", e);
-      throw new RaceNotFoundException(String.format("Unable to find a race with id %s", id));
+      throw new RaceNotFoundException(
+          String.format("Unable to find a race with id %s", id));
     } catch (IllegalArgumentException e) {
       this.logger.error("Id was not formatted correctly.", e);
-      throw new BadRequestException(
-          String.format("The provided id %s was not in the correct format.  Please try again", id));
+      throw new BadRequestException(String.format(
+          "The provided id %s was not in the correct format.  Please try again",
+          id));
     }
   }
 
@@ -55,10 +58,10 @@ public class RaceController extends BaseController implements IRaceController {
    *
    * @param request The request object with a required name and category
    * @return The successfully created race
-   * @throws BadRequestException Thrown if the input parameters do not allow for the creation of the
-   *     race
-   * @throws DuplicateItemException Thrown if there is already a race in the database with the same
-   *     name, case sensitive
+   * @throws BadRequestException Thrown if the input parameters do not allow for
+   *     the creation of the race
+   * @throws DuplicateItemException Thrown if there is already a race in the
+   *     database with the same name, case sensitive
    */
   @Override
   public Race createRace(CreateRaceRequest request)
@@ -70,7 +73,8 @@ public class RaceController extends BaseController implements IRaceController {
     }
 
     try {
-      return this.raceService.createRace(request.getName(), request.getCategory());
+      return this.raceService.createRace(request.getName(),
+                                         request.getCategory());
     } catch (DuplicateItemException e) {
       this.logger.error("Unable to create a duplicate item", e);
       throw new DuplicateItemException(e.getMessage());
@@ -86,8 +90,8 @@ public class RaceController extends BaseController implements IRaceController {
 
       // verify requred parameters
       if (request.getName().isPresent() || request.getCategory().isPresent()) {
-        return this.raceService.updateRace(
-            raceId, request.getName().get(), request.getCategory().get());
+        return this.raceService.updateRace(raceId, request.getName().get(),
+                                           request.getCategory().get());
       } else {
         this.logger.error("No valid parameters in the request {}", request);
         throw new BadRequestException("No valid parameters provided!");
@@ -107,13 +111,16 @@ public class RaceController extends BaseController implements IRaceController {
   /**
    * Adds a single racer
    *
-   * @param request A request object with the racer's id and the race ID to add the racer to
+   * @param request A request object with the racer's id and the race ID to add
+   *     the racer to
    * @return The Race object with the new racer
-   * @throws BadRequestException Thrown if the racer is unable to be added to the Race object
+   * @throws BadRequestException Thrown if the racer is unable to be added to
+   *     the Race object
    */
   @Override
   public Race addRacer(AddRacerRequest request, String raceId)
-      throws BadRequestException, RaceNotFoundException, RacerNotFoundException, UpdateException {
+      throws BadRequestException, RaceNotFoundException, RacerNotFoundException,
+             UpdateException {
     this.logger.trace("addRacer called");
 
     try {
@@ -126,7 +133,8 @@ public class RaceController extends BaseController implements IRaceController {
       throw new RaceNotFoundException(e.getMessage());
     } catch (IllegalArgumentException e) {
       logger.error("Unable to parse the id {}", raceId);
-      throw new BadRequestException(String.format("Unable to parse the provided id %s", raceId));
+      throw new BadRequestException(
+          String.format("Unable to parse the provided id %s", raceId));
     }
   }
 
@@ -149,7 +157,8 @@ public class RaceController extends BaseController implements IRaceController {
   }
 
   @Override
-  public Race endRace(String raceId) throws RaceNotFoundException, BadRequestException {
+  public Race endRace(String raceId)
+      throws RaceNotFoundException, BadRequestException {
     this.logger.trace("endRace called");
 
     try {
@@ -157,7 +166,8 @@ public class RaceController extends BaseController implements IRaceController {
       return this.raceService.endRace(id);
     } catch (IllegalArgumentException e) {
       logger.error("Unable to parse the id {}", raceId);
-      throw new BadRequestException(String.format("Unable to parse the provided id"));
+      throw new BadRequestException(
+          String.format("Unable to parse the provided id"));
     } catch (RaceNotFoundException e) {
       throw new RaceNotFoundException(e.getMessage());
     }
@@ -165,7 +175,8 @@ public class RaceController extends BaseController implements IRaceController {
 
   @Override
   public Race setRacerResult(String raceId, SetResultRequest request)
-      throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException {
+      throws RaceNotFoundException, RacerNotFoundException,
+             DuplicateItemException {
     this.logger.trace("setRacerResult called");
 
     try {
@@ -173,23 +184,23 @@ public class RaceController extends BaseController implements IRaceController {
       ArrayList<UUID> mappedIds = new ArrayList<>();
       String[] requestIds = request.getIds();
 
-      for (String id : requestIds) mappedIds.add(UUID.fromString(id));
+      for (String id : requestIds)
+        mappedIds.add(UUID.fromString(id));
 
       return this.raceService.placeRacersInFinishOrder(mappedRaceId, mappedIds);
     } catch (IllegalArgumentException e) {
       this.logger.error(
-          "Unable to parse one of the ids  raceId: {}, racerId: {}",
-          raceId,
+          "Unable to parse one of the ids  raceId: {}, racerId: {}", raceId,
           Arrays.toString(request.getIds()));
-      throw new BadRequestException(
-          String.format(
-              "Unable to parse one of the ids  raceId: %s, racerId: %s",
-              raceId, Arrays.toString(request.getIds())));
+      throw new BadRequestException(String.format(
+          "Unable to parse one of the ids  raceId: %s, racerId: %s", raceId,
+          Arrays.toString(request.getIds())));
     }
   }
 
   @Override
-  public RaceResult getResults(String raceId) throws RaceNotFoundException, BadRequestException {
+  public RaceResult getResults(String raceId)
+      throws RaceNotFoundException, BadRequestException {
     this.logger.trace("getResults called");
 
     try {
@@ -204,7 +215,8 @@ public class RaceController extends BaseController implements IRaceController {
   }
 
   @Override
-  public Race deleteRace(String raceId) throws BadRequestException, RaceNotFoundException {
+  public Race deleteRace(String raceId)
+      throws BadRequestException, RaceNotFoundException {
     this.logger.trace("deleteRace called");
 
     try {
@@ -235,14 +247,16 @@ public class RaceController extends BaseController implements IRaceController {
   }
 
   @Override
-  public Collection<Race> filterRaces(String type, String value) throws BadRequestException {
+  public Collection<Race> filterRaces(String type, String value)
+      throws BadRequestException {
     logger.trace("filterRaces called");
 
     // validate if type is a valid race filter type
     if (EnumHelpers.testEnumValue(RaceFilterType.class, type)) {
       try {
         RaceFilterType filterType = RaceFilterType.valueOf(type.toUpperCase());
-        boolean isValidCategory = EnumHelpers.testEnumValue(Category.class, value);
+        boolean isValidCategory =
+            EnumHelpers.testEnumValue(Category.class, value);
 
         // validate category, if provided
         if (filterType == RaceFilterType.CATEGORY && isValidCategory) {
@@ -251,7 +265,8 @@ public class RaceController extends BaseController implements IRaceController {
         } else if (filterType == RaceFilterType.CATEGORY) {
           // if the type is category but it's invalid
           logger.error("{} is not a valid category!", value);
-          throw new BadRequestException("The provided value is not a valid category");
+          throw new BadRequestException(
+              "The provided value is not a valid category");
         } else if (filterType == RaceFilterType.NAME) {
           return this.raceService.filterRace(filterType, Either.left(value));
         } else {
@@ -265,7 +280,8 @@ public class RaceController extends BaseController implements IRaceController {
       }
     } else {
       logger.error("{} is not a valid filter type", type);
-      throw new BadRequestException("The provided filter type is not a valid filter type");
+      throw new BadRequestException(
+          "The provided filter type is not a valid filter type");
     }
   }
 }

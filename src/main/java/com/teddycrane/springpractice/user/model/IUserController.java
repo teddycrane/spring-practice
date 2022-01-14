@@ -20,24 +20,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/users")
 public interface IUserController {
 
-  @GetMapping(path = "/all")
-  Collection<User> getAllUsers();
+  @GetMapping(path = "/all") Collection<User> getAllUsers();
 
   @GetMapping(path = "/{id}")
-  User getUser(@PathVariable String id) throws BadRequestException, UserNotFoundError;
+  User getUser(@PathVariable String id)
+      throws BadRequestException, UserNotFoundError;
 
   @PostMapping
   User createUser(@RequestBody @Valid CreateUserRequest request)
       throws BadRequestException, DuplicateItemException;
 
   @PostMapping(path = "/login")
-  AuthenticationResponse login(@RequestBody @Valid AuthenticationRequest request)
+  AuthenticationResponse
+  login(@RequestBody @Valid AuthenticationRequest request)
       throws BadRequestException, NoCredentialsException, UserNotFoundError;
 
   @PatchMapping
-  User updateUser(
-      @RequestBody @Valid UpdateUserRequest request,
-      @RequestHeader("Authorization") String authToken)
+  User updateUser(@RequestBody @Valid UpdateUserRequest request,
+                  @RequestHeader("Authorization") String authToken)
       throws BadRequestException, ForbiddenException, UserNotFoundError;
 
   // TODO update to be requestBody instead
@@ -46,13 +46,14 @@ public interface IUserController {
       throws BadRequestException, UserNotFoundError;
 
   @GetMapping(path = "/search-users")
-  Collection<User> searchUsers(@RequestParam String searchType, @RequestParam String searchValue)
+  Collection<User> searchUsers(@RequestParam String searchType,
+                               @RequestParam String searchValue)
       throws BadRequestException;
 
   @PostMapping(path = "/change-password")
-  PasswordChangeResponse changePassword(
-      @RequestBody @Valid PasswordChangeRequest request,
-      @RequestHeader("requester-id") String requesterId)
+  PasswordChangeResponse
+  changePassword(@RequestBody @Valid PasswordChangeRequest request,
+                 @RequestHeader("requester-id") String requesterId)
       throws BadRequestException, UserNotFoundError;
 
   @PostMapping(path = "/create-new")

@@ -7,11 +7,7 @@ public enum UserStatus {
 
   private final String message;
 
-  UserStatus(final String message) {
-    this.message = message;
-  }
+  UserStatus(final String message) { this.message = message; }
 
-  public String toString() {
-    return this.message;
-  }
+  public String toString() { return this.message; }
 }

@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface IGenerateController {
 
   @PostMapping(path = "/racer")
-  Collection<Racer> generateRacer(
-      @RequestParam(required = false) String category,
-      @RequestParam(required = false) Integer number)
+  Collection<Racer>
+  generateRacer(@RequestParam(required = false) String category,
+                @RequestParam(required = false) Integer number)
       throws BadRequestException;
 
   @PostMapping(path = "/race")

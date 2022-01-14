@@ -27,10 +27,8 @@ public class AuthService extends BaseService implements IAuthService {
     // allow all resources for base users, this should be reverted
     return true;
     // // explicit disallow for PATCH /users
-    // if (resourcePath.contains("/users") && method.equalsIgnoreCase("PATCH")) {
-    // return false;
-    // } else {
-    // return true;
+    // if (resourcePath.contains("/users") && method.equalsIgnoreCase("PATCH"))
+    // { return false; } else { return true;
     // }
   }
 
@@ -43,26 +41,28 @@ public class AuthService extends BaseService implements IAuthService {
    * @param method the HTTP method to check
    * @return True if allowed, otherwise false.
    */
-  private boolean isResourceAllowedForRoleAndStatus(
-      UserType role, UserStatus status, String resourcePath, String method) {
+  private boolean isResourceAllowedForRoleAndStatus(UserType role,
+                                                    UserStatus status,
+                                                    String resourcePath,
+                                                    String method) {
     logger.info("Checking permissions for role {} and status {}", role, status);
 
     switch (status) {
-      case ACTIVE:
-        return isResourceAllowedForRole(role, resourcePath, method);
-      case DISABLED:
+    case ACTIVE:
+      return isResourceAllowedForRole(role, resourcePath, method);
+    case DISABLED:
+      return false;
+    case PASSWORDCHANGEREQUIRED: {
+      // for future, allow change password endpoint here
+      if (resourcePath.equals("/users/change-password") &&
+          method.equalsIgnoreCase("POST")) {
+        return true;
+      } else {
         return false;
-      case PASSWORDCHANGEREQUIRED:
-        {
-          // for future, allow change password endpoint here
-          if (resourcePath.equals("/users/change-password") && method.equalsIgnoreCase("POST")) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-      default:
-        return false;
+      }
+    }
+    default:
+      return false;
     }
   }
 
@@ -72,24 +72,27 @@ public class AuthService extends BaseService implements IAuthService {
    * @param role The role to check access for
    * @param resourcePath The URI for the resource to check
    * @param method The HTTP method in question
-   * @return Returns true if the role is allowed access, otherwise, returns false
+   * @return Returns true if the role is allowed access, otherwise, returns
+   *     false
    */
-  private boolean isResourceAllowedForRole(UserType role, String resourcePath, String method) {
+  private boolean isResourceAllowedForRole(UserType role, String resourcePath,
+                                           String method) {
     logger.info("Checking permissions for user type {}", role);
 
     switch (role) {
-      case USER:
-        return isResourceAllowedForUser(resourcePath, method);
-      case ADMIN:
-      case ROOT:
-        return true;
-      default:
-        return false;
+    case USER:
+      return isResourceAllowedForUser(resourcePath, method);
+    case ADMIN:
+    case ROOT:
+      return true;
+    default:
+      return false;
     }
   }
 
   @Override
-  public boolean isResourceAllowedForUser(String userId, String resourcePath, String method)
+  public boolean isResourceAllowedForUser(String userId, String resourcePath,
+                                          String method)
       throws UserNotFoundError, BadRequestException {
     logger.trace("Checking resource permissions");
 
@@ -107,7 +110,8 @@ public class AuthService extends BaseService implements IAuthService {
       UserType role = u.getType();
       UserStatus status = u.getStatus();
 
-      return this.isResourceAllowedForRoleAndStatus(role, status, resourcePath, method);
+      return this.isResourceAllowedForRoleAndStatus(role, status, resourcePath,
+                                                    method);
     } catch (IllegalArgumentException e) {
       logger.error("Bad user id provided");
       throw new BadRequestException(e.getMessage());

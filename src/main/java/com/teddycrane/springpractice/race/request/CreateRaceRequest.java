@@ -34,26 +34,21 @@ public class CreateRaceRequest {
     this.endTime = null;
   }
 
-  public CreateRaceRequest(String name, Category category, Date startTime, Date endTime) {
+  public CreateRaceRequest(String name, Category category, Date startTime,
+                           Date endTime) {
     this.name = name;
     this.category = category;
     this.startTime = new Date(startTime.getTime());
     this.endTime = new Date(endTime.getTime());
   }
 
-  public Category getCategory() {
-    return category;
-  }
+  public Category getCategory() { return category; }
 
-  public String getName() {
-    return name;
-  }
+  public String getName() { return name; }
 
   public Optional<Date> getStartTime() {
     return Optional.ofNullable(startTime);
   }
 
-  public Optional<Date> getEndTime() {
-    return Optional.ofNullable(endTime);
-  }
+  public Optional<Date> getEndTime() { return Optional.ofNullable(endTime); }
 }

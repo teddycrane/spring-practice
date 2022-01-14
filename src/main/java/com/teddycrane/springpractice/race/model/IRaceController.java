@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public interface IRaceController {
 
   @GetMapping(path = "/{id}")
-  Race getRace(@PathVariable String id) throws RaceNotFoundException, BadRequestException;
+  Race getRace(@PathVariable String id)
+      throws RaceNotFoundException, BadRequestException;
 
   @GetMapping(path = "/all")
   List<Race> getAllRaces() throws RaceNotFoundException;
@@ -27,30 +28,37 @@ public interface IRaceController {
       throws BadRequestException, DuplicateItemException;
 
   @PatchMapping
-  Race updateRace(@RequestBody @Valid UpdateRaceRequest request, @RequestParam String id)
+  Race updateRace(@RequestBody @Valid UpdateRaceRequest request,
+                  @RequestParam String id)
       throws BadRequestException, RaceNotFoundException, UpdateException;
 
   @PatchMapping(path = "{raceId}/add-racer")
-  Race addRacer(@RequestBody @Valid AddRacerRequest request, @PathVariable String raceId)
-      throws BadRequestException, RaceNotFoundException, RacerNotFoundException, UpdateException;
+  Race addRacer(@RequestBody @Valid AddRacerRequest request,
+                @PathVariable String raceId)
+      throws BadRequestException, RaceNotFoundException, RacerNotFoundException,
+             UpdateException;
 
   @PostMapping(path = "/{raceId}/start")
   Race startRace(@PathVariable String raceId)
       throws RaceNotFoundException, BadRequestException, StartException;
 
   @PostMapping(path = "/{raceId}/end")
-  Race endRace(@PathVariable String raceId) throws RaceNotFoundException, BadRequestException;
+  Race endRace(@PathVariable String raceId)
+      throws RaceNotFoundException, BadRequestException;
 
   @PostMapping(path = "/{raceId}/place")
-  Race setRacerResult(@PathVariable String raceId, @RequestBody @Valid SetResultRequest request)
-      throws RaceNotFoundException, RacerNotFoundException, DuplicateItemException;
+  Race setRacerResult(@PathVariable String raceId,
+                      @RequestBody @Valid SetResultRequest request)
+      throws RaceNotFoundException, RacerNotFoundException,
+             DuplicateItemException;
 
   @GetMapping(path = "/{raceId}/results")
   RaceResult getResults(@PathVariable String raceId)
       throws RaceNotFoundException, BadRequestException;
 
   @DeleteMapping(path = "/{raceId}")
-  Race deleteRace(@PathVariable String raceId) throws BadRequestException, RaceNotFoundException;
+  Race deleteRace(@PathVariable String raceId)
+      throws BadRequestException, RaceNotFoundException;
 
   /**
    * This endpoint should be deprecated in favor a different URI
@@ -66,6 +74,7 @@ public interface IRaceController {
       throws BadRequestException, RacerNotFoundException;
 
   @GetMapping(path = "/filter")
-  Collection<Race> filterRaces(@RequestParam String type, @RequestParam String value)
+  Collection<Race> filterRaces(@RequestParam String type,
+                               @RequestParam String value)
       throws BadRequestException;
 }

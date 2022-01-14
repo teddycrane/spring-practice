@@ -22,14 +22,16 @@ public class TestResourceGenerator {
 
   public static @NotNull List<Racer> generateRacerList(int length) {
     List<Racer> result = new ArrayList<>(length);
-    for (int i = 0; i < length; i++) result.add(i, generateRacer());
+    for (int i = 0; i < length; i++)
+      result.add(i, generateRacer());
     return result;
   }
 
   public static @NotNull Race generateRace() {
     String name = RandomStringUtils.randomAlphabetic(10);
     ArrayList<Racer> temp = new ArrayList<>();
-    for (int i = 0; i < 5; i++) temp.add(generateRacer());
+    for (int i = 0; i < 5; i++)
+      temp.add(generateRacer());
 
     Race result = new Race(name);
     result.setRacers(temp);
@@ -62,13 +64,10 @@ public class TestResourceGenerator {
   }
 
   public static User generateUser() {
-    return new User(
-        UserType.USER,
-        faker.name().firstName(),
-        faker.name().lastName(),
-        faker.name().username(),
-        faker.idNumber().toString(),
-        faker.bothify("????##@fake.fake"));
+    return new User(UserType.USER, faker.name().firstName(),
+                    faker.name().lastName(), faker.name().username(),
+                    faker.idNumber().toString(),
+                    faker.bothify("????##@fake.fake"));
   }
 
   public static Iterable<User> generateUserList(int length) {

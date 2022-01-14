@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/racer")
-public class RacerController extends BaseController implements IRacerController {
+public class RacerController
+    extends BaseController implements IRacerController {
 
   private final IRacerService racerService;
 
@@ -45,7 +46,8 @@ public class RacerController extends BaseController implements IRacerController 
 
     } catch (RacerNotFoundException e) {
       logger.error("No racer found for the given id {}", id);
-      throw new RacerNotFoundException(String.format("No racer found with id %s", id));
+      throw new RacerNotFoundException(
+          String.format("No racer found with id %s", id));
     }
   }
 
@@ -55,12 +57,12 @@ public class RacerController extends BaseController implements IRacerController 
 
     try {
       // verify required parameters
-      return this.racerService.addRacer(request.getFirstName(), request.getLastName());
+      return this.racerService.addRacer(request.getFirstName(),
+                                        request.getLastName());
     } catch (Exception e) {
       throw new BadRequestException(
-          String.format(
-              "Unable to create a racer with name %s %s",
-              request.getFirstName(), request.getLastName()));
+          String.format("Unable to create a racer with name %s %s",
+                        request.getFirstName(), request.getLastName()));
     }
   }
 
@@ -69,7 +71,8 @@ public class RacerController extends BaseController implements IRacerController 
    *
    * @param request The request object containing the fields to update
    * @return The updated Racer object
-   * @throws UpdateException Thrown if the racer does not exist, or if the racer fails to update
+   * @throws UpdateException Thrown if the racer does not exist, or if the racer
+   *     fails to update
    */
   @Override
   public Racer updateRacer(UpdateRacerRequest request, String id)
@@ -82,14 +85,18 @@ public class RacerController extends BaseController implements IRacerController 
 
       return this.racerService.updateRacer(
           uuid,
-          request.getFirstName().isPresent() ? request.getFirstName().get() : null,
-          request.getLastName().isPresent() ? request.getLastName().get() : null,
-          request.getCategory().isPresent() ? request.getCategory().get() : null);
+          request.getFirstName().isPresent() ? request.getFirstName().get()
+                                             : null,
+          request.getLastName().isPresent() ? request.getLastName().get()
+                                            : null,
+          request.getCategory().isPresent() ? request.getCategory().get()
+                                            : null);
     } catch (BadRequestException e) {
       throw new BadRequestException(e.getMessage());
     } catch (RacerNotFoundException e) {
       logger.error("No racer found with the id {}", id);
-      throw new RacerNotFoundException(String.format("No racer found with id %s.", id));
+      throw new RacerNotFoundException(
+          String.format("No racer found with id %s.", id));
     } catch (IllegalArgumentException e) {
       logger.error("Unable to parse the id {}", id);
       throw new BadRequestException(
@@ -128,32 +135,37 @@ public class RacerController extends BaseController implements IRacerController 
    *
    * @param type The String value of the FilterType enum to use for the search
    * @return A List of Racers matching the filter type
-   * @throws BadRequestException Throws if there is not a filter type provided, or if the filter
-   *     type is invalid.
+   * @throws BadRequestException Throws if there is not a filter type provided,
+   *     or if the filter type is invalid.
    */
   @Override
-  public List<Racer> getRacersByType(String type, String value) throws BadRequestException {
+  public List<Racer> getRacersByType(String type, String value)
+      throws BadRequestException {
     this.logger.trace("getRacersByType called");
 
     // validate that the query param is a valid enum type (non case-sensitive)
     if (EnumHelpers.testEnumValue(RacerFilterType.class, type)) {
       try {
-        RacerFilterType filterType = RacerFilterType.valueOf(type.toUpperCase());
+        RacerFilterType filterType =
+            RacerFilterType.valueOf(type.toUpperCase());
 
         // category validation
-        if (filterType == RacerFilterType.CATEGORY
-            && !EnumHelpers.testEnumValue(Category.class, value)) {
+        if (filterType == RacerFilterType.CATEGORY &&
+            !EnumHelpers.testEnumValue(Category.class, value)) {
           this.logger.error("Unable to parse the category value {}", value);
-          throw new BadRequestException("Unable to parse the provided category value!");
+          throw new BadRequestException(
+              "Unable to parse the provided category value!");
         }
 
-        return this.racerService.getRacersByType(filterType, value.toUpperCase());
+        return this.racerService.getRacersByType(filterType,
+                                                 value.toUpperCase());
       } catch (BadRequestException e) {
         throw new BadRequestException(e.getMessage());
       }
     } else {
       this.logger.error("The filter type {} is not a valid filter type", type);
-      throw new BadRequestException("The provided filter type is not a valid filter type");
+      throw new BadRequestException(
+          "The provided filter type is not a valid filter type");
     }
   }
 }
