@@ -7,9 +7,16 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: check-added-large-files
+    -   id: check-xml
 
--   repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks 
-    rev: v2.2.0
+-   repo: https://github.com/pocc/pre-commit-hooks 
+    rev: v1.3.5
     hooks:
-    -   id: pretty-format-java
-        args: [--autofix]
+    -   id: clang-format
+        args: [-i]
+
+# -   repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks 
+#     rev: v2.2.0
+#     hooks:
+#     -   id: pretty-format-java
+#         args: [--autofix]

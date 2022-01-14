@@ -32,7 +32,8 @@ import org.mockito.MockitoAnnotations;
 public class UserControllerTest {
   private IUserController userController;
   private User user;
-  private final UUID testUUID = UUID.fromString("1023c9e1-6900-4520-b8ec-7753a5cdf120");
+  private final UUID testUUID =
+      UUID.fromString("1023c9e1-6900-4520-b8ec-7753a5cdf120");
 
   @Mock private IUserService userService;
 
@@ -41,20 +42,14 @@ public class UserControllerTest {
   @Captor private ArgumentCaptor<UUID> uuidCaptor;
 
   @Captor
-  private ArgumentCaptor<String> usernameCaptor,
-      emailCaptor,
-      passwordCaptor,
-      fNameCaptor,
-      lNameCaptor;
+  private ArgumentCaptor<String> usernameCaptor, emailCaptor, passwordCaptor,
+      fNameCaptor, lNameCaptor;
 
   @Captor private ArgumentCaptor<Optional<UserType>> typeCaptor;
 
   @Captor
-  ArgumentCaptor<Optional<String>> usernameOptional,
-      passwordOptional,
-      firstNameOptional,
-      lastNameOptional,
-      emailOptional;
+  ArgumentCaptor<Optional<String>> usernameOptional, passwordOptional,
+      firstNameOptional, lastNameOptional, emailOptional;
 
   @Captor ArgumentCaptor<Optional<UserType>> userTypeOptional;
 
@@ -62,13 +57,12 @@ public class UserControllerTest {
   public void init() throws NoSuchAlgorithmException {
     MockitoAnnotations.openMocks(this);
 
-    this.jwtHelper =
-        new JwtHelper(
-            "ziaNrj4XV/8rZPvbo5iSyWPEwGvGmU3fsxUsLIZNsy5VbVfoQagF0uRkMLIT1mOIlQrK2urhRMtrzW8pWs7pbg==");
+    this.jwtHelper = new JwtHelper(
+        "ziaNrj4XV/8rZPvbo5iSyWPEwGvGmU3fsxUsLIZNsy5VbVfoQagF0uRkMLIT1mOIlQrK2urhRMtrzW8pWs7pbg==");
 
     this.userController = new UserController(this.userService, this.jwtHelper);
-    this.user =
-        new User(UserType.USER, "first", "last", "username", "password", "email@email.fake");
+    this.user = new User(UserType.USER, "first", "last", "username", "password",
+                         "email@email.fake");
   }
 
   @Test
@@ -86,8 +80,8 @@ public class UserControllerTest {
   public void getUser_shouldExceptWhenInvalidUUIDProvided() {
     String invalidUUID = "test string";
 
-    Assertions.assertThrows(
-        BadRequestException.class, () -> this.userController.getUser(invalidUUID));
+    Assertions.assertThrows(BadRequestException.class,
+                            () -> this.userController.getUser(invalidUUID));
   }
 
   @Test
@@ -103,13 +97,16 @@ public class UserControllerTest {
 
   @Test
   public void login_shouldAuthenticateValidUsersWithUsername() {
-    AuthenticationResponse response = new AuthenticationResponse(true, "mock-token");
-    when(this.userService.login("username", null, "password")).thenReturn(response);
+    AuthenticationResponse response =
+        new AuthenticationResponse(true, "mock-token");
+    when(this.userService.login("username", null, "password"))
+        .thenReturn(response);
 
-    AuthenticationResponse result =
-        this.userController.login(new AuthenticationRequest("username", null, "password"));
+    AuthenticationResponse result = this.userController.login(
+        new AuthenticationRequest("username", null, "password"));
     verify(this.userService)
-        .login(usernameCaptor.capture(), emailCaptor.capture(), passwordCaptor.capture());
+        .login(usernameCaptor.capture(), emailCaptor.capture(),
+               passwordCaptor.capture());
 
     Assertions.assertEquals("username", usernameCaptor.getValue());
     Assertions.assertEquals(null, emailCaptor.getValue());
@@ -120,13 +117,16 @@ public class UserControllerTest {
 
   @Test
   public void login_shouldAuthenticateWithEmail() {
-    AuthenticationResponse response = new AuthenticationResponse(true, "mock-token");
-    when(this.userService.login(null, "email", "password")).thenReturn(response);
+    AuthenticationResponse response =
+        new AuthenticationResponse(true, "mock-token");
+    when(this.userService.login(null, "email", "password"))
+        .thenReturn(response);
 
-    AuthenticationResponse result =
-        this.userController.login(new AuthenticationRequest(null, "email", "password"));
+    AuthenticationResponse result = this.userController.login(
+        new AuthenticationRequest(null, "email", "password"));
     verify(this.userService)
-        .login(usernameCaptor.capture(), emailCaptor.capture(), passwordCaptor.capture());
+        .login(usernameCaptor.capture(), emailCaptor.capture(),
+               passwordCaptor.capture());
 
     Assertions.assertEquals(null, usernameCaptor.getValue());
     Assertions.assertEquals("email", emailCaptor.getValue());
@@ -139,35 +139,28 @@ public class UserControllerTest {
   public void login_shouldNotAuthenticateWithoutEmailOrUsername() {
     Assertions.assertThrows(
         BadRequestException.class,
-        () -> this.userController.login(new AuthenticationRequest(null, null, "password")));
+        ()
+            -> this.userController.login(
+                new AuthenticationRequest(null, null, "password")));
   }
 
   @Test
   public void createUser_shouldCreateValidUserWithType() {
     CreateUserRequest request =
-        new CreateUserRequest(
-            "username", "password", "firstName", "lastName", "email@email.com", UserType.ADMIN);
-    User u =
-        new User(
-            UserType.ADMIN, "firstName", "lastName", "username", "password", "email@email.com");
-    when(this.userService.createUser(
-            "firstName",
-            "lastName",
-            "username",
-            "email@email.com",
-            "password",
-            Optional.of(UserType.ADMIN)))
+        new CreateUserRequest("username", "password", "firstName", "lastName",
+                              "email@email.com", UserType.ADMIN);
+    User u = new User(UserType.ADMIN, "firstName", "lastName", "username",
+                      "password", "email@email.com");
+    when(this.userService.createUser("firstName", "lastName", "username",
+                                     "email@email.com", "password",
+                                     Optional.of(UserType.ADMIN)))
         .thenReturn(u);
 
     User result = this.userController.createUser(request);
     verify(this.userService)
-        .createUser(
-            fNameCaptor.capture(),
-            lNameCaptor.capture(),
-            usernameCaptor.capture(),
-            emailCaptor.capture(),
-            passwordCaptor.capture(),
-            typeCaptor.capture());
+        .createUser(fNameCaptor.capture(), lNameCaptor.capture(),
+                    usernameCaptor.capture(), emailCaptor.capture(),
+                    passwordCaptor.capture(), typeCaptor.capture());
 
     Assertions.assertEquals("firstName", fNameCaptor.getValue());
     Assertions.assertEquals("lastName", lNameCaptor.getValue());
@@ -183,46 +176,40 @@ public class UserControllerTest {
   @Test
   public void createUser_shouldHandleUserCreationErrors() {
     CreateUserRequest request =
-        new CreateUserRequest(
-            "username", "password", "firstName", "lastName", "email@email.com", UserType.ADMIN);
+        new CreateUserRequest("username", "password", "firstName", "lastName",
+                              "email@email.com", UserType.ADMIN);
 
-    when(this.userService.createUser(
-            "firstName",
-            "lastName",
-            "username",
-            "email@email.com",
-            "password",
-            Optional.of(UserType.ADMIN)))
+    when(this.userService.createUser("firstName", "lastName", "username",
+                                     "email@email.com", "password",
+                                     Optional.of(UserType.ADMIN)))
         .thenThrow(DuplicateItemException.class);
 
-    Assertions.assertThrows(
-        DuplicateItemException.class, () -> this.userController.createUser(request));
+    Assertions.assertThrows(DuplicateItemException.class,
+                            () -> this.userController.createUser(request));
   }
 
   @Test
   public void createUser_shouldHandleInternalServerErrors() {
     CreateUserRequest request =
-        new CreateUserRequest(
-            "username", "password", "firstName", "lastName", "email@email.com", UserType.ADMIN);
-    when(this.userService.createUser(
-            "firstName",
-            "lastName",
-            "username",
-            "email@email.com",
-            "password",
-            Optional.of(UserType.ADMIN)))
+        new CreateUserRequest("username", "password", "firstName", "lastName",
+                              "email@email.com", UserType.ADMIN);
+    when(this.userService.createUser("firstName", "lastName", "username",
+                                     "email@email.com", "password",
+                                     Optional.of(UserType.ADMIN)))
         .thenThrow(InternalServerError.class);
 
-    Assertions.assertThrows(
-        InternalServerError.class, () -> this.userController.createUser(request));
+    Assertions.assertThrows(InternalServerError.class,
+                            () -> this.userController.createUser(request));
   }
 
   @Test
   public void resetPassword_shouldResetPassword() {
     UUID id = UUID.randomUUID();
-    when(this.userService.resetPassword(id)).thenReturn(new PasswordResetResponse());
+    when(this.userService.resetPassword(id))
+        .thenReturn(new PasswordResetResponse());
 
-    PasswordResetResponse response = this.userController.resetPassword(id.toString());
+    PasswordResetResponse response =
+        this.userController.resetPassword(id.toString());
     verify(this.userService).resetPassword(uuidCaptor.capture());
 
     Assertions.assertEquals(id, uuidCaptor.getValue());
@@ -231,7 +218,7 @@ public class UserControllerTest {
     Assertions.assertEquals("", response.getNewPassword());
 
     // test uuid error
-    Assertions.assertThrows(
-        BadRequestException.class, () -> this.userController.resetPassword("test"));
+    Assertions.assertThrows(BadRequestException.class,
+                            () -> this.userController.resetPassword("test"));
   }
 }
