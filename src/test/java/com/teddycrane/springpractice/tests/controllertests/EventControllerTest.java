@@ -85,7 +85,7 @@ public class EventControllerTest {
   }
 
   @Test
-  public void createEvent_shouldCreateWhenDatesAreNotPresent() {
+  public void createEvent_shouldCreateWhenStartDateIsPresent() {
     when(this.eventService.createEvent(anyString(), any(Date.class), any()))
         .thenReturn(event);
 
@@ -93,6 +93,22 @@ public class EventControllerTest {
         new CreateEventRequest("name", new Date(), null));
 
     assertNotNull(result);
+  }
+
+  @Test
+  public void createEvent_shouldCreateWhenEndDateIsPresent() {
+    when(this.eventService.createEvent(anyString(), any(), any(Date.class)))
+        .thenReturn(event);
+    assertNotNull(this.eventController.createEvent(
+        new CreateEventRequest("name", null, new Date())));
+  }
+
+  @Test
+  public void createEvent_shouldFailWhenParamsAreMissing() {
+    assertThrows(BadRequestException.class,
+                 ()
+                     -> this.eventController.createEvent(
+                         new CreateEventRequest(null, null, null)));
   }
 
   @Test
