@@ -7,6 +7,8 @@ import com.teddycrane.springpractice.error.DuplicateItemException;
 import com.teddycrane.springpractice.error.EventNotFoundException;
 import com.teddycrane.springpractice.event.Event;
 import com.teddycrane.springpractice.event.request.CreateEventRequest;
+import com.teddycrane.springpractice.event.request.UpdateEventRequest;
+import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.event.model.IEventService;
 import com.teddycrane.springpractice.tests.helpers.TestResourceGenerator;
 import org.junit.jupiter.api.*;
@@ -20,6 +22,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.booleanThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +43,9 @@ public class EventControllerTest {
 
 	@Captor
 	private ArgumentCaptor<UUID> idCaptor;
+
+	@Captor
+	private ArgumentCaptor<Boolean> booleanCaptor;
 
 	@BeforeEach
 	public void init() {
@@ -132,9 +140,13 @@ public class EventControllerTest {
 	public void startEvent_shouldStartEvent() {
 		Event expected = new Event(event);
 		event.setIsActive(true);
-		when(this.eventService.setEventAsActive(testId, true)).thenReturn(expected);
+		when(this.eventService.setEventAsActive(any(UUID.class), anyBoolean())).thenReturn(expected);
 
 		Event actual = this.eventController.startEvent(testString);
+
+		verify(this.eventService).setEventAsActive(idCaptor.capture(), booleanCaptor.capture());
+		assertEquals(testId, idCaptor.getValue());
+		assertTrue(booleanCaptor.getValue());
 		assertEquals(expected, actual);
 	}
 
@@ -144,5 +156,54 @@ public class EventControllerTest {
 
 		when(this.eventService.setEventAsActive(testId, true)).thenThrow(EventNotFoundException.class);
 		assertThrows(EventNotFoundException.class, () -> this.eventController.startEvent(testString));
+	}
+
+	@Test
+	public void endEvent_shouldEndEvent() {
+		Event expected = new Event(event);
+		when(this.eventService.setEventAsActive(any(UUID.class), anyBoolean())).thenReturn(event);
+
+		Event actual = this.eventController.endEvent(testString);
+		verify(this.eventService).setEventAsActive(idCaptor.capture(), booleanCaptor.capture());
+
+		assertEquals(testId, idCaptor.getValue());
+		assertFalse(booleanCaptor.getValue());
+
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void endEvent_shouldHandleServiceErrors() {
+		assertThrows(BadRequestException.class, () -> this.eventController.endEvent("not a uuid"));
+
+		when(this.eventService.setEventAsActive(any(UUID.class), anyBoolean())).thenThrow(EventNotFoundException.class);
+		assertThrows(EventNotFoundException.class, () -> this.eventController.endEvent(testString));
+	}
+
+	@Test
+	public void addRacesToEvent_shouldAddRaces() {
+		Event expected = new Event(event);
+		List<Race> raceList = TestResourceGenerator.generateRaceList(5);
+		expected.setRaces(raceList);
+		when(this.eventService.addRacesToEvent(any(UUID.class), anyList())).thenReturn(expected);
+
+		List<UUID> idList = raceList.stream().map((race) -> race.getId()).toList();
+
+		UpdateEventRequest request = new UpdateEventRequest(null, null, null, idList);
+		Event actual = this.eventController.addRacesToEvent(testString, request);
+
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void addRacesToEvent_shouldHandleServiceErrors() {
+		List<UUID> idList = TestResourceGenerator.generateRaceList(5).stream().map((race) -> race.getId()).toList();
+		UpdateEventRequest request = new UpdateEventRequest(null, null, null, idList);
+
+		when(this.eventService.addRacesToEvent(any(UUID.class), anyList())).thenThrow(EventNotFoundException.class);
+
+		assertThrows(EventNotFoundException.class, () -> this.eventController.addRacesToEvent(testString, request));
+
+		assertThrows(BadRequestException.class, () -> this.eventController.addRacesToEvent("not an id", request));
 	}
 }
