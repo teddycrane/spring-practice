@@ -66,13 +66,17 @@ public class Event {
     this.races = new ArrayList<>(races);
   }
 
-  public Date getStartDate() { return new Date(startDate.getTime()); }
+  public Optional<Date> getStartDate() {
+    return Optional.ofNullable(this.startDate);
+  }
 
   public void setStartDate(Date startDate) {
     this.startDate = new Date(startDate.getTime());
   }
 
-  public Date getEndDate() { return new Date(endDate.getTime()); }
+  public Optional<Date> getEndDate() {
+    return Optional.ofNullable(this.endDate);
+  }
 
   public void setEndDate(Date endDate) {
     this.endDate = new Date(endDate.getTime());
@@ -82,7 +86,13 @@ public class Event {
 
   public void setIsActive(boolean isActive) { this.isActive = isActive; }
 
-  public boolean equals(Event other) {
+  @Override
+  public boolean equals(Object other) {
+    return this.getClass().equals(other.getClass()) ? this.equals((Event)other)
+                                                    : false;
+  }
+
+  private boolean equals(Event other) {
     return this.id.equals(other.id) && this.name.equals(other.name) &&
         this.startDate.equals(other.startDate) &&
         this.endDate.equals(other.endDate) && this.races.equals(other.races) &&

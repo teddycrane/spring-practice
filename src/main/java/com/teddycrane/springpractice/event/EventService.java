@@ -8,6 +8,7 @@ import com.teddycrane.springpractice.models.BaseService;
 import com.teddycrane.springpractice.race.Race;
 import com.teddycrane.springpractice.race.model.RaceRepository;
 import java.util.*;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,15 +48,16 @@ public class EventService extends BaseService implements IEventService {
   }
 
   @Override
-  public Event createEvent(String name, Date startDate, Date endDate)
+  public Event createEvent(String name, @Nullable Date startDate,
+                           @Nullable Date endDate)
       throws DuplicateItemException {
     this.logger.trace("EventService.createEvent called");
     Optional<Event> existing = this.eventRepository.findByName(name);
     Event e = new Event(name);
 
     if (existing.isPresent() &&
-        existing.get().getStartDate().equals(startDate) &&
-        existing.get().getEndDate().equals(endDate)) {
+        existing.get().getStartDate().orElse(null).equals(startDate) &&
+        existing.get().getEndDate().orElse(null).equals(endDate)) {
       this.logger.error("Duplicate item detected for name {}", name);
       throw new DuplicateItemException(String.format(
           "An event with the name %s already exists! Try adding a race to this event instead. ",

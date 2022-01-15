@@ -18,7 +18,8 @@ public class CreateEventRequest {
     endDate = null;
   }
 
-  public CreateEventRequest(String name, Date startDate, Date endDate) {
+  public CreateEventRequest(String name, @Nullable Date startDate,
+                            @Nullable Date endDate) {
     this.name = name;
     this.startDate = startDate;
     this.endDate = endDate;

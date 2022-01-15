@@ -18,7 +18,7 @@ repos:
     rev: v1.3.5
     hooks:
     -   id: clang-format
-        args: [-i]
+        args: [-i, -style=file]
 
 # -   repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks 
 #     rev: v2.2.0
